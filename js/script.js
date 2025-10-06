@@ -28,3 +28,22 @@ button.addEventListener('mouseover', () => {
   button.style.left = `${randomX}px`;
   button.style.top = `${randomY}px`;
 });
+
+const messages = [
+  "You are a legend… in another universe.",
+  "Clicking skills: unparalleled.",
+  "You could be a professional nothing-doer.",
+  "Your dedication to nothing is inspiring.",
+  "Almost… there… keep clicking!"
+];
+
+button.addEventListener('click', () => {
+  clicks++;
+  counterDiv.textContent = `Clicks: ${clicks}`;
+
+  if (clicks % 5 === 0) {
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    counterDiv.textContent += ` — ${randomMessage}`;
+  }
+});
+
