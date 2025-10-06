@@ -1,4 +1,4 @@
-/* Reset some default styles */
+/* Reset some defaults */
 * {
   margin: 0;
   padding: 0;
@@ -30,10 +30,10 @@ h1 {
   color: white;
   cursor: pointer;
   transition: transform 0.2s, background 0.2s;
+  position: relative; 
 }
 
 #useless-button:hover {
-  background: #ff4757;
   transform: scale(1.1);
 }
 
