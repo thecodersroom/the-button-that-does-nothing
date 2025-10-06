@@ -20,7 +20,7 @@ Check out the live demo here: [This is Clickable](https://thecodersroom.github.i
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/the-button-that-does-nothing.git
+git clone https://github.com/thecodersroom/the-button-that-does-nothing.git
 ````
 
 2. Open `index.html` in your browser.
