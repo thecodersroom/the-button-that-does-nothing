@@ -1,0 +1,36 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+
+.clock-container{
+    width: 150px;
+    height: 30px;
+    background: linear-gradient(135deg, rgba(240, 166, 93, 0.954), rgba(255, 104, 3, 0.973));
+    padding: 8px 12px;
+    border-radius: 12px;
+    box-shadow:
+        0 6px 18px rgba(0,0,0,0.35),
+        inset 0 -2px 6px rgba(255,255,255,0.04);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* transform: rotate(-2deg); */
+    transition: transform 250ms ease, box-shadow 250ms ease;
+}
+
+.clock{
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    color: #00ffd5;
+    text-shadow:
+        0 0 8px rgba(0,255,213,0.18),
+        0 6px 18px rgba(0,0,0,0.6);
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+}
