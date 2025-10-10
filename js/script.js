@@ -1,12 +1,14 @@
 // DOM elements
 const button = document.getElementById('useless-button');
 const counterDiv = document.getElementById('counter');
+const quoteDiv = document.getElementById('quote'); // ⚠️ must define this
 const clickSound = document.getElementById('click-sound');
 const failSound = document.getElementById('fail-sound');
 
 // State
 let clicks = 0;
 let failedClicks = 0;
+let userInteracted = false; // unlock audio on first click
 
 const messages = [
   "You are a legend… in another universe.",
@@ -14,29 +16,21 @@ const messages = [
   "You could be a professional nothing-doer.",
   "Your dedication to nothing is inspiring.",
   "Almost… there… keep clicking!",
-];
-
-// Funny useless quotes
-const quotes = [
-  "The button is mightier than the sword.",
-  "You just wasted 0.3 calories. Congrats!",
-  "This button has no purpose, and neither does this quote.",
-  "Keep clicking, maybe it’ll do something… someday.",
-  "Legend says, after 10,000 clicks, enlightenment is achieved.",
-  "Warning: excessive clicking may lead to existential thoughts.",
-  "Relax, you’re doing nothing perfectly.",
-  "This is fine. Everything is fine.",
-  "Achievement unlocked: nothing accomplished!",
+  "Warning: excessive clicking may lead to existential thoughts."
 ];
 
 const failedClickMessages = [
-  "Choppy fingers",
-  "My mom's sandal clicks more precise",
-  "As a nothing-doer, you're pretty good",
-  "You're a failing legend"
+  "Choppy fingers.",
+  "My mom's sandal clicks more precise.",
+  "As a nothing-doer, you're pretty good.",
+  "You're a failing legend.",
+  "Bro missed a stationary button 💀",
+  "Even the cursor gave up on you.",
+  "You’ve achieved the rare 'Click Miss Combo'.",
+  "Pathetic reflexes — admirable persistence."
 ];
 
-// Utility: random color
+// Random color generator
 function getRandomColor() {
   const letters = "0123456789ABCDEF";
   let color = "#";
@@ -46,20 +40,32 @@ function getRandomColor() {
   return color;
 }
 
-// Update display
+// Update counter + quote
 function updateCounter(extraText = "") {
-  counterDiv.textContent = `Clicks: ${clicks} | Failed clicks: ${failedClicks} ${extraText}`;
+  counterDiv.textContent = `Clicks: ${clicks} | Failed clicks: ${failedClicks}`;
+  if (extraText) {
+    quoteDiv.textContent = extraText;
+  }
 }
 
+// Unlock audio on first interaction
+window.addEventListener(
+  "click",
+  () => {
+    if (!userInteracted) {
+      userInteracted = true;
+      clickSound.play().then(() => clickSound.pause());
+      failSound.play().then(() => failSound.pause());
+    }
+  },
+  { once: true }
+);
+
 // Button click handler
-button.addEventListener('click', () => {
+button.addEventListener("click", () => {
   clicks++;
-  let message = "";
-  if (clicks % 5 === 0) {
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    message = `— ${randomMessage}`;
-  }
-  updateCounter(message);
+  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+  updateCounter(`— ${randomMessage}`);
   button.style.backgroundColor = getRandomColor();
 
   // Tiny scale animation
@@ -68,28 +74,28 @@ button.addEventListener('click', () => {
     button.style.transform = "scale(1)";
   }, 100);
 
-  clickSound.currentTime = 0;
-  clickSound.play();
+  if (userInteracted) {
+    clickSound.currentTime = 0;
+    clickSound.play().catch(() => {});
+  }
 });
 
-// Button dodge behavior 
+// Button dodge behavior
 let lastDodgeTime = 0;
-button.addEventListener('mouseover', () => {
+button.addEventListener("mouseover", () => {
   const now = Date.now();
-  if (now - lastDodgeTime < 150) return; 
+  if (now - lastDodgeTime < 150) return; // throttle
   lastDodgeTime = now;
 
-  if (Math.random() < 0.9) { // 90% chance to dodge
+  if (Math.random() < 0.9) {
     failedClicks++;
     const randomFail = failedClickMessages[Math.floor(Math.random() * failedClickMessages.length)];
-
-    // Update counter
     updateCounter(`— ${randomFail}`);
 
     // Play fail sound every 10 fails
-    if (failedClicks % 10 === 0) {
+    if (failedClicks % 10 === 0 && userInteracted) {
       failSound.currentTime = 0;
-      failSound.play();
+      failSound.play().catch(() => {});
     }
 
     const maxX = window.innerWidth - button.offsetWidth;
@@ -97,14 +103,14 @@ button.addEventListener('mouseover', () => {
     const randomX = Math.floor(Math.random() * maxX);
     const randomY = Math.floor(Math.random() * maxY);
 
-    button.style.position = 'absolute';
+    button.style.position = "absolute";
     button.style.left = `${randomX}px`;
     button.style.top = `${randomY}px`;
 
-    // Little shake/rotate animation
-    button.style.transform = 'rotate(5deg)';
+    // Shake animation
+    button.style.transform = "rotate(5deg)";
     setTimeout(() => {
-      button.style.transform = 'rotate(0deg)';
+      button.style.transform = "rotate(0deg)";
     }, 100);
   }
 });
