@@ -14,6 +14,7 @@ body {
   font-family: Arial, sans-serif;
   flex-direction: column;
   text-align: center;
+  transition: background-color 2s ease;
 }
 
 h1 {
@@ -60,4 +61,3 @@ h1 {
 .fade-in {
   opacity: 1;
 }
-
