@@ -30,7 +30,7 @@ h1 {
   color: white;
   cursor: pointer;
   transition: transform 0.2s, background 0.2s;
-  position: relative; 
+  position: relative;
 }
 
 #useless-button:hover {
@@ -42,3 +42,22 @@ h1 {
   font-size: 1.2rem;
   color: #555;
 }
+.quote {
+  margin-top: 15px;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #555;
+  text-align: center;
+  opacity: 1;
+  transition: opacity 0.6s ease; /* smooth fade */
+}
+
+/* Optional subtle animation for the quote appearance */
+.fade-out {
+  opacity: 0;
+}
+
+.fade-in {
+  opacity: 1;
+}
+
