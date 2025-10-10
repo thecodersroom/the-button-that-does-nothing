@@ -118,14 +118,37 @@ button.addEventListener("click", () => {
 
 // --- Button dodge behavior ---
 button.addEventListener("mouseover", () => {
+  // --- Create smoke/particle trail ---
+  for (let i = 0; i < 8; i++) {
+    const particle = document.createElement("span");
+    particle.classList.add("particle");
+
+    // Random position around the button
+    const offsetX = (Math.random() - 0.5) * button.offsetWidth;
+    const offsetY = (Math.random() - 0.5) * button.offsetHeight;
+
+    particle.style.left = `${button.offsetLeft + button.offsetWidth / 2 + offsetX}px`;
+    particle.style.top = `${button.offsetTop + button.offsetHeight / 2 + offsetY}px`;
+
+    document.body.appendChild(particle);
+
+    // Remove after animation
+    setTimeout(() => {
+      particle.remove();
+    }, 1000);
+  }
+
+  // --- Random button move ---
   const maxX = window.innerWidth - button.offsetWidth;
   const maxY = window.innerHeight - button.offsetHeight;
   const randomX = Math.floor(Math.random() * maxX);
   const randomY = Math.floor(Math.random() * maxY);
+
   button.style.position = "absolute";
   button.style.left = `${randomX}px`;
   button.style.top = `${randomY}px`;
 });
+
 
 // --- Random background color changer ---
 function changeBackgroundColor() {
