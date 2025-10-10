@@ -13,7 +13,20 @@ const messages = [
   "Clicking skills: unparalleled.",
   "You could be a professional nothing-doer.",
   "Your dedication to nothing is inspiring.",
-  "Almost… there… keep clicking!"
+  "Almost… there… keep clicking!",
+];
+
+// Funny useless quotes
+const quotes = [
+  "The button is mightier than the sword.",
+  "You just wasted 0.3 calories. Congrats!",
+  "This button has no purpose, and neither does this quote.",
+  "Keep clicking, maybe it’ll do something… someday.",
+  "Legend says, after 10,000 clicks, enlightenment is achieved.",
+  "Warning: excessive clicking may lead to existential thoughts.",
+  "Relax, you’re doing nothing perfectly.",
+  "This is fine. Everything is fine.",
+  "Achievement unlocked: nothing accomplished!",
 ];
 
 const failedClickMessages = [
@@ -25,8 +38,8 @@ const failedClickMessages = [
 
 // Utility: random color
 function getRandomColor() {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
+  const letters = "0123456789ABCDEF";
+  let color = "#";
   for (let i = 0; i < 6; i++) {
     color += letters[Math.floor(Math.random() * 16)];
   }
@@ -50,9 +63,9 @@ button.addEventListener('click', () => {
   button.style.backgroundColor = getRandomColor();
 
   // Tiny scale animation
-  button.style.transform = 'scale(1.2)';
+  button.style.transform = "scale(1.2)";
   setTimeout(() => {
-    button.style.transform = 'scale(1)';
+    button.style.transform = "scale(1)";
   }, 100);
 
   clickSound.currentTime = 0;
