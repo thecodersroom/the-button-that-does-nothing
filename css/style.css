@@ -61,3 +61,15 @@ h1 {
 .fade-in {
   opacity: 1;
 }
+.timer {
+  margin-top: 15px;
+  font-size: 1.1rem;
+  color: #666;
+  transition: opacity 0.6s ease;
+  opacity: 1;
+  font-weight: 700;
+}
+
+.timer.fade {
+  opacity: 0.5;
+}
