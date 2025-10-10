@@ -1,7 +1,7 @@
 // DOM elements
 const button = document.getElementById('useless-button');
 const counterDiv = document.getElementById('counter');
-const quoteDiv = document.getElementById('quote'); // ⚠️ must define this
+const quoteDiv = document.getElementById('quote');
 const clickSound = document.getElementById('click-sound');
 const failSound = document.getElementById('fail-sound');
 
