@@ -14,6 +14,7 @@ body {
   font-family: Arial, sans-serif;
   flex-direction: column;
   text-align: center;
+  transition: background-color 2s ease;
 }
 
 h1 {
@@ -61,6 +62,14 @@ h1 {
 .fade-in {
   opacity: 1;
 }
+.timer {
+  margin-top: 15px;
+  font-size: 1.1rem;
+  color: #666;
+  transition: opacity 0.6s ease;
+  opacity: 1;
+  font-weight: 700;
+}
 
 .button-container {
   height: 100px;
@@ -75,5 +84,28 @@ h1 {
   50% {
     top: 20px;
     animation-timing-function: ease-out;
+.timer.fade {
+  opacity: 0.5;
+}
+
+/* === Particle smoke effect === */
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+  animation: particleFade 1s ease-out forwards;
+}
+
+@keyframes particleFade {
+  0% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2) translateY(-20px);
+    opacity: 0;
   }
 }
