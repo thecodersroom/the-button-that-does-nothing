@@ -19,12 +19,14 @@
 
     <h1>The Button That Does Nothing</h1>
     <button id="useless-button">Click Me!</button>
-    <div id="counter">Clicks: 0</div>
-    <div id="quote" class="quote">"Loading some wisdom..."</div>
+
+    <div id="counter">Clicks: 0 | Failed clicks: 0</div>
+    <div id="quote" class="quote"></div>
     <div id="timer" class="timer">Time spent doing nothing: 00:00</div>
 
-    <!-- Hidden click sound -->
+    <!-- Sounds -->
     <audio id="click-sound" src="audio/click.mp3"></audio>
+    <audio id="fail-sound" src="audio/failedClick.mp3"></audio>
 
     <script src="js/script.js"></script>
     <script src="js/clock.js"></script>
