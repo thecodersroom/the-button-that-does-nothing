@@ -123,3 +123,30 @@ function changeBackgroundColor() {
 
 // Change every 5 seconds (adjust as you like)
 setInterval(changeBackgroundColor, 5000);
+
+// --- Time Spent Doing Nothing Timer ---
+const timerDiv = document.getElementById("timer");
+let seconds = 0;
+
+function formatTime(sec) {
+  const mins = Math.floor(sec / 60);
+  const secs = sec % 60;
+  return `${mins.toString().padStart(2, "0")}:${secs
+    .toString()
+    .padStart(2, "0")}`;
+}
+
+function updateTimer() {
+  seconds++;
+  timerDiv.textContent = `Time spent doing nothing: ${formatTime(seconds)}`;
+  // optional little blink effect every 5s for fun
+  if (seconds % 5 === 0) {
+    timerDiv.classList.add("fade");
+    setTimeout(() => timerDiv.classList.remove("fade"), 400);
+  }
+}
+
+// start timer on page load
+window.addEventListener("load", () => {
+  setInterval(updateTimer, 1000);
+});
