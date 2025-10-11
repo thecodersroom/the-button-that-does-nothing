@@ -114,3 +114,12 @@ button.addEventListener("mouseover", () => {
     }, 100);
   }
 });
+
+// --- Random background color changer ---
+function changeBackgroundColor() {
+  const color = getRandomColor(); // reuse your existing getRandomColor() function
+  document.body.style.backgroundColor = color;
+}
+
+// Change every 5 seconds (adjust as you like)
+setInterval(changeBackgroundColor, 5000);
