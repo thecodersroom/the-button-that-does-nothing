@@ -32,6 +32,7 @@ h1 {
   cursor: pointer;
   transition: transform 0.2s, background 0.2s;
   position: relative;
+  animation: bounce 2s infinite;
 }
 
 #useless-button:hover {
@@ -70,6 +71,19 @@ h1 {
   font-weight: 700;
 }
 
+.button-container {
+  height: 100px;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    top: 0;
+    animation-timing-function: ease-in;
+  }
+  50% {
+    top: 20px;
+    animation-timing-function: ease-out;
 .timer.fade {
   opacity: 0.5;
 }
