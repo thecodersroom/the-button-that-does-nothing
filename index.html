@@ -4,29 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Button That Does Nothing</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/clock.css" />
   </head>
+
   <body>
-    <!-- clock -->
     <div class="clock-container">
       <div class="clock">
-        <span id="hrs">00</span><span>:</span> <span id="min">00</span
-        ><span>:</span>
-        <span id="sec">00</span>
+        <span id="hrs">00</span>:<span id="min">00</span>:<span id="sec"
+          >00</span
+        >
       </div>
     </div>
+    <div class="app-container">
+      <h1>The Button That Does Nothing</h1>
 
-    <h1>The Button That Does Nothing</h1>
-    <div class="button-container">
-      <button id="useless-button">Click Me!</button>
+      <div class="button-container">
+        <button id="useless-button">Click Me!</button>
+      </div>
+
+      <div id="counter">Clicks: 0 | Failed clicks: 0</div>
+      <div id="quote" class="quote">"Loading some wisdom..."</div>
+      <div id="timer" class="timer">Time spent doing nothing: 00:00</div>
     </div>
-    <div id="counter">Clicks: 0</div>
-    <div id="quote" class="quote">"Loading some wisdom..."</div>
-
-    <div id="counter">Clicks: 0 | Failed clicks: 0</div>
-    <div id="quote" class="quote"></div>
-    <div id="timer" class="timer">Time spent doing nothing: 00:00</div>
 
     <!-- Sounds -->
     <audio id="click-sound" src="audio/click.mp3"></audio>
