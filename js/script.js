@@ -1,9 +1,9 @@
 // DOM elements
-const button = document.getElementById('useless-button');
-const counterDiv = document.getElementById('counter');
-const quoteDiv = document.getElementById('quote');
-const clickSound = document.getElementById('click-sound');
-const failSound = document.getElementById('fail-sound');
+const button = document.getElementById("useless-button");
+const counterDiv = document.getElementById("counter");
+const quoteDiv = document.getElementById("quote");
+const clickSound = document.getElementById("click-sound");
+const failSound = document.getElementById("fail-sound");
 // State
 let clicks = 0;
 let failedClicks = 0;
@@ -14,7 +14,7 @@ const messages = [
   "You could be a professional nothing-doer.",
   "Your dedication to nothing is inspiring.",
   "Almost… there… keep clicking!",
-  "Warning: excessive clicking may lead to existential thoughts."
+  "Warning: excessive clicking may lead to existential thoughts.",
 ];
 const failedClickMessages = [
   "Choppy fingers.",
@@ -24,7 +24,7 @@ const failedClickMessages = [
   "Bro missed a stationary button 💀",
   "Even the cursor gave up on you.",
   "You’ve achieved the rare 'Click Miss Combo'.",
-  "Pathetic reflexes — admirable persistence."
+  "Pathetic reflexes — admirable persistence.",
 ];
 // Random color generator
 function getRandomColor() {
@@ -42,6 +42,14 @@ function updateCounter(extraText = "") {
     quoteDiv.textContent = extraText;
   }
 }
+
+// Random number generator
+function getRandomNumber(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 // Unlock audio on first interaction
 window.addEventListener(
   "click",
@@ -60,6 +68,13 @@ button.addEventListener("click", () => {
   const randomMessage = messages[Math.floor(Math.random() * messages.length)];
   updateCounter(`— ${randomMessage}`);
   button.style.backgroundColor = getRandomColor();
+
+  // Change size of button
+  const width = getRandomNumber(150, 250);
+  const height = getRandomNumber(80, 300);
+  button.style.width = `${width}px`;
+  button.style.height = `${height}px`;
+
   // Tiny scale animation
   button.style.transform = "scale(1.2)";
   setTimeout(() => {
@@ -94,7 +109,8 @@ button.addEventListener("mouseover", () => {
   }
 
   // --- Dodge logic and button move (combined) ---
-  if (Math.random() < 0.9) { // Only dodge 90% of the time (from 'main')
+  if (Math.random() < 0.9) {
+    // Only dodge 90% of the time (from 'main')
     failedClicks++; // from 'main'
     const randomFail = failedClickMessages[Math.floor(Math.random() * failedClickMessages.length)]; // from 'main'
     updateCounter(`— ${randomFail}`); // from 'main'
@@ -136,9 +152,7 @@ let seconds = 0;
 function formatTime(sec) {
   const mins = Math.floor(sec / 60);
   const secs = sec % 60;
-  return `${mins.toString().padStart(2, "0")}:${secs
-    .toString()
-    .padStart(2, "0")}`;
+  return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }
 function updateTimer() {
   seconds++;
