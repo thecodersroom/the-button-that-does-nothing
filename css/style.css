@@ -1,4 +1,4 @@
-/* Reset some defaults */
+/* === Global Reset === */
 * {
   margin: 0;
   padding: 0;
@@ -6,106 +6,153 @@
 }
 
 body {
+  font-family: "Poppins", sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: #f0f0f0;
-  font-family: Arial, sans-serif;
-  flex-direction: column;
   text-align: center;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
   transition: background-color 2s ease;
+  overflow: hidden;
 }
 
+/* === App Container === */
+.app-container {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  padding: 40px 60px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  max-width: 600px;
+  width: 90%;
+  position: relative;
+}
+
+/* === Heading === */
 h1 {
-  margin-bottom: 20px;
-  color: #333;
+  margin-bottom: 25px;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
+/* === Button === */
 #useless-button {
   padding: 20px 40px;
   font-size: 1.5rem;
-  background: #ff6b6b;
+  background: linear-gradient(45deg, #ff6b6b, #ff9a76);
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   color: white;
   cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
+  transition: transform 0.2s ease, background 0.3s ease;
   position: relative;
-  animation: bounce 2s infinite;
+  z-index: 2;
 }
 
 #useless-button:hover {
-  transform: scale(1.1);
+  transform: scale(1.1) translateY(-5px);
+  background: linear-gradient(45deg, #ff9a76, #ff6b6b);
 }
 
-#counter {
-  margin-top: 20px;
-  font-size: 1.2rem;
-  color: #555;
-}
-.quote {
-  margin-top: 15px;
-  font-style: italic;
-  font-size: 1.1rem;
-  color: #555;
-  text-align: center;
-  opacity: 1;
-  transition: opacity 0.6s ease; /* smooth fade */
-}
-
-/* Optional subtle animation for the quote appearance */
-.fade-out {
+/* Smoke trail effect */
+#useless-button::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 70%
+  );
+  transform: translateX(-50%) scale(0);
   opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
 }
 
-.fade-in {
+#useless-button:hover::after {
+  transform: translateX(-50%) scale(2);
   opacity: 1;
 }
+
+/* === Counter / Quote / Timer === */
+#counter,
+.quote,
 .timer {
   margin-top: 15px;
   font-size: 1.1rem;
-  color: #666;
+  color: #f0f0f0;
+}
+
+.quote {
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.timer {
+  font-weight: 600;
+  margin-top: 10px;
   transition: opacity 0.6s ease;
-  opacity: 1;
-  font-weight: 700;
 }
 
-.button-container {
-  height: 100px;
-}
-
-@keyframes bounce {
-  0%,
-  100% {
-    top: 0;
-    animation-timing-function: ease-in;
-  }
-  50% {
-    top: 20px;
-    animation-timing-function: ease-out;
 .timer.fade {
-  opacity: 0.5;
+  opacity: 0.6;
 }
 
-/* === Particle smoke effect === */
+/* === Button Smoke Effect === */
 .particle {
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.8);
   pointer-events: none;
-  animation: particleFade 1s ease-out forwards;
+  animation: smokeTrail 1s ease-out forwards;
+  z-index: 1;
 }
 
-@keyframes particleFade {
+@keyframes smokeTrail {
   0% {
     transform: scale(1) translateY(0);
     opacity: 1;
   }
   100% {
-    transform: scale(2) translateY(-20px);
+    transform: scale(2) translateY(-40px);
     opacity: 0;
+  }
+}
+
+/* === Animated Gradient === */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+  .app-container {
+    padding: 25px;
+  }
+
+  #useless-button {
+    font-size: 1.1rem;
+    padding: 15px 30px;
+  }
+
+  h1 {
+    font-size: 1.3rem;
   }
 }
