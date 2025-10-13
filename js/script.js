@@ -50,6 +50,26 @@ function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// Random Location
+function getRandomLocation() {
+  const maxX = window.innerWidth - button.offsetWidth;
+  const maxY = window.innerHeight - button.offsetHeight;
+  const randomX = Math.floor(Math.random() * maxX);
+  const randomY = Math.floor(Math.random() * maxY);
+
+  return {
+    randomX,
+    randomY,
+  };
+}
+
+function buttonTeleport(posX, posY) {
+  // Apply new position
+  button.style.position = "absolute";
+  button.style.left = `${posX}px`;
+  button.style.top = `${posY}px`;
+}
+
 // Unlock audio on first interaction
 window.addEventListener(
   "click",
@@ -74,6 +94,12 @@ button.addEventListener("click", () => {
   const height = getRandomNumber(80, 300);
   button.style.width = `${width}px`;
   button.style.height = `${height}px`;
+
+  // Calculate new position
+  const { randomX, randomY } = getRandomLocation();
+
+  // Apply new position
+  buttonTeleport(randomX, randomY);
 
   // Tiny scale animation
   button.style.transform = "scale(1.2)";
@@ -122,15 +148,10 @@ button.addEventListener("mouseover", () => {
     }
 
     // Calculate new position
-    const maxX = window.innerWidth - button.offsetWidth;
-    const maxY = window.innerHeight - button.offsetHeight;
-    const randomX = Math.floor(Math.random() * maxX);
-    const randomY = Math.floor(Math.random() * maxY);
+    const { randomX, randomY } = getRandomLocation();
 
     // Apply new position
-    button.style.position = "absolute";
-    button.style.left = `${randomX}px`;
-    button.style.top = `${randomY}px`;
+    buttonTeleport(randomX, randomY);
 
     // Shake animation (from 'main')
     button.style.transform = "rotate(5deg)";
