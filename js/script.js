@@ -188,3 +188,14 @@ function updateTimer() {
 window.addEventListener("load", () => {
   setInterval(updateTimer, 1000);
 });
+
+const themeToggle = document.getElementById("theme-toggle");
+
+themeToggle.addEventListener("click", () => {
+  const current = document.body.dataset.theme;
+  const newTheme = current === "light" ? "dark" : "light";
+  document.body.dataset.theme = newTheme;
+  quoteDiv.textContent = newTheme === "light"
+    ? "Welcome to the light. It won’t help."
+    : "Back to the void.";
+});
