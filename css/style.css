@@ -1,158 +1,278 @@
-/* === Global Reset === */
+/* === Global Styles === */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  font-family: "Poppins", sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  text-align: center;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
-  transition: background-color 2s ease;
-  overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow: hidden;
+    position: relative;
+}
+
+/* === Animated Background === */
+body::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(253, 121, 168, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(194, 233, 251, 0.3) 0%, transparent 50%);
+    animation: bgMove 15s ease-in-out infinite;
+}
+
+@keyframes bgMove {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-50px, -50px); }
+}
+
+/* === Canvas for Particles === */
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
 }
 
 /* === App Container === */
 .app-container {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
-  padding: 40px 60px;
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  color: #fff;
-  max-width: 600px;
-  width: 90%;
-  position: relative;
+    text-align: center;
+    z-index: 10;
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 50px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    animation: fadeInScale 0.6s ease-out;
 }
 
-/* === Heading === */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* === Title === */
 h1 {
-  margin-bottom: 25px;
-  font-weight: 600;
-  letter-spacing: 1px;
+    color: #fff;
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: titlePulse 2s ease-in-out infinite;
 }
 
-/* === Button === */
+@keyframes titlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* === Button Container === */
+.button-container {
+    margin: 40px 0;
+    min-height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* === The Useless Button === */
 #useless-button {
-  padding: 20px 40px;
-  font-size: 1.5rem;
-  background: linear-gradient(45deg, #ff6b6b, #ff9a76);
-  border: none;
-  border-radius: 12px;
-  color: white;
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.3s ease;
-  position: relative;
-  z-index: 2;
+    padding: 20px 60px;
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+    overflow: hidden;
+}
+
+#useless-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
 }
 
 #useless-button:hover {
-  transform: scale(1.1) translateY(-5px);
-  background: linear-gradient(45deg, #ff9a76, #ff6b6b);
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(245, 87, 108, 0.6);
 }
 
-/* Smoke trail effect */
-#useless-button::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  width: 40px;
-  height: 40px;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.3) 0%,
-    transparent 70%
-  );
-  transform: translateX(-50%) scale(0);
-  opacity: 0;
-  transition: transform 0.4s ease, opacity 0.4s ease;
+#useless-button:active::before {
+    width: 300px;
+    height: 300px;
 }
 
-#useless-button:hover::after {
-  transform: translateX(-50%) scale(2);
-  opacity: 1;
+#useless-button.shake {
+    animation: buttonShake 0.5s;
 }
 
-/* === Counter / Quote / Timer === */
-#counter,
-.quote,
-.timer {
-  margin-top: 15px;
-  font-size: 1.1rem;
-  color: #f0f0f0;
+@keyframes buttonShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px) rotate(-5deg); }
+    75% { transform: translateX(10px) rotate(5deg); }
 }
 
+#useless-button.rainbow {
+    animation: rainbowBg 2s linear infinite;
+}
+
+@keyframes rainbowBg {
+    0% { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    25% { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    50% { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    75% { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    100% { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+}
+
+/* === Counter & Stats === */
+#counter {
+    font-size: 1.2em;
+    color: #fff;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* === Quote === */
 .quote {
-  font-style: italic;
-  opacity: 0.9;
-}
-
-.timer {
-  font-weight: 600;
-  margin-top: 10px;
-  transition: opacity 0.6s ease;
-}
-
-.timer.fade {
-  opacity: 0.6;
-}
-
-/* === Button Smoke Effect === */
-.particle {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.8);
-  pointer-events: none;
-  animation: smokeTrail 1s ease-out forwards;
-  z-index: 1;
-}
-
-@keyframes smokeTrail {
-  0% {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(2) translateY(-40px);
+    font-size: 1.1em;
+    color: #fff;
+    margin: 20px 0;
+    font-style: italic;
+    min-height: 50px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
     opacity: 0;
-  }
+    animation: fadeIn 1s ease-in forwards;
 }
 
-/* === Animated Gradient === */
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+@keyframes fadeIn {
+    to { opacity: 1; }
 }
 
-/* === Responsive === */
-@media (max-width: 600px) {
-  .app-container {
-    padding: 25px;
-  }
+/* === Timer === */
+.timer {
+    font-size: 1em;
+    color: #fff;
+    margin-top: 20px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    font-weight: 500;
+}
 
-  #useless-button {
-    font-size: 1.1rem;
-    padding: 15px 30px;
-  }
+/* === Achievement Popup === */
+.achievement-popup {
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    padding: 20px 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
 
-  h1 {
-    font-size: 1.3rem;
-  }
+.achievement-popup.show {
+    top: 30px;
+}
+
+.achievement-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.achievement-icon {
+    font-size: 2.5em;
+    animation: rotate360 1s ease-in-out;
+}
+
+@keyframes rotate360 {
+    from { transform: rotate(0deg) scale(0); }
+    to { transform: rotate(360deg) scale(1); }
+}
+
+.achievement-text {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.2em;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* === Screen Shake === */
+body.page-shake {
+    animation: pageShake 0.5s;
+}
+
+@keyframes pageShake {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(-5px, 5px); }
+    50% { transform: translate(5px, -5px); }
+    75% { transform: translate(-5px, -5px); }
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+    .app-container {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+    
+    h1 {
+        font-size: 1.8em;
+    }
+    
+    #useless-button {
+        padding: 15px 40px;
+        font-size: 1.2em;
+    }
+    
+    #counter {
+        font-size: 1em;
+    }
+    
+    .quote {
+        font-size: 0.95em;
+    }
 }
