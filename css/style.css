@@ -1,8 +1,8 @@
-/* === Global Reset === */
+/* === Global Styles === */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 :root {
@@ -52,12 +52,29 @@ body {
 
 /* === Heading === */
 h1 {
-  margin-bottom: 25px;
-  font-weight: 600;
-  letter-spacing: 1px;
+    color: #fff;
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: titlePulse 2s ease-in-out infinite;
 }
 
-/* === Button === */
+@keyframes titlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* === Button Container === */
+.button-container {
+    margin: 40px 0;
+    min-height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* === The Useless Button === */
 #useless-button {
   padding: 20px 40px;
   font-size: 1.5rem;
@@ -124,55 +141,70 @@ body[data-theme="light"] #useless-button {
   color: var(--text-color);
 }
 
+@keyframes rainbowBg {
+    0% { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    25% { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    50% { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    75% { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    100% { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+}
+
+/* === Counter & Stats === */
+#counter {
+    font-size: 1.2em;
+    color: #fff;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* === Quote === */
 .quote {
-  font-style: italic;
-  opacity: 0.9;
-}
-
-.timer {
-  font-weight: 600;
-  margin-top: 10px;
-  transition: opacity 0.6s ease;
-}
-
-.timer.fade {
-  opacity: 0.6;
-}
-
-/* === Button Smoke Effect === */
-.particle {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.8);
-  pointer-events: none;
-  animation: smokeTrail 1s ease-out forwards;
-  z-index: 1;
-}
-
-@keyframes smokeTrail {
-  0% {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(2) translateY(-40px);
+    font-size: 1.1em;
+    color: #fff;
+    margin: 20px 0;
+    font-style: italic;
+    min-height: 50px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
     opacity: 0;
-  }
+    animation: fadeIn 1s ease-in forwards;
 }
 
-/* === Animated Gradient === */
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+/* === Timer === */
+.timer {
+    font-size: 1em;
+    color: #fff;
+    margin-top: 20px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    font-weight: 500;
+}
+
+/* === Achievement Popup === */
+.achievement-popup {
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    padding: 20px 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 /* === Theme Toggle Button === */
@@ -216,11 +248,58 @@ body[data-theme="light"] #theme-toggle {
     padding: 25px;
   }
 
-  #useless-button {
-    font-size: 1.1rem;
-    padding: 15px 30px;
-  }
+.achievement-icon {
+    font-size: 2.5em;
+    animation: rotate360 1s ease-in-out;
+}
 
+@keyframes rotate360 {
+    from { transform: rotate(0deg) scale(0); }
+    to { transform: rotate(360deg) scale(1); }
+}
+
+.achievement-text {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.2em;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* === Screen Shake === */
+body.page-shake {
+    animation: pageShake 0.5s;
+}
+
+@keyframes pageShake {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(-5px, 5px); }
+    50% { transform: translate(5px, -5px); }
+    75% { transform: translate(-5px, -5px); }
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+    .app-container {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+    
+    h1 {
+        font-size: 1.8em;
+    }
+    
+    #useless-button {
+        padding: 15px 40px;
+        font-size: 1.2em;
+    }
+    
+    #counter {
+        font-size: 1em;
+    }
+    
+    .quote {
+        font-size: 0.95em;
+    }
   h1 {
     font-size: 1.3rem;
   }
