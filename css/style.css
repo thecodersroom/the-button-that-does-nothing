@@ -5,6 +5,22 @@
   box-sizing: border-box;
 }
 
+:root {
+  --bg-start: #667eea;
+  --bg-end: #764ba2;
+  --text-color: #fff;
+  --card-bg: rgba(255, 255, 255, 0.15);
+  --accent-color: #ff6b6b;
+}
+
+[data-theme="light"] {
+  --bg-start: #fff8f0;
+  --bg-end: #ffe0e0;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --text-color: #2c2c2c;
+  --accent-color: #ff6b6b;
+}
+
 body {
   font-family: "Poppins", sans-serif;
   display: flex;
@@ -12,24 +28,26 @@ body {
   align-items: center;
   height: 100vh;
   text-align: center;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
   transition: background-color 2s ease;
+  color: var(--text-color);
   overflow: hidden;
 }
 
 /* === App Container === */
 .app-container {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--card-bg);
   backdrop-filter: blur(12px);
   padding: 40px 60px;
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  color: #fff;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+  color: var(--text-color);
   max-width: 600px;
   width: 90%;
   position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* === Heading === */
@@ -51,6 +69,14 @@ h1 {
   transition: transform 0.2s ease, background 0.3s ease;
   position: relative;
   z-index: 2;
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+  animation: pulseGlow 2s infinite;
+}
+
+body[data-theme="light"] #useless-button {
+  background: linear-gradient(45deg, #ff9a76, #ff6b6b);
+  color: white;
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
 }
 
 #useless-button:hover {
@@ -66,11 +92,7 @@ h1 {
   left: 50%;
   width: 40px;
   height: 40px;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.3) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
   transform: translateX(-50%) scale(0);
   opacity: 0;
   transition: transform 0.4s ease, opacity 0.4s ease;
@@ -81,13 +103,25 @@ h1 {
   opacity: 1;
 }
 
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 107, 107, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
+  }
+}
+
 /* === Counter / Quote / Timer === */
 #counter,
 .quote,
 .timer {
   margin-top: 15px;
   font-size: 1.1rem;
-  color: #f0f0f0;
+  color: var(--text-color);
 }
 
 .quote {
@@ -139,6 +173,41 @@ h1 {
   100% {
     background-position: 0% 50%;
   }
+}
+
+/* === Theme Toggle Button === */
+#theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(45deg, #f0f0f0, #dcdcdc);
+  color: #333;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  z-index: 3;
+}
+
+body[data-theme="dark"] #theme-toggle {
+  background: linear-gradient(45deg, #333, #555);
+  color: #eee;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+body[data-theme="light"] #theme-toggle {
+  background: linear-gradient(45deg, #ffe0e0, #fff8f0);
+  color: #333;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#theme-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
 }
 
 /* === Responsive === */
