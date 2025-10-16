@@ -7,6 +7,9 @@ const clickSound = document.getElementById("click-sound");
 const failSound = document.getElementById("fail-sound");
 const canvas = document.getElementById("particle-canvas");
 const ctx = canvas ? canvas.getContext("2d") : null;
+const popupContainer = document.getElementById("still-clicking-popup");
+const popupYesButton = document.getElementById("popup-yes");
+const popupNoButton = document.getElementById("popup-no");
 
 // === State Variables ===
 let clicks = 0;
@@ -16,6 +19,10 @@ let isButtonMoving = false;
 let particles = [];
 let comboCount = 0;
 let lastClickTime = 0;
+let lastActivityTime = Date.now();
+let popupTimer = null;
+let popupActive = false;
+let popupAutoCloseTimer = null;
 
 // Setup canvas if exists
 if (canvas) {
@@ -367,3 +374,106 @@ themeToggle.addEventListener("click", () => {
     ? "Welcome to the light. It won’t help."
     : "Back to the void.";
 });
+
+// === Are You Still Clicking Popup ===
+
+// Function to update the last activity time
+function updateActivityTime() {
+  lastActivityTime = Date.now();
+  
+  // Reset popup timer if it exists
+  if (popupTimer) {
+    clearTimeout(popupTimer);
+  }
+  
+  // Set new popup timer
+  popupTimer = setTimeout(showPopup, getRandomInactivityTime());
+}
+
+// Function to get a random inactivity time between 15-30 seconds
+function getRandomInactivityTime() {
+  return Math.floor(Math.random() * (30000 - 15000 + 1)) + 15000; // 15-30 seconds
+}
+
+// Function to show the popup
+function showPopup() {
+  if (popupActive) return;
+  
+  popupActive = true;
+  popupContainer.classList.add("show");
+  
+  // Auto-close popup after 8 seconds
+  popupAutoCloseTimer = setTimeout(() => {
+    hidePopup();
+  }, 8000);
+}
+
+// Function to hide the popup
+function hidePopup() {
+  popupContainer.classList.remove("show");
+  popupActive = false;
+  
+  if (popupAutoCloseTimer) {
+    clearTimeout(popupAutoCloseTimer);
+  }
+  
+  // Reset the activity timer
+  updateActivityTime();
+}
+
+// Function to randomize button position within the popup
+function randomizeButtonPosition(button, containerWidth, containerHeight) {
+  const buttonWidth = button.offsetWidth;
+  const buttonHeight = button.offsetHeight;
+  
+  // Calculate maximum positions while keeping buttons within container
+  const maxX = containerWidth - buttonWidth;
+  const maxY = containerHeight - buttonHeight;
+  
+  // Generate random positions
+  const randomX = Math.random() * maxX;
+  const randomY = Math.random() * maxY;
+  
+  // Apply new positions
+  button.style.left = `${randomX}px`;
+  button.style.top = `${randomY}px`;
+  button.style.transform = "none"; // Reset any transform
+}
+
+// Event listeners for popup buttons
+popupYesButton.addEventListener("mouseover", () => {
+  const container = popupYesButton.closest(".popup-buttons");
+  randomizeButtonPosition(popupYesButton, container.offsetWidth, container.offsetHeight);
+});
+
+popupNoButton.addEventListener("mouseover", () => {
+  const container = popupNoButton.closest(".popup-buttons");
+  randomizeButtonPosition(popupNoButton, container.offsetWidth, container.offsetHeight);
+});
+
+popupYesButton.addEventListener("click", () => {
+  hidePopup();
+  playSound(clickSound);
+});
+
+popupNoButton.addEventListener("click", () => {
+  hidePopup();
+  playSound(clickSound);
+});
+
+// Track all user interactions to reset the inactivity timer
+["click", "mousemove", "keydown"].forEach(eventType => {
+  document.addEventListener(eventType, updateActivityTime);
+});
+
+// Initialize the popup timer on page load
+window.addEventListener("load", () => {
+  // Add this to the existing load event
+  updateActivityTime();
+});
+
+// Update activity time on theme toggle
+themeToggle.addEventListener("click", updateActivityTime);
+
+// Update activity time on button click
+button.addEventListener("click", updateActivityTime);
