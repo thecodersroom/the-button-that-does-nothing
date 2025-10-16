@@ -357,9 +357,13 @@ window.addEventListener("load", () => {
   quoteDiv.textContent = "Click the button to begin your pointless journey! 🚀";
 });
 
-// === Reset button position on resize ===
-window.addEventListener("resize", () => {
-  button.style.position = "relative";
-  button.style.left = "";
-  button.style.top = "";
+const themeToggle = document.getElementById("theme-toggle");
+
+themeToggle.addEventListener("click", () => {
+  const current = document.body.dataset.theme;
+  const newTheme = current === "light" ? "dark" : "light";
+  document.body.dataset.theme = newTheme;
+  quoteDiv.textContent = newTheme === "light"
+    ? "Welcome to the light. It won’t help."
+    : "Back to the void.";
 });

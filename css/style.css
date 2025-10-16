@@ -5,72 +5,52 @@
     box-sizing: border-box;
 }
 
+:root {
+  --bg-start: #667eea;
+  --bg-end: #764ba2;
+  --text-color: #fff;
+  --card-bg: rgba(255, 255, 255, 0.15);
+  --accent-color: #ff6b6b;
+}
+
+[data-theme="light"] {
+  --bg-start: #fff8f0;
+  --bg-end: #ffe0e0;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --text-color: #2c2c2c;
+  --accent-color: #ff6b6b;
+}
+
 body {
-    font-family: 'Poppins', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    overflow: hidden;
-    position: relative;
-}
-
-/* === Animated Background === */
-body::before {
-    content: '';
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background: 
-        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(253, 121, 168, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 40% 20%, rgba(194, 233, 251, 0.3) 0%, transparent 50%);
-    animation: bgMove 15s ease-in-out infinite;
-}
-
-@keyframes bgMove {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(-50px, -50px); }
-}
-
-/* === Canvas for Particles === */
-#particle-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 999;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+  background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  transition: background-color 2s ease;
+  color: var(--text-color);
+  overflow: hidden;
 }
 
 /* === App Container === */
 .app-container {
-    text-align: center;
-    z-index: 10;
-    position: relative;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 30px;
-    padding: 50px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    animation: fadeInScale 0.6s ease-out;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  padding: 40px 60px;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+  color: var(--text-color);
+  max-width: 600px;
+  width: 90%;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-@keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* === Title === */
+/* === Heading === */
 h1 {
     color: #fff;
     font-size: 2.5em;
@@ -96,55 +76,69 @@ h1 {
 
 /* === The Useless Button === */
 #useless-button {
-    padding: 20px 60px;
-    font-size: 1.5em;
-    font-weight: 600;
-    color: #fff;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
-    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    position: relative;
-    overflow: hidden;
+  padding: 20px 40px;
+  font-size: 1.5rem;
+  background: linear-gradient(45deg, #ff6b6b, #ff9a76);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+  animation: pulseGlow 2s infinite;
 }
 
-#useless-button::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
+body[data-theme="light"] #useless-button {
+  background: linear-gradient(45deg, #ff9a76, #ff6b6b);
+  color: white;
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
 }
 
 #useless-button:hover {
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 15px 40px rgba(245, 87, 108, 0.6);
+  transform: scale(1.1) translateY(-5px);
+  background: linear-gradient(45deg, #ff9a76, #ff6b6b);
 }
 
-#useless-button:active::before {
-    width: 300px;
-    height: 300px;
+/* Smoke trail effect */
+#useless-button::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  transform: translateX(-50%) scale(0);
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
 }
 
-#useless-button.shake {
-    animation: buttonShake 0.5s;
+#useless-button:hover::after {
+  transform: translateX(-50%) scale(2);
+  opacity: 1;
 }
 
-@keyframes buttonShake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-10px) rotate(-5deg); }
-    75% { transform: translateX(10px) rotate(5deg); }
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 107, 107, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
+  }
 }
 
-#useless-button.rainbow {
-    animation: rainbowBg 2s linear infinite;
+/* === Counter / Quote / Timer === */
+#counter,
+.quote,
+.timer {
+  margin-top: 15px;
+  font-size: 1.1rem;
+  color: var(--text-color);
 }
 
 @keyframes rainbowBg {
@@ -213,15 +207,46 @@ h1 {
     transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-.achievement-popup.show {
-    top: 30px;
+/* === Theme Toggle Button === */
+#theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(45deg, #f0f0f0, #dcdcdc);
+  color: #333;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  z-index: 3;
 }
 
-.achievement-content {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+body[data-theme="dark"] #theme-toggle {
+  background: linear-gradient(45deg, #333, #555);
+  color: #eee;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
 }
+
+body[data-theme="light"] #theme-toggle {
+  background: linear-gradient(45deg, #ffe0e0, #fff8f0);
+  color: #333;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#theme-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+  .app-container {
+    padding: 25px;
+  }
 
 .achievement-icon {
     font-size: 2.5em;
@@ -275,4 +300,7 @@ body.page-shake {
     .quote {
         font-size: 0.95em;
     }
+  h1 {
+    font-size: 1.3rem;
+  }
 }
