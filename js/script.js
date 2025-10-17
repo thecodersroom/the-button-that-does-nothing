@@ -94,20 +94,29 @@ function getRandomNumber(min, max) {
 }
 
 function getRandomLocation() {
+  // find the maximum and minimum locations the useless button can be
   const padding = 20;
   const maxX = window.innerWidth - button.offsetWidth - padding;
   const maxY = window.innerHeight - button.offsetHeight - padding;
   const minX = padding;
   const minY = padding;
   
+  // randomly choose a location
   const randomX = Math.floor(Math.random() * (maxX - minX)) + minX;
   const randomY = Math.floor(Math.random() * (maxY - minY)) + minY;
 
-  return { randomX, randomY };
+  // find the location of useless button's parent node
+  var parentNode = document.getElementById('useless-button').parentNode.getBoundingClientRect();
+
+  // modify the random location by the parent div location so the absolute style renders in the correct position
+  const top = randomY - parentNode.top;
+  const left = randomX - parentNode.left;
+
+  return { left, top };
 }
 
 function buttonTeleport(posX, posY) {
-  button.style.position = "fixed";
+  button.style.position = "absolute";
   button.style.left = `${posX}px`;
   button.style.top = `${posY}px`;
   button.style.transition = "all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)";
