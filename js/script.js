@@ -187,6 +187,20 @@ function animateParticles() {
 
 if (ctx) animateParticles();
 
+// === Confetti System ===
+function createConfetti() {
+  for (let i = 0; i < 200; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + 'vw';
+    confetti.style.backgroundColor = getRandomColor();
+    confetti.style.animationDelay = Math.random() * 2 + 's';
+    document.body.appendChild(confetti);
+    
+    setTimeout(() => confetti.remove(), 6000);
+  }
+}
+
 // === Smoke Trail Effect ===
 function createSmokeTrail() {
   for (let i = 0; i < 8; i++) {
@@ -288,7 +302,11 @@ button.addEventListener("click", (e) => {
   showAchievement(clicks);
   
   // Special effects at milestones
-  if (clicks % 50 === 0) {
+  if (clicks === 50) {
+    createConfetti();
+  }
+  
+  if(clicks % 50 === 0) {
     document.body.classList.add("page-shake");
     setTimeout(() => document.body.classList.remove("page-shake"), 500);
   }
