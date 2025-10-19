@@ -1,3 +1,15 @@
+// sound files
+const clickSoundFiles = [
+  "audio/click1.mp3",
+  "audio/click2.wav",
+  "audio/click3.wav",
+  "audio/click4.wav",
+  "audio/click5.wav",
+  "audio/click6.mp3",
+  "audio/click7.wav",
+  "audio/click8.wav",
+];
+
 // === DOM Elements ===
 const button = document.getElementById("useless-button");
 const counterDiv = document.getElementById("counter");
@@ -135,6 +147,8 @@ function updateCounter(extraText = "") {
 
 function playSound(sound) {
   if (sound && userInteracted) {
+    const randomIndex = Math.floor(Math.random()*clickSoundFiles.length);
+    sound.src = clickSoundFiles[randomIndex];
     sound.currentTime = 0;
     sound.play().catch(() => {});
   }
@@ -292,6 +306,11 @@ button.addEventListener("click", (e) => {
   }, 150);
   
   // Effects
+
+  if (!userInteracted) {
+  userInteracted = true;
+}
+
   playSound(clickSound);
   createParticles(e.clientX, e.clientY, 30, true);
   showAchievement(clicks);
