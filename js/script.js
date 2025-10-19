@@ -83,20 +83,49 @@ const comboMessages = [
 
 // === Achievements System ===
 const achievements = {
-  10: { icon: "🎯", text: "First Steps - 10 clicks!" },
-  25: { icon: "⚡", text: "Speed Demon - 25 clicks!" },
-  50: { icon: "🌟", text: "Half Century - 50 clicks!" },
-  100: { icon: "💯", text: "Century Master - 100 clicks!" },
-  200: { icon: "🚀", text: "Double Century - 200 clicks!" },
-  500: { icon: "👑", text: "Click Royalty - 500 clicks!" },
-  1000: { icon: "🏆", text: "ULTIMATE CHAMPION - 1000 clicks!" },
-};
+  10: {
+    icon: "🥉",
+    text: "Novice Nothing-Doer — 10 clicks! You've officially wasted your first minute productively doing nothing!",
+  },
+  25: {
+    icon: "🧤",
+    text: "Casual Clicker — 25 clicks! You’re getting suspiciously good at being unproductive.",
+  },
+  50: {
+    icon: "🥈",
+    text: "Master of Useless Clicking — 50 clicks! Your dedication to pointlessness is unmatched!",
+  },
+  100: {
+    icon: "🥇",
+    text: "Legendary Button Slayer — 100 clicks! The button now fears your existence.",
+  },
+  200: {
+    icon: "🚀",
+      text: "Galactic Click Commander — 200 clicks! You've officially left the orbit of sanity.",
+    },
+    500: {
+      icon: "👑",
+      text: "Click Royalty — 500 clicks! Bow down to the Emperor of Empty Effort!",
+    },
+    1000: {
+      icon: "🏆",
+      text: "Ultimate Button God — 1000 clicks! You’ve ascended beyond purpose, beyond reason, beyond… everything.",
+    },
+  };
 
 // === Utility Functions ===
 function getRandomColor() {
   const colors = [
-    "#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8",
-    "#F7DC6F", "#BB8FCE", "#85C1E2", "#F8B739", "#52B788"
+    "#FF6B6B",
+    "#4ECDC4",
+    "#45B7D1",
+    "#FFA07A",
+    "#98D8C8",
+    "#F7DC6F",
+    "#BB8FCE",
+    "#85C1E2",
+    "#F8B739",
+    "#52B788",
   ];
   return colors[Math.floor(Math.random() * colors.length)];
 }
@@ -112,13 +141,15 @@ function getRandomLocation() {
   const maxY = window.innerHeight - button.offsetHeight - padding;
   const minX = padding;
   const minY = padding;
-  
+
   // randomly choose a location
   const randomX = Math.floor(Math.random() * (maxX - minX)) + minX;
   const randomY = Math.floor(Math.random() * (maxY - minY)) + minY;
 
   // find the location of useless button's parent node
-  var parentNode = document.getElementById('useless-button').parentNode.getBoundingClientRect();
+  var parentNode = document
+    .getElementById("useless-button")
+    .parentNode.getBoundingClientRect();
 
   // modify the random location by the parent div location so the absolute style renders in the correct position
   const top = randomY - parentNode.top;
@@ -147,7 +178,7 @@ function updateCounter(extraText = "") {
 
 function playSound(sound) {
   if (sound && userInteracted) {
-    const randomIndex = Math.floor(Math.random()*clickSoundFiles.length);
+    const randomIndex = Math.floor(Math.random() * clickSoundFiles.length);
     sound.src = clickSoundFiles[randomIndex];
     sound.currentTime = 0;
     sound.play().catch(() => {});
@@ -162,19 +193,19 @@ class Particle {
     this.size = Math.random() * 5 + 2;
     this.speedX = (Math.random() - 0.5) * 10;
     this.speedY = (Math.random() - 0.5) * 10;
-    this.color = isSuccess 
-      ? `hsl(${Math.random() * 60 + 120}, 100%, 60%)` 
+    this.color = isSuccess
+      ? `hsl(${Math.random() * 60 + 120}, 100%, 60%)`
       : `hsl(${Math.random() * 30}, 100%, 60%)`;
     this.life = 100;
   }
-  
+
   update() {
     this.x += this.speedX;
     this.y += this.speedY;
     this.speedY += 0.2;
     this.life -= 2;
   }
-  
+
   draw() {
     if (!ctx) return;
     ctx.fillStyle = this.color;
@@ -195,16 +226,16 @@ function createParticles(x, y, count = 20, isSuccess = true) {
 function animateParticles() {
   if (!ctx) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
+
   for (let i = particles.length - 1; i >= 0; i--) {
     particles[i].update();
     particles[i].draw();
-    
+
     if (particles[i].life <= 0) {
       particles.splice(i, 1);
     }
   }
-  
+
   requestAnimationFrame(animateParticles);
 }
 
@@ -215,16 +246,20 @@ function createSmokeTrail() {
   for (let i = 0; i < 8; i++) {
     const particle = document.createElement("span");
     particle.classList.add("particle");
-    
+
     const offsetX = (Math.random() - 0.5) * button.offsetWidth;
     const offsetY = (Math.random() - 0.5) * button.offsetHeight;
-    
-    particle.style.left = `${button.offsetLeft + button.offsetWidth / 2 + offsetX}px`;
-    particle.style.top = `${button.offsetTop + button.offsetHeight / 2 + offsetY}px`;
+
+    particle.style.left = `${
+      button.offsetLeft + button.offsetWidth / 2 + offsetX
+    }px`;
+    particle.style.top = `${
+      button.offsetTop + button.offsetHeight / 2 + offsetY
+    }px`;
     particle.style.background = getRandomColor();
-    
+
     document.body.appendChild(particle);
-    
+
     setTimeout(() => particle.remove(), 1000);
   }
 }
@@ -232,18 +267,18 @@ function createSmokeTrail() {
 // === Achievement Display ===
 function showAchievement(clickCount) {
   if (!achievements[clickCount]) return;
-  
+
   const achievement = achievements[clickCount];
   const popup = document.getElementById("achievement-popup");
-  
+
   if (popup) {
     const icon = popup.querySelector(".achievement-icon");
     const text = popup.querySelector(".achievement-text");
-    
+
     icon.textContent = achievement.icon;
     text.textContent = achievement.text;
     popup.classList.add("show");
-    
+
     setTimeout(() => popup.classList.remove("show"), 3000);
   }
 }
@@ -252,11 +287,13 @@ function showAchievement(clickCount) {
 function checkCombo() {
   const now = Date.now();
   const timeDiff = now - lastClickTime;
-  
-  if (timeDiff < 500) { // Less than 500ms between clicks
+
+  if (timeDiff < 500) {
+    // Less than 500ms between clicks
     comboCount++;
     if (comboCount >= 2 && comboCount <= 6) {
-      const comboMessage = comboMessages[Math.min(comboCount - 2, comboMessages.length - 1)];
+      const comboMessage =
+        comboMessages[Math.min(comboCount - 2, comboMessages.length - 1)];
       quoteDiv.textContent = comboMessage;
       quoteDiv.style.color = "#FFD700";
       setTimeout(() => {
@@ -266,55 +303,67 @@ function checkCombo() {
   } else {
     comboCount = 0;
   }
-  
+
   lastClickTime = now;
 }
 
 // === Unlock Audio ===
-window.addEventListener("click", () => {
-  if (!userInteracted) {
-    userInteracted = true;
-    if (clickSound) clickSound.play().then(() => clickSound.pause()).catch(() => {});
-    if (failSound) failSound.play().then(() => failSound.pause()).catch(() => {});
-  }
-}, { once: true });
+window.addEventListener(
+  "click",
+  () => {
+    if (!userInteracted) {
+      userInteracted = true;
+      if (clickSound)
+        clickSound
+          .play()
+          .then(() => clickSound.pause())
+          .catch(() => {});
+      if (failSound)
+        failSound
+          .play()
+          .then(() => failSound.pause())
+          .catch(() => {});
+    }
+  },
+  { once: true }
+);
 
 // === Button Click Handler ===
 button.addEventListener("click", (e) => {
   e.stopPropagation();
   clicks++;
   checkCombo();
-  
+
   const randomMessage = messages[Math.floor(Math.random() * messages.length)];
   updateCounter(`— ${randomMessage}`);
-  
+
   // Change button appearance
   button.style.backgroundColor = getRandomColor();
   const width = getRandomNumber(150, 250);
   const height = getRandomNumber(80, 150);
   button.style.width = `${width}px`;
   button.style.height = `${height}px`;
-  
+
   // Teleport button
   const { randomX, randomY } = getRandomLocation();
   buttonTeleport(randomX, randomY);
-  
+
   // Animations
   button.style.transform = "scale(1.2) rotate(10deg)";
   setTimeout(() => {
     button.style.transform = "scale(1) rotate(0deg)";
   }, 150);
-  
+
   // Effects
 
   if (!userInteracted) {
-  userInteracted = true;
-}
+    userInteracted = true;
+  }
 
   playSound(clickSound);
   createParticles(e.clientX, e.clientY, 30, true);
   showAchievement(clicks);
-  
+
   // Special effects at milestones
   if (clicks % 50 === 0) {
     document.body.classList.add("page-shake");
@@ -326,31 +375,34 @@ button.addEventListener("click", (e) => {
 let lastDodgeTime = 0;
 button.addEventListener("mouseover", () => {
   if (isButtonMoving) return;
-  
+
   const now = Date.now();
   if (now - lastDodgeTime < 200) return;
   lastDodgeTime = now;
-  
+
   // Create smoke trail
   createSmokeTrail();
-  
+
   // Dodge logic (90% chance)
   if (Math.random() < 0.9) {
     isButtonMoving = true;
     failedClicks++;
-    
-    const randomFail = failedClickMessages[Math.floor(Math.random() * failedClickMessages.length)];
+
+    const randomFail =
+      failedClickMessages[
+        Math.floor(Math.random() * failedClickMessages.length)
+      ];
     updateCounter(`— ${randomFail}`);
-    
+
     // Play fail sound every 10 fails
     if (failedClicks % 10 === 0) {
       playSound(failSound);
     }
-    
+
     // Teleport button
     const { randomX, randomY } = getRandomLocation();
     buttonTeleport(randomX, randomY);
-    
+
     // Shake animation
     button.style.transform = "rotate(5deg) scale(0.95)";
     setTimeout(() => {
@@ -374,13 +426,15 @@ let seconds = 0;
 function formatTime(sec) {
   const mins = Math.floor(sec / 60);
   const secs = sec % 60;
-  return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  return `${mins.toString().padStart(2, "0")}:${secs
+    .toString()
+    .padStart(2, "0")}`;
 }
 
 function updateTimer() {
   seconds++;
   timerDiv.textContent = `Time spent doing nothing: ${formatTime(seconds)}`;
-  
+
   if (seconds % 5 === 0) {
     timerDiv.classList.add("fade");
     setTimeout(() => timerDiv.classList.remove("fade"), 400);
@@ -398,9 +452,10 @@ themeToggle.addEventListener("click", () => {
   const current = document.body.dataset.theme;
   const newTheme = current === "light" ? "dark" : "light";
   document.body.dataset.theme = newTheme;
-  quoteDiv.textContent = newTheme === "light"
-    ? "Welcome to the light. It won’t help."
-    : "Back to the void.";
+  quoteDiv.textContent =
+    newTheme === "light"
+      ? "Welcome to the light. It won’t help."
+      : "Back to the void.";
 });
 
 // === Are You Still Clicking Popup ===
@@ -408,12 +463,12 @@ themeToggle.addEventListener("click", () => {
 // Function to update the last activity time
 function updateActivityTime() {
   lastActivityTime = Date.now();
-  
+
   // Reset popup timer if it exists
   if (popupTimer) {
     clearTimeout(popupTimer);
   }
-  
+
   // Set new popup timer
   popupTimer = setTimeout(showPopup, getRandomInactivityTime());
 }
@@ -426,10 +481,10 @@ function getRandomInactivityTime() {
 // Function to show the popup
 function showPopup() {
   if (popupActive) return;
-  
+
   popupActive = true;
   popupContainer.classList.add("show");
-  
+
   // Auto-close popup after 8 seconds
   popupAutoCloseTimer = setTimeout(() => {
     hidePopup();
@@ -440,11 +495,11 @@ function showPopup() {
 function hidePopup() {
   popupContainer.classList.remove("show");
   popupActive = false;
-  
+
   if (popupAutoCloseTimer) {
     clearTimeout(popupAutoCloseTimer);
   }
-  
+
   // Reset the activity timer
   updateActivityTime();
 }
@@ -453,15 +508,15 @@ function hidePopup() {
 function randomizeButtonPosition(button, containerWidth, containerHeight) {
   const buttonWidth = button.offsetWidth;
   const buttonHeight = button.offsetHeight;
-  
+
   // Calculate maximum positions while keeping buttons within container
   const maxX = containerWidth - buttonWidth;
   const maxY = containerHeight - buttonHeight;
-  
+
   // Generate random positions
   const randomX = Math.random() * maxX;
   const randomY = Math.random() * maxY;
-  
+
   // Apply new positions
   button.style.left = `${randomX}px`;
   button.style.top = `${randomY}px`;
@@ -471,12 +526,20 @@ function randomizeButtonPosition(button, containerWidth, containerHeight) {
 // Event listeners for popup buttons
 popupYesButton.addEventListener("mouseover", () => {
   const container = popupYesButton.closest(".popup-buttons");
-  randomizeButtonPosition(popupYesButton, container.offsetWidth, container.offsetHeight);
+  randomizeButtonPosition(
+    popupYesButton,
+    container.offsetWidth,
+    container.offsetHeight
+  );
 });
 
 popupNoButton.addEventListener("mouseover", () => {
   const container = popupNoButton.closest(".popup-buttons");
-  randomizeButtonPosition(popupNoButton, container.offsetWidth, container.offsetHeight);
+  randomizeButtonPosition(
+    popupNoButton,
+    container.offsetWidth,
+    container.offsetHeight
+  );
 });
 
 popupYesButton.addEventListener("click", () => {
@@ -490,7 +553,7 @@ popupNoButton.addEventListener("click", () => {
 });
 
 // Track all user interactions to reset the inactivity timer
-["click", "mousemove", "keydown"].forEach(eventType => {
+["click", "mousemove", "keydown"].forEach((eventType) => {
   document.addEventListener(eventType, updateActivityTime);
 });
 
