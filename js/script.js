@@ -452,7 +452,7 @@ if (button) {
     const height = getRandomNumber(80, 150);
     button.style.width = `${width}px`;
     button.style.height = `${height}px`;
-
+    
     // Animations
     button.style.transform = "scale(1.2) rotate(10deg)";
     setTimeout(() => {
@@ -485,6 +485,10 @@ if (button) {
       document.body.classList.add("page-shake");
       setTimeout(() => document.body.classList.remove("page-shake"), 500);
     }
+
+    // Teleport button
+    const { randomX, randomY } = getRandomLocation();
+    buttonTeleport(randomX, randomY);
 
     updateActivityTime();
   });
