@@ -1,32 +1,31 @@
 // sound files
 const clickSoundFiles = [
-  "audio/click1.mp3",
-  "audio/click2.wav",
-  "audio/click3.wav",
-  "audio/click4.wav",
-  "audio/click5.wav",
-  "audio/click6.mp3",
-  "audio/click7.wav",
-  "audio/click8.wav",
+  "audio/click1.mp3","audio/click2.wav","audio/click3.wav",
+  "audio/click4.wav","audio/click5.wav","audio/click6.mp3",
+  "audio/click7.wav","audio/click8.wav"
 ];
 
-// === DOM Elements ===
+// DOM Elements
 const button = document.getElementById("useless-button");
 const counterDiv = document.getElementById("counter");
 const quoteDiv = document.getElementById("quote");
 const timerDiv = document.getElementById("timer");
 const clickSound = document.getElementById("click-sound");
 const failSound = document.getElementById("fail-sound");
+const impossibleToggle = document.getElementById("impossible-toggle");
+const themeToggle = document.getElementById("theme-toggle");
+
 const canvas = document.getElementById("particle-canvas");
 const ctx = canvas ? canvas.getContext("2d") : null;
 const popupContainer = document.getElementById("still-clicking-popup");
 const popupYesButton = document.getElementById("popup-yes");
 const popupNoButton = document.getElementById("popup-no");
 
-// === State Variables ===
+// State
 let clicks = 0;
 let failedClicks = 0;
 let userInteracted = false;
+let impossibleMode = false;
 let isButtonMoving = false;
 let particles = [];
 let comboCount = 0;
@@ -35,8 +34,10 @@ let lastActivityTime = Date.now();
 let popupTimer = null;
 let popupActive = false;
 let popupAutoCloseTimer = null;
+let lastDodgeTime = 0;
+let seconds = 0;
 
-// Setup canvas if exists
+// Canvas setup
 if (canvas) {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -46,7 +47,7 @@ if (canvas) {
   });
 }
 
-// === Messages ===
+// Messages
 const messages = [
   "You are a legend… in another universe. 🌌",
   "Clicking skills: unparalleled. 💪",
@@ -63,14 +64,23 @@ const messages = [
 const failedClickMessages = [
   "Choppy fingers. 🍗",
   "My mom's sandal clicks more precise. 👡",
-  "As a nothing-doer, you're pretty good. 😏",
   "You're a failing legend. 💀",
-  "Bro missed a stationary button 💀",
   "Even the cursor gave up on you. 🖱️",
   "You've achieved the rare 'Click Miss Combo'. 🎪",
   "Pathetic reflexes — admirable persistence. 🐌",
   "Your aim is as good as a stormtrooper's. 🎯",
   "Button: 1, You: 0 😂",
+];
+
+const impossibleFailMessages = [
+  "Did you really think it would be that easy?",
+  "IMPOSSIBLE MODE activated! Good luck! 😈",
+  "The button is now sentient and afraid of you.",
+  "Physics don't apply here anymore.",
+  "You're fighting a losing battle, friend.",
+  "The button has evolved beyond your reach.",
+  "Welcome to the nightmare dimension.",
+  "This is what peak performance looks like.",
 ];
 
 const comboMessages = [
@@ -81,7 +91,7 @@ const comboMessages = [
   "👑 MEGA COMBO! You're the chosen one!",
 ];
 
-// === Achievements System ===
+// Achievements
 const achievements = {
   10: {
     icon: "🥉",
@@ -101,19 +111,19 @@ const achievements = {
   },
   200: {
     icon: "🚀",
-      text: "Galactic Click Commander — 200 clicks! You've officially left the orbit of sanity.",
-    },
-    500: {
-      icon: "👑",
-      text: "Click Royalty — 500 clicks! Bow down to the Emperor of Empty Effort!",
-    },
-    1000: {
-      icon: "🏆",
-      text: "Ultimate Button God — 1000 clicks! You’ve ascended beyond purpose, beyond reason, beyond… everything.",
-    },
-  };
+    text: "Galactic Click Commander — 200 clicks! You've officially left the orbit of sanity.",
+  },
+  500: {
+    icon: "👑",
+    text: "Click Royalty — 500 clicks! Bow down to the Emperor of Empty Effort!",
+  },
+  1000: {
+    icon: "🏆",
+    text: "Ultimate Button God — 1000 clicks! You’ve ascended beyond purpose, beyond reason, beyond… everything.",
+  },
+};
 
-// === Utility Functions ===
+// Utils
 function getRandomColor() {
   const colors = [
     "#FF6B6B",
@@ -134,31 +144,30 @@ function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+/**
+ * Returns location values:
+ * - left/top are relative to button.parentNode (suitable for style.left/top)
+ * - randomX/randomY are provided as aliases (equal to left/top) so older calls still work
+ */
 function getRandomLocation() {
-  // find the maximum and minimum locations the useless button can be
   const padding = 20;
-  const maxX = window.innerWidth - button.offsetWidth - padding;
-  const maxY = window.innerHeight - button.offsetHeight - padding;
+  const maxX = window.innerWidth - (button ? button.offsetWidth : 100) - padding;
+  const maxY = window.innerHeight - (button ? button.offsetHeight : 50) - padding;
   const minX = padding;
   const minY = padding;
 
-  // randomly choose a location
-  const randomX = Math.floor(Math.random() * (maxX - minX)) + minX;
-  const randomY = Math.floor(Math.random() * (maxY - minY)) + minY;
+  const randomXAbs = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
+  const randomYAbs = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
 
-  // find the location of useless button's parent node
-  var parentNode = document
-    .getElementById("useless-button")
-    .parentNode.getBoundingClientRect();
+  const parentNodeRect = button.parentNode.getBoundingClientRect();
+  const left = randomXAbs - parentNodeRect.left;
+  const top = randomYAbs - parentNodeRect.top;
 
-  // modify the random location by the parent div location so the absolute style renders in the correct position
-  const top = randomY - parentNode.top;
-  const left = randomX - parentNode.left;
-
-  return { left, top };
+  return { left, top, randomX: left, randomY: top };
 }
 
 function buttonTeleport(posX, posY) {
+  // posX/posY are expected to be left/top relative to parent (as returned by getRandomLocation)
   button.style.position = "absolute";
   button.style.left = `${posX}px`;
   button.style.top = `${posY}px`;
@@ -166,8 +175,10 @@ function buttonTeleport(posX, posY) {
 }
 
 function updateCounter(extraText = "") {
-  counterDiv.textContent = `Clicks: ${clicks} | Failed clicks: ${failedClicks}`;
-  if (extraText) {
+  if (counterDiv) {
+    counterDiv.textContent = `Clicks: ${clicks} | Failed clicks: ${failedClicks}`;
+  }
+  if (extraText && quoteDiv) {
     quoteDiv.textContent = extraText;
     quoteDiv.style.animation = "none";
     setTimeout(() => {
@@ -185,7 +196,7 @@ function playSound(sound) {
   }
 }
 
-// === Particle System ===
+// === Particle System (canvas) ===
 class Particle {
   constructor(x, y, isSuccess = true) {
     this.x = x;
@@ -209,7 +220,7 @@ class Particle {
   draw() {
     if (!ctx) return;
     ctx.fillStyle = this.color;
-    ctx.globalAlpha = this.life / 100;
+    ctx.globalAlpha = Math.max(this.life / 100, 0);
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fill();
@@ -226,23 +237,19 @@ function createParticles(x, y, count = 20, isSuccess = true) {
 function animateParticles() {
   if (!ctx) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   for (let i = particles.length - 1; i >= 0; i--) {
     particles[i].update();
     particles[i].draw();
-
-    if (particles[i].life <= 0) {
-      particles.splice(i, 1);
-    }
+    if (particles[i].life <= 0) particles.splice(i, 1);
   }
-
   requestAnimationFrame(animateParticles);
 }
 
 if (ctx) animateParticles();
 
-// === Smoke Trail Effect ===
+// === Smoke Trail Effect (DOM spans) ===
 function createSmokeTrail() {
+  if (!button) return;
   for (let i = 0; i < 8; i++) {
     const particle = document.createElement("span");
     particle.classList.add("particle");
@@ -289,16 +296,17 @@ function checkCombo() {
   const timeDiff = now - lastClickTime;
 
   if (timeDiff < 500) {
-    // Less than 500ms between clicks
     comboCount++;
     if (comboCount >= 2 && comboCount <= 6) {
       const comboMessage =
         comboMessages[Math.min(comboCount - 2, comboMessages.length - 1)];
-      quoteDiv.textContent = comboMessage;
-      quoteDiv.style.color = "#FFD700";
-      setTimeout(() => {
-        quoteDiv.style.color = "#fff";
-      }, 1000);
+      if (quoteDiv) {
+        quoteDiv.textContent = comboMessage;
+        quoteDiv.style.color = "#FFD700";
+        setTimeout(() => {
+          quoteDiv.style.color = "#fff";
+        }, 1000);
+      }
     }
   } else {
     comboCount = 0;
@@ -307,108 +315,139 @@ function checkCombo() {
   lastClickTime = now;
 }
 
-// === Unlock Audio ===
+// === Unlock audio on first user interaction ===
 window.addEventListener(
   "click",
   () => {
     if (!userInteracted) {
       userInteracted = true;
-      if (clickSound)
+      if (clickSound) {
         clickSound
           .play()
           .then(() => clickSound.pause())
           .catch(() => {});
-      if (failSound)
+      }
+      if (failSound) {
         failSound
           .play()
           .then(() => failSound.pause())
           .catch(() => {});
+      }
     }
   },
   { once: true }
 );
 
 // === Button Click Handler ===
-button.addEventListener("click", (e) => {
-  e.stopPropagation();
-  clicks++;
-  checkCombo();
+if (button) {
+  button.addEventListener("click", (e) => {
+    e.stopPropagation();
+    clicks++;
+    checkCombo();
 
-  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-  updateCounter(`— ${randomMessage}`);
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    updateCounter(`— ${randomMessage}`);
 
-  // Change button appearance
-  button.style.backgroundColor = getRandomColor();
-  const width = getRandomNumber(150, 250);
-  const height = getRandomNumber(80, 150);
-  button.style.width = `${width}px`;
-  button.style.height = `${height}px`;
-
-  // Teleport button
-  const { randomX, randomY } = getRandomLocation();
-  buttonTeleport(randomX, randomY);
-
-  // Animations
-  button.style.transform = "scale(1.2) rotate(10deg)";
-  setTimeout(() => {
-    button.style.transform = "scale(1) rotate(0deg)";
-  }, 150);
-
-  // Effects
-
-  if (!userInteracted) {
-    userInteracted = true;
-  }
-
-  playSound(clickSound);
-  createParticles(e.clientX, e.clientY, 30, true);
-  showAchievement(clicks);
-
-  // Special effects at milestones
-  if (clicks % 50 === 0) {
-    document.body.classList.add("page-shake");
-    setTimeout(() => document.body.classList.remove("page-shake"), 500);
-  }
-});
-
-// === Button Dodge Behavior ===
-let lastDodgeTime = 0;
-button.addEventListener("mouseover", () => {
-  if (isButtonMoving) return;
-
-  const now = Date.now();
-  if (now - lastDodgeTime < 200) return;
-  lastDodgeTime = now;
-
-  // Create smoke trail
-  createSmokeTrail();
-
-  // Dodge logic (90% chance)
-  if (Math.random() < 0.9) {
-    isButtonMoving = true;
-    failedClicks++;
-
-    const randomFail =
-      failedClickMessages[
-        Math.floor(Math.random() * failedClickMessages.length)
-      ];
-    updateCounter(`— ${randomFail}`);
-
-    // Play fail sound every 10 fails
-    if (failedClicks % 10 === 0) {
-      playSound(failSound);
-    }
+    // Change button appearance
+    button.style.backgroundColor = getRandomColor();
+    const width = getRandomNumber(150, 250);
+    const height = getRandomNumber(80, 150);
+    button.style.width = `${width}px`;
+    button.style.height = `${height}px`;
 
     // Teleport button
     const { randomX, randomY } = getRandomLocation();
     buttonTeleport(randomX, randomY);
 
-    // Shake animation
-    button.style.transform = "rotate(5deg) scale(0.95)";
+    // Animations
+    button.style.transform = "scale(1.2) rotate(10deg)";
     setTimeout(() => {
-      button.style.transform = "rotate(0deg) scale(1)";
-      isButtonMoving = false;
-    }, 200);
+      button.style.transform = "scale(1) rotate(0deg)";
+    }, 150);
+
+    if (!userInteracted) userInteracted = true;
+
+    playSound(clickSound);
+    createParticles(e.clientX, e.clientY, 30, true);
+
+    // smoke trail mini DOM particles
+    createSmokeTrail();
+
+    showAchievement(clicks);
+
+    // Special effects at milestones
+    if (clicks % 50 === 0) {
+      document.body.classList.add("page-shake");
+      setTimeout(() => document.body.classList.remove("page-shake"), 500);
+    }
+
+    updateActivityTime();
+  });
+}
+
+// === Button Dodge / Mouseover ===
+if (button) {
+  button.addEventListener("mouseover", () => {
+    if (isButtonMoving) return;
+    const now = Date.now();
+    // Throttle dodge more aggressively in impossible mode
+    const throttleTime = impossibleMode ? 50 : 150;
+    if (now - lastDodgeTime < throttleTime) return;
+    lastDodgeTime = now;
+
+    // create some smoke visuals
+    createSmokeTrail();
+
+    const dodgeChance = impossibleMode ? 1 : 0.9;
+    if (Math.random() < dodgeChance) {
+      isButtonMoving = true;
+      failedClicks++;
+
+      const messageArray = impossibleMode ? impossibleFailMessages : failedClickMessages;
+      const randomFail = messageArray[Math.floor(Math.random() * messageArray.length)];
+      updateCounter(`— ${randomFail}`);
+
+      // Play fail sound occasionally
+      if (failedClicks % (impossibleMode ? 5 : 10) === 0 && userInteracted) {
+        if (failSound) {
+          failSound.currentTime = 0;
+          failSound.play().catch(() => {});
+        }
+      }
+
+      const { randomX, randomY } = getRandomLocation();
+      buttonTeleport(randomX, randomY);
+
+      const rotation = impossibleMode ? getRandomNumber(-15, 15) : 5;
+      button.style.transform = `rotate(${rotation}deg)`;
+      setTimeout(() => {
+        button.style.transform = "rotate(0deg) scale(1)";
+        isButtonMoving = false;
+      }, 200);
+    }
+  });
+}
+
+// === Impossible mode special mousemove dodge (larger radius reaction) ===
+document.addEventListener("mousemove", (e) => {
+  if (!button || !impossibleMode) return;
+  const rect = button.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const dx = e.clientX - cx;
+  const dy = e.clientY - cy;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  const dangerZone = 200;
+  if (dist < dangerZone) {
+    const now = Date.now();
+    if (now - lastDodgeTime < 100) return;
+    lastDodgeTime = now;
+    const { randomX, randomY } = getRandomLocation();
+    buttonTeleport(randomX, randomY);
+    if (Math.random() > 0.7) {
+      button.style.width = `${getRandomNumber(120, 200)}px`;
+      button.style.height = `${getRandomNumber(60, 150)}px`;
+    }
   }
 });
 
@@ -418,11 +457,9 @@ function changeBackgroundColor() {
   const color2 = getRandomColor();
   document.body.style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
 }
-
 setInterval(changeBackgroundColor, 5000);
 
 // === Timer ===
-let seconds = 0;
 function formatTime(sec) {
   const mins = Math.floor(sec / 60);
   const secs = sec % 60;
@@ -433,30 +470,41 @@ function formatTime(sec) {
 
 function updateTimer() {
   seconds++;
-  timerDiv.textContent = `Time spent doing nothing: ${formatTime(seconds)}`;
-
-  if (seconds % 5 === 0) {
-    timerDiv.classList.add("fade");
-    setTimeout(() => timerDiv.classList.remove("fade"), 400);
+  if (timerDiv) {
+    timerDiv.textContent = `Time spent doing nothing: ${formatTime(seconds)}`;
+    if (seconds % 5 === 0) {
+      timerDiv.classList.add("fade");
+      setTimeout(() => timerDiv.classList.remove("fade"), 400);
+    }
   }
 }
 
-window.addEventListener("load", () => {
-  setInterval(updateTimer, 1000);
-  quoteDiv.textContent = "Click the button to begin your pointless journey! 🚀";
-});
+// === Theme toggle ===
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const current = document.body.dataset.theme;
+    const newTheme = current === "light" ? "dark" : "light";
+    document.body.dataset.theme = newTheme;
+    if (quoteDiv) {
+      quoteDiv.textContent =
+        newTheme === "light" ? "Welcome to the light. It won’t help." : "Back to the void.";
+    }
+  });
+}
 
-const themeToggle = document.getElementById("theme-toggle");
-
-themeToggle.addEventListener("click", () => {
-  const current = document.body.dataset.theme;
-  const newTheme = current === "light" ? "dark" : "light";
-  document.body.dataset.theme = newTheme;
-  quoteDiv.textContent =
-    newTheme === "light"
-      ? "Welcome to the light. It won’t help."
-      : "Back to the void.";
-});
+// === Impossible Mode Toggle ===
+if (impossibleToggle) {
+  impossibleToggle.addEventListener("change", () => {
+    impossibleMode = impossibleToggle.checked;
+    if (impossibleMode) {
+      if (button) button.classList.add("impossible-mode");
+      updateCounter("— 🔥 IMPOSSIBLE MODE ACTIVATED! Good luck clicking now! 🔥");
+    } else {
+      if (button) button.classList.remove("impossible-mode");
+      updateCounter("— Normal mode restored. (Boring!)");
+    }
+  });
+}
 
 // === Are You Still Clicking Popup ===
 
@@ -480,6 +528,7 @@ function getRandomInactivityTime() {
 
 // Function to show the popup
 function showPopup() {
+  if (!popupContainer) return;
   if (popupActive) return;
 
   popupActive = true;
@@ -493,6 +542,7 @@ function showPopup() {
 
 // Function to hide the popup
 function hidePopup() {
+  if (!popupContainer) return;
   popupContainer.classList.remove("show");
   popupActive = false;
 
@@ -504,67 +554,77 @@ function hidePopup() {
   updateActivityTime();
 }
 
-// Function to randomize button position within the popup
-function randomizeButtonPosition(button, containerWidth, containerHeight) {
-  const buttonWidth = button.offsetWidth;
-  const buttonHeight = button.offsetHeight;
+// Function to randomize button position within the popup (keeps button inside container)
+function randomizeButtonPosition(buttonEl, containerWidth, containerHeight) {
+  const buttonWidth = buttonEl.offsetWidth;
+  const buttonHeight = buttonEl.offsetHeight;
 
-  // Calculate maximum positions while keeping buttons within container
-  const maxX = containerWidth - buttonWidth;
-  const maxY = containerHeight - buttonHeight;
+  const maxX = Math.max(0, containerWidth - buttonWidth);
+  const maxY = Math.max(0, containerHeight - buttonHeight);
 
-  // Generate random positions
   const randomX = Math.random() * maxX;
   const randomY = Math.random() * maxY;
 
-  // Apply new positions
-  button.style.left = `${randomX}px`;
-  button.style.top = `${randomY}px`;
-  button.style.transform = "none"; // Reset any transform
+  buttonEl.style.position = "absolute";
+  buttonEl.style.left = `${randomX}px`;
+  buttonEl.style.top = `${randomY}px`;
+  buttonEl.style.transform = "none";
 }
 
-// Event listeners for popup buttons
-popupYesButton.addEventListener("mouseover", () => {
-  const container = popupYesButton.closest(".popup-buttons");
-  randomizeButtonPosition(
-    popupYesButton,
-    container.offsetWidth,
-    container.offsetHeight
-  );
-});
+// Event listeners for popup buttons (if they exist)
+if (popupYesButton) {
+  popupYesButton.addEventListener("mouseover", () => {
+    const container = popupYesButton.closest(".popup-buttons");
+    if (container) {
+      randomizeButtonPosition(
+        popupYesButton,
+        container.offsetWidth,
+        container.offsetHeight
+      );
+    }
+  });
 
-popupNoButton.addEventListener("mouseover", () => {
-  const container = popupNoButton.closest(".popup-buttons");
-  randomizeButtonPosition(
-    popupNoButton,
-    container.offsetWidth,
-    container.offsetHeight
-  );
-});
+  popupYesButton.addEventListener("click", () => {
+    hidePopup();
+    playSound(clickSound);
+  });
+}
 
-popupYesButton.addEventListener("click", () => {
-  hidePopup();
-  playSound(clickSound);
-});
+if (popupNoButton) {
+  popupNoButton.addEventListener("mouseover", () => {
+    const container = popupNoButton.closest(".popup-buttons");
+    if (container) {
+      randomizeButtonPosition(
+        popupNoButton,
+        container.offsetWidth,
+        container.offsetHeight
+      );
+    }
+  });
 
-popupNoButton.addEventListener("click", () => {
-  hidePopup();
-  playSound(clickSound);
-});
+  popupNoButton.addEventListener("click", () => {
+    hidePopup();
+    playSound(clickSound);
+  });
+}
 
 // Track all user interactions to reset the inactivity timer
 ["click", "mousemove", "keydown"].forEach((eventType) => {
   document.addEventListener(eventType, updateActivityTime);
 });
 
-// Initialize the popup timer on page load
+// Initialize on load
 window.addEventListener("load", () => {
-  // Add this to the existing load event
+  // Timer tick every second
+  setInterval(updateTimer, 1000);
+
+  if (quoteDiv) {
+    quoteDiv.textContent = "Click the button to begin your pointless journey! 🚀";
+  }
+
+  // start the inactivity timer
   updateActivityTime();
+
+  // initial background
+  changeBackgroundColor();
 });
-
-// Update activity time on theme toggle
-themeToggle.addEventListener("click", updateActivityTime);
-
-// Update activity time on button click
-button.addEventListener("click", updateActivityTime);

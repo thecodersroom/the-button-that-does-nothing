@@ -49,7 +49,6 @@ body {
   color: var(--text-color);
   max-width: 600px;
   width: 90%;
-  position: relative;
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
@@ -73,6 +72,77 @@ h1 {
   }
 }
 
+/* === Toggle Styles === */
+.toggle-container {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.toggle-label input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  width: 60px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  position: relative;
+  transition: background 0.3s ease;
+  margin-right: 12px;
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.3s ease;
+}
+
+.toggle-label input[type="checkbox"]:checked + .toggle-slider {
+  background: linear-gradient(45deg, #ff6b6b, #ff9a76);
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
+}
+
+.toggle-label input[type="checkbox"]:checked + .toggle-slider::before {
+  transform: translateX(30px);
+}
+
+.toggle-text {
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-label input[type="checkbox"]:checked ~ .toggle-text {
+  color: #ffeb3b;
+  text-shadow: 0 0 10px rgba(255, 235, 59, 0.8);
+  animation: pulse 1s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
 /* === Button Container === */
 .button-container {
   margin: 40px 0;
@@ -83,7 +153,7 @@ h1 {
   position: relative;
 }
 
-/* === The Useless Button === */
+/* === Useless Button === */
 #useless-button {
   padding: 20px 40px;
   font-size: 1.5rem;
@@ -109,7 +179,23 @@ body[data-theme="light"] #useless-button {
   background: linear-gradient(45deg, #ff9a76, #ff6b6b);
 }
 
-/* Smoke trail effect */
+/* Impossible mode button */
+#useless-button.impossible-mode {
+  animation: colorShift 0.2s ease infinite, pulseGlow 2s infinite;
+}
+
+#useless-button.impossible-mode:hover {
+  transform: scale(0.85) translateY(-10px) rotate(3deg);
+}
+
+@keyframes colorShift {
+  0% { filter: hue-rotate(0deg) brightness(1.1); }
+  25% { filter: hue-rotate(90deg) brightness(1.2); }
+  50% { filter: hue-rotate(180deg) brightness(1.1); }
+  75% { filter: hue-rotate(270deg) brightness(1.2); }
+  100% { filter: hue-rotate(360deg) brightness(1.1); }
+}
+
 #useless-button::after {
   content: "";
   position: absolute;
@@ -133,15 +219,9 @@ body[data-theme="light"] #useless-button {
 }
 
 @keyframes pulseGlow {
-  0% {
-    box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 25px rgba(255, 107, 107, 0.8);
-  }
-  100% {
-    box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
-  }
+  0% { box-shadow: 0 0 10px rgba(255, 107, 107, 0.4); }
+  50% { box-shadow: 0 0 25px rgba(255, 107, 107, 0.8); }
+  100% { box-shadow: 0 0 10px rgba(255, 107, 107, 0.4); }
 }
 
 /* === Counter / Quote / Timer === */
@@ -153,6 +233,9 @@ body[data-theme="light"] #useless-button {
   border: 1px solid var(--border-color);
 }
 
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
 @keyframes rainbowBg {
   0% {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -171,7 +254,6 @@ body[data-theme="light"] #useless-button {
   }
 }
 
-/* === Counter & Stats === */
 #counter {
   font-size: 1.2em;
   color: var(--text-color);
@@ -184,7 +266,6 @@ body[data-theme="light"] #useless-button {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* === Quote === */
 .quote {
   font-size: 1.1em;
   color: var(--text-color);
