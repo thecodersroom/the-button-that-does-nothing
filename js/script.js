@@ -247,7 +247,21 @@ function animateParticles() {
 
 if (ctx) animateParticles();
 
-// === Smoke Trail Effect (DOM spans) ===
+// === Confetti System ===
+function createConfetti() {
+  for (let i = 0; i < 200; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + 'vw';
+    confetti.style.backgroundColor = getRandomColor();
+    confetti.style.animationDelay = Math.random() * 2 + 's';
+    document.body.appendChild(confetti);
+    
+    setTimeout(() => confetti.remove(), 6000);
+  }
+}
+
+// === Smoke Trail Effect ===
 function createSmokeTrail() {
   if (!button) return;
   for (let i = 0; i < 8; i++) {
@@ -337,7 +351,6 @@ window.addEventListener(
   },
   { once: true }
 );
-
 // === Button Click Handler ===
 if (button) {
   button.addEventListener("click", (e) => {
@@ -367,13 +380,16 @@ if (button) {
 
     if (!userInteracted) userInteracted = true;
 
+    // Effects
     playSound(clickSound);
     createParticles(e.clientX, e.clientY, 30, true);
-
-    // smoke trail mini DOM particles
     createSmokeTrail();
-
     showAchievement(clicks);
+
+    // 🎉 Confetti animation at 50 clicks
+    if (clicks === 50 && typeof createConfetti === "function") {
+      createConfetti();
+    }
 
     // Special effects at milestones
     if (clicks % 50 === 0) {
@@ -384,6 +400,7 @@ if (button) {
     updateActivityTime();
   });
 }
+
 
 // === Button Dodge / Mouseover ===
 if (button) {

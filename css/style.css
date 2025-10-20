@@ -564,3 +564,60 @@ body[data-theme="light"] #theme-toggle {
     font-size: 1rem;
   }
 }
+
+/* === Confetti Animation === */
+.confetti {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  top: -20px;
+  z-index: 999;
+  border-radius: 50%;
+  animation: confettiFall 5s ease-out forwards;
+}
+
+.confetti:nth-child(odd) {
+  width: 6px;
+  height: 12px;
+  border-radius: 2px;
+  animation: confettiWiggle 5s ease-out forwards;
+}
+
+.confetti:nth-child(3n) {
+  width: 4px;
+  height: 4px;
+  animation: confettiSpin 4s linear forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes confettiWiggle {
+  0% {
+    transform: translateY(-20px) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) translateX(30px) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes confettiSpin {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
