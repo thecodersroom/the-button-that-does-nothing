@@ -34,6 +34,8 @@ let lastActivityTime = Date.now();
 let popupTimer = null;
 let popupActive = false;
 let popupAutoCloseTimer = null;
+let lastDodgeTime = 0;
+let seconds = 0;
 
 // Canvas setup
 if (canvas) {
@@ -91,213 +93,538 @@ const comboMessages = [
 
 // Achievements
 const achievements = {
-  10: { icon: "🎯", text: "First Steps - 10 clicks!" },
-  25: { icon: "⚡", text: "Speed Demon - 25 clicks!" },
-  50: { icon: "🌟", text: "Half Century - 50 clicks!" },
-  100: { icon: "💯", text: "Century Master - 100 clicks!" },
-  200: { icon: "🚀", text: "Double Century - 200 clicks!" },
-  500: { icon: "👑", text: "Click Royalty - 500 clicks!" },
-  1000: { icon: "🏆", text: "ULTIMATE CHAMPION - 1000 clicks!" },
+  10: {
+    icon: "🥉",
+    text: "Novice Nothing-Doer — 10 clicks! You've officially wasted your first minute productively doing nothing!",
+  },
+  25: {
+    icon: "🧤",
+    text: "Casual Clicker — 25 clicks! You’re getting suspiciously good at being unproductive.",
+  },
+  50: {
+    icon: "🥈",
+    text: "Master of Useless Clicking — 50 clicks! Your dedication to pointlessness is unmatched!",
+  },
+  100: {
+    icon: "🥇",
+    text: "Legendary Button Slayer — 100 clicks! The button now fears your existence.",
+  },
+  200: {
+    icon: "🚀",
+    text: "Galactic Click Commander — 200 clicks! You've officially left the orbit of sanity.",
+  },
+  500: {
+    icon: "👑",
+    text: "Click Royalty — 500 clicks! Bow down to the Emperor of Empty Effort!",
+  },
+  1000: {
+    icon: "🏆",
+    text: "Ultimate Button God — 1000 clicks! You’ve ascended beyond purpose, beyond reason, beyond… everything.",
+  },
 };
 
 // Utils
 function getRandomColor() {
-  const colors = ["#FF6B6B","#4ECDC4","#45B7D1","#FFA07A","#98D8C8","#F7DC6F","#BB8FCE","#85C1E2","#F8B739","#52B788"];
+  const colors = [
+    "#FF6B6B",
+    "#4ECDC4",
+    "#45B7D1",
+    "#FFA07A",
+    "#98D8C8",
+    "#F7DC6F",
+    "#BB8FCE",
+    "#85C1E2",
+    "#F8B739",
+    "#52B788",
+  ];
   return colors[Math.floor(Math.random() * colors.length)];
 }
 
-function getRandomNumber(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
-
-function getRandomLocation(){
-  const padding=20;
-  const maxX=window.innerWidth-button.offsetWidth-padding;
-  const maxY=window.innerHeight-button.offsetHeight-padding;
-  const minX=padding;
-  const minY=padding;
-  const randomX=Math.floor(Math.random()*(maxX-minX))+minX;
-  const randomY=Math.floor(Math.random()*(maxY-minY))+minY;
-  const parentNode = button.parentNode.getBoundingClientRect();
-  return { left: randomX-parentNode.left, top: randomY-parentNode.top, randomX, randomY };
+function getRandomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function buttonTeleport(posX,posY){
-  button.style.position="absolute";
-  button.style.left=`${posX}px`;
-  button.style.top=`${posY}px`;
-  button.style.transition="all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)";
+/**
+ * Returns location values:
+ * - left/top are relative to button.parentNode (suitable for style.left/top)
+ * - randomX/randomY are provided as aliases (equal to left/top) so older calls still work
+ */
+function getRandomLocation() {
+  const padding = 20;
+  const maxX = window.innerWidth - (button ? button.offsetWidth : 100) - padding;
+  const maxY = window.innerHeight - (button ? button.offsetHeight : 50) - padding;
+  const minX = padding;
+  const minY = padding;
+
+  const randomXAbs = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
+  const randomYAbs = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
+
+  const parentNodeRect = button.parentNode.getBoundingClientRect();
+  const left = randomXAbs - parentNodeRect.left;
+  const top = randomYAbs - parentNodeRect.top;
+
+  return { left, top, randomX: left, randomY: top };
 }
 
-function updateCounter(extraText=""){
-  counterDiv.textContent=`Clicks: ${clicks} | Failed clicks: ${failedClicks}`;
-  if(extraText){
-    quoteDiv.textContent=extraText;
-    quoteDiv.style.animation="none";
-    setTimeout(()=>{quoteDiv.style.animation="fadeIn 0.5s ease-in forwards";},10);
+function buttonTeleport(posX, posY) {
+  // posX/posY are expected to be left/top relative to parent (as returned by getRandomLocation)
+  button.style.position = "absolute";
+  button.style.left = `${posX}px`;
+  button.style.top = `${posY}px`;
+  button.style.transition = "all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)";
+}
+
+function updateCounter(extraText = "") {
+  if (counterDiv) {
+    counterDiv.textContent = `Clicks: ${clicks} | Failed clicks: ${failedClicks}`;
+  }
+  if (extraText && quoteDiv) {
+    quoteDiv.textContent = extraText;
+    quoteDiv.style.animation = "none";
+    setTimeout(() => {
+      quoteDiv.style.animation = "fadeIn 0.5s ease-in forwards";
+    }, 10);
   }
 }
 
-function playSound(sound){
-  if(sound && userInteracted){
-    const idx=Math.floor(Math.random()*clickSoundFiles.length);
-    sound.src=clickSoundFiles[idx];sound.currentTime=0;
-    sound.play().catch(()=>{});
+function playSound(sound) {
+  if (sound && userInteracted) {
+    const randomIndex = Math.floor(Math.random() * clickSoundFiles.length);
+    sound.src = clickSoundFiles[randomIndex];
+    sound.currentTime = 0;
+    sound.play().catch(() => {});
   }
 }
 
-// Impossible Mode Toggle
-impossibleToggle.addEventListener("change",()=>{
-  impossibleMode=impossibleToggle.checked;
-  if(impossibleMode){
-    button.classList.add("impossible-mode");
-    updateCounter("— 🔥 IMPOSSIBLE MODE ACTIVATED! Good luck clicking now! 🔥");
-  } else {
-    button.classList.remove("impossible-mode");
-    updateCounter("— Normal mode restored. (Boring!)");
+// === Particle System (canvas) ===
+class Particle {
+  constructor(x, y, isSuccess = true) {
+    this.x = x;
+    this.y = y;
+    this.size = Math.random() * 5 + 2;
+    this.speedX = (Math.random() - 0.5) * 10;
+    this.speedY = (Math.random() - 0.5) * 10;
+    this.color = isSuccess
+      ? `hsl(${Math.random() * 60 + 120}, 100%, 60%)`
+      : `hsl(${Math.random() * 30}, 100%, 60%)`;
+    this.life = 100;
   }
-});
 
-// Unlock audio on first interaction
-window.addEventListener("click",()=>{
-  if(!userInteracted){
-    userInteracted=true;
-    clickSound.play().then(()=>clickSound.pause());
-    failSound.play().then(()=>failSound.pause());
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.speedY += 0.2;
+    this.life -= 2;
   }
-},{once:true});
 
-// Combo System
-function checkCombo(){
-  const now=Date.now();
-  const timeDiff=now-lastClickTime;
-  if(timeDiff<500){comboCount++;
-    if(comboCount>=2 && comboCount<=6){
-      const comboMessage=comboMessages[Math.min(comboCount-2,comboMessages.length-1)];
-      quoteDiv.textContent=comboMessage;quoteDiv.style.color="#FFD700";
-      setTimeout(()=>{quoteDiv.style.color="#fff";},1000);
-    }
-  } else {comboCount=0;}
-  lastClickTime=now;
+  draw() {
+    if (!ctx) return;
+    ctx.fillStyle = this.color;
+    ctx.globalAlpha = Math.max(this.life / 100, 0);
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
 }
 
-// Particle System
-class Particle{
-  constructor(x,y,isSuccess=true){
-    this.x=x;this.y=y;this.size=Math.random()*5+2;
-    this.speedX=(Math.random()-0.5)*10;this.speedY=(Math.random()-0.5)*10;
-    this.color=isSuccess?`hsl(${Math.random()*60+120},100%,60%)`:`hsl(${Math.random()*30},100%,60%)`;
-    this.life=100;
+function createParticles(x, y, count = 20, isSuccess = true) {
+  for (let i = 0; i < count; i++) {
+    particles.push(new Particle(x, y, isSuccess));
   }
-  update(){this.x+=this.speedX;this.y+=this.speedY;this.speedY+=0.2;this.life-=2;}
-  draw(){if(!ctx)return;ctx.fillStyle=this.color;ctx.globalAlpha=this.life/100;ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;}
 }
-function createParticles(x,y,count=20,isSuccess=true){for(let i=0;i<count;i++){particles.push(new Particle(x,y,isSuccess));}}
-function animateParticles(){if(!ctx)return;ctx.clearRect(0,0,canvas.width,canvas.height);for(let i=particles.length-1;i>=0;i--){particles[i].update();particles[i].draw();if(particles[i].life<=0){particles.splice(i,1);}}requestAnimationFrame(animateParticles);}
-if(ctx)animateParticles();
 
-// Show Achievement
-function showAchievement(clickCount){
-  if(!achievements[clickCount])return;
-  const achievement=achievements[clickCount];
-  const popup=document.getElementById("achievement-popup");
-  if(popup){
-    popup.querySelector(".achievement-icon").textContent=achievement.icon;
-    popup.querySelector(".achievement-text").textContent=achievement.text;
+function animateParticles() {
+  if (!ctx) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = particles.length - 1; i >= 0; i--) {
+    particles[i].update();
+    particles[i].draw();
+    if (particles[i].life <= 0) particles.splice(i, 1);
+  }
+  requestAnimationFrame(animateParticles);
+}
+
+if (ctx) animateParticles();
+
+// === Smoke Trail Effect (DOM spans) ===
+function createSmokeTrail() {
+  if (!button) return;
+  for (let i = 0; i < 8; i++) {
+    const particle = document.createElement("span");
+    particle.classList.add("particle");
+
+    const offsetX = (Math.random() - 0.5) * button.offsetWidth;
+    const offsetY = (Math.random() - 0.5) * button.offsetHeight;
+
+    particle.style.left = `${
+      button.offsetLeft + button.offsetWidth / 2 + offsetX
+    }px`;
+    particle.style.top = `${
+      button.offsetTop + button.offsetHeight / 2 + offsetY
+    }px`;
+    particle.style.background = getRandomColor();
+
+    document.body.appendChild(particle);
+
+    setTimeout(() => particle.remove(), 1000);
+  }
+}
+
+// === Achievement Display ===
+function showAchievement(clickCount) {
+  if (!achievements[clickCount]) return;
+
+  const achievement = achievements[clickCount];
+  const popup = document.getElementById("achievement-popup");
+
+  if (popup) {
+    const icon = popup.querySelector(".achievement-icon");
+    const text = popup.querySelector(".achievement-text");
+
+    icon.textContent = achievement.icon;
+    text.textContent = achievement.text;
     popup.classList.add("show");
-    setTimeout(()=>popup.classList.remove("show"),3000);
+
+    setTimeout(() => popup.classList.remove("show"), 3000);
   }
 }
 
-// Button Click
-button.addEventListener("click",(e)=>{
-  clicks++;checkCombo();
-  const randomMessage=messages[Math.floor(Math.random()*messages.length)];
-  updateCounter(`— ${randomMessage}`);
-  button.style.backgroundColor=getRandomColor();
-  const width=getRandomNumber(150,250);const height=getRandomNumber(80,150);
-  button.style.width=`${width}px`;button.style.height=`${height}px`;
-  const {randomX,randomY}=getRandomLocation();
-  buttonTeleport(randomX,randomY);
-  button.style.transform="scale(1.2) rotate(10deg)";
-  setTimeout(()=>{button.style.transform="scale(1) rotate(0deg)";},100);
-  playSound(clickSound);
-  createParticles(e.clientX,e.clientY,30,true);
-  showAchievement(clicks);
-  if(clicks%50===0){document.body.classList.add("page-shake");setTimeout(()=>document.body.classList.remove("page-shake"),500);}
-  updateActivityTime();
-});
+// === Combo System ===
+function checkCombo() {
+  const now = Date.now();
+  const timeDiff = now - lastClickTime;
 
-// Button Dodge
-let lastDodgeTime=0;
-button.addEventListener("mouseover",()=>{
-  if(isButtonMoving)return;
-  const now=Date.now();
-  const throttleTime=impossibleMode?50:150;
-  if(now-lastDodgeTime<throttleTime)return;
-  lastDodgeTime=now;
-  const particleCount=impossibleMode?15:8;
-  for(let i=0;i<particleCount;i++){
-    const particle=document.createElement("span");particle.classList.add("particle");
-    const offsetX=(Math.random()-0.5)*button.offsetWidth;const offsetY=(Math.random()-0.5)*button.offsetHeight;
-    particle.style.left=`${button.offsetLeft+button.offsetWidth/2+offsetX}px`;
-    particle.style.top=`${button.offsetTop+button.offsetHeight/2+offsetY}px`;
-    document.body.appendChild(particle);setTimeout(()=>{particle.remove();},1000);
+  if (timeDiff < 500) {
+    comboCount++;
+    if (comboCount >= 2 && comboCount <= 6) {
+      const comboMessage =
+        comboMessages[Math.min(comboCount - 2, comboMessages.length - 1)];
+      if (quoteDiv) {
+        quoteDiv.textContent = comboMessage;
+        quoteDiv.style.color = "#FFD700";
+        setTimeout(() => {
+          quoteDiv.style.color = "#fff";
+        }, 1000);
+      }
+    }
+  } else {
+    comboCount = 0;
   }
-  const dodgeChance=impossibleMode?1:0.9;
-  if(Math.random()<dodgeChance){
-    isButtonMoving=true;failedClicks++;
-    const messageArray=impossibleMode?impossibleFailMessages:failedClickMessages;
-    const randomFail=messageArray[Math.floor(Math.random()*messageArray.length)];
-    updateCounter(`— ${randomFail}`);
-    if(failedClicks%(impossibleMode?5:10)===0 && userInteracted){failSound.currentTime=0;failSound.play().catch(()=>{});}
-    const {randomX,randomY}=getRandomLocation();buttonTeleport(randomX,randomY);
-    const rotation=impossibleMode?getRandomNumber(-15,15):5;button.style.transform=`rotate(${rotation}deg)`;
-    setTimeout(()=>{button.style.transform="rotate(0deg) scale(1)";isButtonMoving=false;},200);
-  }
-});
 
-// Impossible Mode Mousemove Dodge
-document.addEventListener("mousemove",(e)=>{
-  if(!impossibleMode)return;
-  const rect=button.getBoundingClientRect();
-  const cx=rect.left+rect.width/2;const cy=rect.top+rect.height/2;
-  const dx=e.clientX-cx;const dy=e.clientY-cy;
-  const dist=Math.sqrt(dx*dx+dy*dy);const dangerZone=200;
-  if(dist<dangerZone){const now=Date.now();if(now-lastDodgeTime<100)return;lastDodgeTime=now;
-    const {randomX,randomY}=getRandomLocation();buttonTeleport(randomX,randomY);
-    if(Math.random()>0.7){button.style.width=`${getRandomNumber(120,200)}px`;button.style.height=`${getRandomNumber(60,150)}px`;}
-  }
-});
-
-// Background color changer
-function changeBackgroundColor(){
-  const color1=getRandomColor();const color2=getRandomColor();
-  document.body.style.background=`linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
+  lastClickTime = now;
 }
-setInterval(changeBackgroundColor,5000);
 
-// Timer
-let seconds=0;
-function formatTime(sec){const mins=Math.floor(sec/60);const secs=sec%60;return `${mins.toString().padStart(2,"0")}:${secs.toString().padStart(2,"0")}`;}
-function updateTimer(){seconds++;timerDiv.textContent=`Time spent doing nothing: ${formatTime(seconds)}`;if(seconds%5===0){timerDiv.classList.add("fade");setTimeout(()=>timerDiv.classList.remove("fade"),400);}}
-window.addEventListener("load",()=>{setInterval(updateTimer,1000);quoteDiv.textContent="Click the button to begin your pointless journey! 🚀";updateActivityTime();});
+// === Unlock audio on first user interaction ===
+window.addEventListener(
+  "click",
+  () => {
+    if (!userInteracted) {
+      userInteracted = true;
+      if (clickSound) {
+        clickSound
+          .play()
+          .then(() => clickSound.pause())
+          .catch(() => {});
+      }
+      if (failSound) {
+        failSound
+          .play()
+          .then(() => failSound.pause())
+          .catch(() => {});
+      }
+    }
+  },
+  { once: true }
+);
 
-// Theme toggle
-themeToggle.addEventListener("click",()=>{
-  const current=document.body.dataset.theme;
-  const newTheme=current==="light"?"dark":"light";
-  document.body.dataset.theme=newTheme;
-  quoteDiv.textContent=newTheme==="light"?"Welcome to the light. It won’t help.":"Back to the void.";
-  updateActivityTime();
+// === Button Click Handler ===
+if (button) {
+  button.addEventListener("click", (e) => {
+    e.stopPropagation();
+    clicks++;
+    checkCombo();
+
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    updateCounter(`— ${randomMessage}`);
+
+    // Change button appearance
+    button.style.backgroundColor = getRandomColor();
+    const width = getRandomNumber(150, 250);
+    const height = getRandomNumber(80, 150);
+    button.style.width = `${width}px`;
+    button.style.height = `${height}px`;
+
+    // Teleport button
+    const { randomX, randomY } = getRandomLocation();
+    buttonTeleport(randomX, randomY);
+
+    // Animations
+    button.style.transform = "scale(1.2) rotate(10deg)";
+    setTimeout(() => {
+      button.style.transform = "scale(1) rotate(0deg)";
+    }, 150);
+
+    if (!userInteracted) userInteracted = true;
+
+    playSound(clickSound);
+    createParticles(e.clientX, e.clientY, 30, true);
+
+    // smoke trail mini DOM particles
+    createSmokeTrail();
+
+    showAchievement(clicks);
+
+    // Special effects at milestones
+    if (clicks % 50 === 0) {
+      document.body.classList.add("page-shake");
+      setTimeout(() => document.body.classList.remove("page-shake"), 500);
+    }
+
+    updateActivityTime();
+  });
+}
+
+// === Button Dodge / Mouseover ===
+if (button) {
+  button.addEventListener("mouseover", () => {
+    if (isButtonMoving) return;
+    const now = Date.now();
+    // Throttle dodge more aggressively in impossible mode
+    const throttleTime = impossibleMode ? 50 : 150;
+    if (now - lastDodgeTime < throttleTime) return;
+    lastDodgeTime = now;
+
+    // create some smoke visuals
+    createSmokeTrail();
+
+    const dodgeChance = impossibleMode ? 1 : 0.9;
+    if (Math.random() < dodgeChance) {
+      isButtonMoving = true;
+      failedClicks++;
+
+      const messageArray = impossibleMode ? impossibleFailMessages : failedClickMessages;
+      const randomFail = messageArray[Math.floor(Math.random() * messageArray.length)];
+      updateCounter(`— ${randomFail}`);
+
+      // Play fail sound occasionally
+      if (failedClicks % (impossibleMode ? 5 : 10) === 0 && userInteracted) {
+        if (failSound) {
+          failSound.currentTime = 0;
+          failSound.play().catch(() => {});
+        }
+      }
+
+      const { randomX, randomY } = getRandomLocation();
+      buttonTeleport(randomX, randomY);
+
+      const rotation = impossibleMode ? getRandomNumber(-15, 15) : 5;
+      button.style.transform = `rotate(${rotation}deg)`;
+      setTimeout(() => {
+        button.style.transform = "rotate(0deg) scale(1)";
+        isButtonMoving = false;
+      }, 200);
+    }
+  });
+}
+
+// === Impossible mode special mousemove dodge (larger radius reaction) ===
+document.addEventListener("mousemove", (e) => {
+  if (!button || !impossibleMode) return;
+  const rect = button.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const dx = e.clientX - cx;
+  const dy = e.clientY - cy;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  const dangerZone = 200;
+  if (dist < dangerZone) {
+    const now = Date.now();
+    if (now - lastDodgeTime < 100) return;
+    lastDodgeTime = now;
+    const { randomX, randomY } = getRandomLocation();
+    buttonTeleport(randomX, randomY);
+    if (Math.random() > 0.7) {
+      button.style.width = `${getRandomNumber(120, 200)}px`;
+      button.style.height = `${getRandomNumber(60, 150)}px`;
+    }
+  }
 });
+
+// === Background Color Changer ===
+function changeBackgroundColor() {
+  const color1 = getRandomColor();
+  const color2 = getRandomColor();
+  document.body.style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
+}
+setInterval(changeBackgroundColor, 5000);
+
+// === Timer ===
+function formatTime(sec) {
+  const mins = Math.floor(sec / 60);
+  const secs = sec % 60;
+  return `${mins.toString().padStart(2, "0")}:${secs
+    .toString()
+    .padStart(2, "0")}`;
+}
+
+function updateTimer() {
+  seconds++;
+  if (timerDiv) {
+    timerDiv.textContent = `Time spent doing nothing: ${formatTime(seconds)}`;
+    if (seconds % 5 === 0) {
+      timerDiv.classList.add("fade");
+      setTimeout(() => timerDiv.classList.remove("fade"), 400);
+    }
+  }
+}
+
+// === Theme toggle ===
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const current = document.body.dataset.theme;
+    const newTheme = current === "light" ? "dark" : "light";
+    document.body.dataset.theme = newTheme;
+    if (quoteDiv) {
+      quoteDiv.textContent =
+        newTheme === "light" ? "Welcome to the light. It won’t help." : "Back to the void.";
+    }
+  });
+}
+
+// === Impossible Mode Toggle ===
+if (impossibleToggle) {
+  impossibleToggle.addEventListener("change", () => {
+    impossibleMode = impossibleToggle.checked;
+    if (impossibleMode) {
+      if (button) button.classList.add("impossible-mode");
+      updateCounter("— 🔥 IMPOSSIBLE MODE ACTIVATED! Good luck clicking now! 🔥");
+    } else {
+      if (button) button.classList.remove("impossible-mode");
+      updateCounter("— Normal mode restored. (Boring!)");
+    }
+  });
+}
 
 // === Are You Still Clicking Popup ===
-function updateActivityTime(){lastActivityTime=Date.now();if(popupTimer)clearTimeout(popupTimer);popupTimer=setTimeout(showPopup,getRandomInactivityTime());}
-function getRandomInactivityTime(){return Math.floor(Math.random()*(30000-15000+1))+15000;}
-function showPopup(){if(popupActive)return;popupActive=true;popupContainer.classList.add("show");popupAutoCloseTimer=setTimeout(hidePopup,8000);}
-function hidePopup(){popupContainer.classList.remove("show");popupActive=false;if(popupAutoCloseTimer)clearTimeout(popupAutoCloseTimer);updateActivityTime();}
-function randomizeButtonPosition(button,containerWidth,containerHeight){const bw=button.offsetWidth;const bh=button.offsetHeight;const rx=Math.random()* (containerWidth-bw);const ry=Math.random()* (containerHeight-bh);button.style.left=`${rx}px`;button.style.top=`${ry}px`;button.style.transform="none";}
-popupYesButton.addEventListener("mouseover",()=>{randomizeButtonPosition(popupYesButton,popupYesButton.closest(".popup-buttons").offsetWidth,popupYesButton.closest(".popup-buttons").offsetHeight);});
-popupNoButton.addEventListener("mouseover",()=>{randomizeButtonPosition(popupNoButton,popupNoButton.closest(".popup-buttons").offsetWidth,popupNoButton.closest(".popup-buttons").offsetHeight);});
-popupYesButton.addEventListener("click",()=>{hidePopup();playSound(clickSound);});
-popupNoButton.addEventListener("click",()=>{hidePopup();playSound(clickSound);});
-["click","mousemove","keydown"].forEach(e=>document.addEventListener(e,updateActivityTime));
+
+// Function to update the last activity time
+function updateActivityTime() {
+  lastActivityTime = Date.now();
+
+  // Reset popup timer if it exists
+  if (popupTimer) {
+    clearTimeout(popupTimer);
+  }
+
+  // Set new popup timer
+  popupTimer = setTimeout(showPopup, getRandomInactivityTime());
+}
+
+// Function to get a random inactivity time between 15-30 seconds
+function getRandomInactivityTime() {
+  return Math.floor(Math.random() * (30000 - 15000 + 1)) + 15000; // 15-30 seconds
+}
+
+// Function to show the popup
+function showPopup() {
+  if (!popupContainer) return;
+  if (popupActive) return;
+
+  popupActive = true;
+  popupContainer.classList.add("show");
+
+  // Auto-close popup after 8 seconds
+  popupAutoCloseTimer = setTimeout(() => {
+    hidePopup();
+  }, 8000);
+}
+
+// Function to hide the popup
+function hidePopup() {
+  if (!popupContainer) return;
+  popupContainer.classList.remove("show");
+  popupActive = false;
+
+  if (popupAutoCloseTimer) {
+    clearTimeout(popupAutoCloseTimer);
+  }
+
+  // Reset the activity timer
+  updateActivityTime();
+}
+
+// Function to randomize button position within the popup (keeps button inside container)
+function randomizeButtonPosition(buttonEl, containerWidth, containerHeight) {
+  const buttonWidth = buttonEl.offsetWidth;
+  const buttonHeight = buttonEl.offsetHeight;
+
+  const maxX = Math.max(0, containerWidth - buttonWidth);
+  const maxY = Math.max(0, containerHeight - buttonHeight);
+
+  const randomX = Math.random() * maxX;
+  const randomY = Math.random() * maxY;
+
+  buttonEl.style.position = "absolute";
+  buttonEl.style.left = `${randomX}px`;
+  buttonEl.style.top = `${randomY}px`;
+  buttonEl.style.transform = "none";
+}
+
+// Event listeners for popup buttons (if they exist)
+if (popupYesButton) {
+  popupYesButton.addEventListener("mouseover", () => {
+    const container = popupYesButton.closest(".popup-buttons");
+    if (container) {
+      randomizeButtonPosition(
+        popupYesButton,
+        container.offsetWidth,
+        container.offsetHeight
+      );
+    }
+  });
+
+  popupYesButton.addEventListener("click", () => {
+    hidePopup();
+    playSound(clickSound);
+  });
+}
+
+if (popupNoButton) {
+  popupNoButton.addEventListener("mouseover", () => {
+    const container = popupNoButton.closest(".popup-buttons");
+    if (container) {
+      randomizeButtonPosition(
+        popupNoButton,
+        container.offsetWidth,
+        container.offsetHeight
+      );
+    }
+  });
+
+  popupNoButton.addEventListener("click", () => {
+    hidePopup();
+    playSound(clickSound);
+  });
+}
+
+// Track all user interactions to reset the inactivity timer
+["click", "mousemove", "keydown"].forEach((eventType) => {
+  document.addEventListener(eventType, updateActivityTime);
+});
+
+// Initialize on load
+window.addEventListener("load", () => {
+  // Timer tick every second
+  setInterval(updateTimer, 1000);
+
+  if (quoteDiv) {
+    quoteDiv.textContent = "Click the button to begin your pointless journey! 🚀";
+  }
+
+  // start the inactivity timer
+  updateActivityTime();
+
+  // initial background
+  changeBackgroundColor();
+});
