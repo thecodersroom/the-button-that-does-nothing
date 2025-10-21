@@ -36,8 +36,11 @@
       <div class="button-container">
         <button id="useless-button">Click Me!</button>
       </div>
-      <!--Toggle theme button-->
-      <button id="theme-toggle">Toggle Theme</button>
+      <!--Control buttons-->
+      <div class="control-buttons">
+        <button id="theme-toggle">Toggle Theme</button>
+        <button id="sound-toggle">🎵</button>
+      </div>
       <div id="counter">Clicks: 0 | Failed clicks: 0</div>
       <div id="achievement-popup">
         <span class="achievement-icon"> </span>
@@ -50,6 +53,7 @@
     <!-- Sounds -->
     <audio id="click-sound" src="audio/click1.mp3"></audio>
     <audio id="fail-sound" src="audio/failedClick.mp3"></audio>
+    <audio id="bg-music" loop></audio>
 
     <!-- Are You Still Clicking Popup -->
     <div id="still-clicking-popup" class="popup-container">
@@ -58,6 +62,28 @@
         <div class="popup-buttons">
           <button id="popup-yes">Yes</button>
           <button id="popup-no">No</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sound Settings Panel -->
+    <div id="sound-panel" class="popup-container">
+      <div class="popup-content">
+        <h2>🎵 Sound Settings</h2>
+        <div class="sound-controls">
+          <label><input type="checkbox" id="sounds-toggle" checked> 🔊 Sounds</label>
+          <label><input type="checkbox" id="music-toggle" checked> 🎵 Music</label>
+          <label>🔉 Volume: <input type="range" id="volume-slider" min="0" max="100" value="50"></label>
+          <label>🎶 Track: 
+            <select id="track-selector">
+              <option value="8bit" selected>8-Bit Retro</option>
+              <option value="lofi">Lo-Fi Chill</option>
+              <option value="boss">Boss Battle</option>
+              <option value="suspense">Suspense</option>
+              <option value="horror">Horror</option>
+            </select>
+          </label>
+          <button id="close-sound-panel">Close</button>
         </div>
       </div>
     </div>
