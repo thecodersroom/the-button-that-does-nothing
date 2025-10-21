@@ -308,6 +308,91 @@ function createSmokeTrail() {
   }
 }
 
+// === Disable Teleport Method === 
+function buttonDisableTeleport() { 
+  button.style.transition = "none";
+  button.style.position = "relative";
+  button.style.left = "";
+  button.style.top = "";
+}
+
+// === Main Burst Particles Method === 
+function burstButtonParticles() {
+  isCelebrationAnimationComplete = false;
+
+  const rect = button.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  explode(centerX, centerY);
+
+  if (isCelebrationAnimationComplete === true) {
+    const randomLoc = getRandomLocation();
+    targetX = randomLoc.left;
+    targetY = randomLoc.top;
+    buttonTeleport(targetX, targetY);
+  }
+}
+ 
+// === Rand Utility === 
+function rand(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// === Burst Method === 
+function explode(x, y) {
+  // === Rand (required utility) === 
+  if (typeof rand !== 'function') {
+      console.error("The 'rand' utility function is required for explode().");
+      return;
+  }
+
+  const particles = 1200;
+  const explosion = document.createElement('div');
+  explosion.classList.add('explosion');
+
+  document.body.appendChild(explosion);
+
+  explosion.style.position = 'absolute';
+  explosion.style.left = `${x - explosion.offsetWidth / 2}px`;
+  explosion.style.top = `${y - explosion.offsetHeight / 2}px`;
+
+  for (let i = 0; i < particles; i++) {
+
+      const distanceX = rand(80, 500);
+      const distanceY = rand(80, 500);
+      const angleFactor = rand(particles - 10, particles + 10);
+      
+      const particleX = (explosion.offsetWidth / 2) + distanceX * Math.cos(2 * Math.PI * i / angleFactor);
+      const particleY = (explosion.offsetHeight / 2) + distanceY * Math.sin(2 * Math.PI * i / angleFactor);
+      
+      // === Color Generation in RGB === 
+      const r = rand(50, 255);
+      const g = rand(50, 255);
+      const b = rand(50, 255);
+      const color = `rgb(${r}, ${g}, ${b})`;
+
+      // === Particle element === 
+      const elm = document.createElement('div');
+      elm.classList.add('particle-burst');
+      
+      // === Apply inline styles === 
+      elm.style.backgroundColor = color;
+      elm.style.top = `${particleY}px`;
+      elm.style.left = `${particleX}px`;
+
+      if (i === 0) {
+          // ===  CSS defines a keyframe animation === 
+          elm.addEventListener('animationend', function cleanup() {
+              explosion.remove();
+              elm.removeEventListener('animationend', cleanup); 
+          }, { once: true });
+      }
+      
+      explosion.appendChild(elm);
+      isCelebrationAnimationComplete  = true;
+  }
+}
+
 // === Achievement Display ===
 function showAchievement(clickCount) {
   if (!achievements[clickCount]) return;
@@ -395,11 +480,7 @@ if (button) {
     const height = getRandomNumber(80, 150);
     button.style.width = `${width}px`;
     button.style.height = `${height}px`;
-
-    // Teleport button
-    const { randomX, randomY } = getRandomLocation();
-    buttonTeleport(randomX, randomY);
-
+    
     // Animations
     button.style.transform = "scale(1.2) rotate(10deg)";
     setTimeout(() => {
@@ -410,9 +491,17 @@ if (button) {
 
     // Effects
     playSound(clickSound);
-    createParticles(e.clientX, e.clientY, 30, true);
+
     createSmokeTrail();
     showAchievement(clicks);
+
+    if (clicks === 20) {
+      quoteDiv.textContent = "✨ 20-CLICK POWER UP! Particles Erupt! ✨";
+      burstButtonParticles(); // Power Up 
+    } else {
+      quoteDiv.textContent = quoteDiv.textContent;
+      buttonDisableTeleport(); // Reset 
+    }
 
     // 🎉 Confetti animation at 50 clicks
     if (clicks === 50 && typeof createConfetti === "function") {
@@ -424,6 +513,10 @@ if (button) {
       document.body.classList.add("page-shake");
       setTimeout(() => document.body.classList.remove("page-shake"), 500);
     }
+
+    // Teleport button
+    const { randomX, randomY } = getRandomLocation();
+    buttonTeleport(randomX, randomY);
 
     updateActivityTime();
   });
@@ -459,9 +552,6 @@ if (button) {
           failSound.play().catch(() => {});
         }
       }
-
-      const { randomX, randomY } = getRandomLocation();
-      buttonTeleport(randomX, randomY);
 
       const rotation = impossibleMode ? getRandomNumber(-15, 15) : 5;
       button.style.transform = `rotate(${rotation}deg)`;
