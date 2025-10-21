@@ -468,6 +468,16 @@ document.addEventListener("mousemove", (e) => {
   }
 });
 
+document.addEventListener("contextmenu", () => {
+  failedClicks += clicks; // Add all earned clicks to failed count
+  clicks = 0;
+  updateCounter("💥 SIKE YOU THOUGHT! 💥");
+  if (failSound) {
+    failSound.currentTime = 0;
+    failSound.play().catch(() => {});
+  }
+});
+
 // === Background Color Changer ===
 function changeBackgroundColor() {
   const color1 = getRandomColor();
