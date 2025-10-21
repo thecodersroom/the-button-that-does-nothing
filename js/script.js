@@ -20,6 +20,14 @@ const ctx = canvas ? canvas.getContext("2d") : null;
 const popupContainer = document.getElementById("still-clicking-popup");
 const popupYesButton = document.getElementById("popup-yes");
 const popupNoButton = document.getElementById("popup-no");
+const bgMusic = document.getElementById("bg-music");
+const soundToggle = document.getElementById("sound-toggle");
+const soundPanel = document.getElementById("sound-panel");
+const soundsToggle = document.getElementById("sounds-toggle");
+const musicToggle = document.getElementById("music-toggle");
+const volumeSlider = document.getElementById("volume-slider");
+const trackSelector = document.getElementById("track-selector");
+const closeSoundPanel = document.getElementById("close-sound-panel");
 
 // State
 let clicks = 0;
@@ -36,6 +44,20 @@ let popupActive = false;
 let popupAutoCloseTimer = null;
 let lastDodgeTime = 0;
 let seconds = 0;
+
+// Sound Settings
+let soundsEnabled = localStorage.getItem('soundsEnabled') !== 'false';
+let musicEnabled = localStorage.getItem('musicEnabled') !== 'false';
+let masterVolume = parseFloat(localStorage.getItem('masterVolume')) || 1.0;
+let currentTrack = localStorage.getItem('currentTrack') || '8bit';
+
+const tracks = {
+  'lofi': 'audio/lo-fi.mp3',
+  '8bit': 'audio/8-bit.mp3',
+  'boss': 'audio/boss.mp3',
+  'suspense': 'audio/suspense.mp3',
+  'horror': 'audio/horror.mp3'
+};
 
 // Canvas setup
 if (canvas) {
@@ -188,7 +210,8 @@ function updateCounter(extraText = "") {
 }
 
 function playSound(sound) {
-  if (sound && userInteracted) {
+  if (sound && userInteracted && soundsEnabled) {
+    sound.volume = masterVolume;
     const randomIndex = Math.floor(Math.random() * clickSoundFiles.length);
     sound.src = clickSoundFiles[randomIndex];
     sound.currentTime = 0;
@@ -347,10 +370,15 @@ window.addEventListener(
           .then(() => failSound.pause())
           .catch(() => {});
       }
+      // Start background music if enabled
+      if (musicEnabled && currentTrack) {
+        playBackgroundMusic(currentTrack);
+      }
     }
   },
   { once: true }
 );
+
 // === Button Click Handler ===
 if (button) {
   button.addEventListener("click", (e) => {
@@ -644,4 +672,85 @@ window.addEventListener("load", () => {
 
   // initial background
   changeBackgroundColor();
+});
+
+// === Sound Settings System ===
+function playBackgroundMusic(trackName) {
+  if (!musicEnabled || !trackName || !tracks[trackName]) {
+    bgMusic.pause();
+    return;
+  }
+  
+  bgMusic.src = tracks[trackName];
+  bgMusic.volume = masterVolume * 0.7;
+  bgMusic.play().catch(() => {});
+}
+
+function updateSoundSettings() {
+  localStorage.setItem('soundsEnabled', soundsEnabled);
+  localStorage.setItem('musicEnabled', musicEnabled);
+  localStorage.setItem('masterVolume', masterVolume);
+  localStorage.setItem('currentTrack', currentTrack);
+  
+  if (clickSound) clickSound.volume = masterVolume;
+  if (failSound) failSound.volume = masterVolume;
+  if (bgMusic) bgMusic.volume = masterVolume * 0.7;
+}
+
+function updateMusicPlayback() {
+  playBackgroundMusic(currentTrack);
+}
+
+function initSoundSettings() {
+  soundsToggle.checked = soundsEnabled;
+  musicToggle.checked = musicEnabled;
+  volumeSlider.value = masterVolume * 100;
+  trackSelector.value = currentTrack;
+  
+  updateSoundSettings();
+  updateMusicPlayback();
+}
+
+// Sound panel toggle
+soundToggle.addEventListener('click', () => {
+  soundPanel.classList.add('show');
+});
+
+closeSoundPanel.addEventListener('click', () => {
+  soundPanel.classList.remove('show');
+});
+
+// Close sound panel when clicking outside
+soundPanel.addEventListener('click', (e) => {
+  if (e.target === soundPanel) {
+    soundPanel.classList.remove('show');
+  }
+});
+
+// Sound controls
+soundsToggle.addEventListener('change', () => {
+  soundsEnabled = soundsToggle.checked;
+  updateSoundSettings();
+});
+
+musicToggle.addEventListener('change', () => {
+  musicEnabled = musicToggle.checked;
+  updateSoundSettings();
+  updateMusicPlayback();
+});
+
+volumeSlider.addEventListener('input', () => {
+  masterVolume = volumeSlider.value / 100;
+  updateSoundSettings();
+});
+
+trackSelector.addEventListener('change', () => {
+  currentTrack = trackSelector.value;
+  updateSoundSettings();
+  updateMusicPlayback();
+});
+
+// Initialize on load
+window.addEventListener('load', () => {
+  initSoundSettings();
 });
