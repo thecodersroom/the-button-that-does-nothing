@@ -537,6 +537,15 @@ if (button) {
     clicks++;
     checkCombo();
     getNewAction(); // This will now update the quoteDiv
+    
+    // Prevent mouseover from registering a failed click when clicking
+    isButtonMoving = true;
+    setTimeout(() => {
+      isButtonMoving = false;
+    }, 300);
+
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    updateCounter(`— ${randomMessage}`);
 
     // Change button appearance
     button.style.backgroundColor = getRandomColor();
@@ -625,6 +634,32 @@ function getNewAction() {
 
 
 
+// === Count failed clicks when clicking anywhere but the button ===
+document.addEventListener("click", (e) => {
+  // Check if the click target is a button or inside a button
+  const clickedButton = e.target.closest('button');
+  const clickedInput = e.target.closest('input');
+  const clickedLabel = e.target.closest('label');
+  
+  // Only count as failed click if NOT clicking on any interactive element
+  if (!clickedButton && !clickedInput && !clickedLabel) {
+    failedClicks++;
+    
+    const messageArray = impossibleMode ? impossibleFailMessages : failedClickMessages;
+    const randomFail = messageArray[Math.floor(Math.random() * messageArray.length)];
+    updateCounter(`— ${randomFail}`);
+
+    // Play fail sound occasionally
+    if (failedClicks % (impossibleMode ? 5 : 10) === 0 && userInteracted) {
+      if (failSound) {
+        failSound.volume = masterVolume;
+        failSound.currentTime = 0;
+        failSound.play().catch(() => {});
+      }
+    }
+  }
+});
+
 // === Button Dodge / Mouseover ===
 if (button) {
   button.addEventListener("mouseover", () => {
@@ -641,19 +676,6 @@ if (button) {
     const dodgeChance = impossibleMode ? 1 : 0.9;
     if (Math.random() < dodgeChance) {
       isButtonMoving = true;
-      failedClicks++;
-
-      const messageArray = impossibleMode ? impossibleFailMessages : failedClickMessages;
-      const randomFail = messageArray[Math.floor(Math.random() * messageArray.length)];
-      updateCounter(`— ${randomFail}`);
-
-      // Play fail sound occasionally
-      if (failedClicks % (impossibleMode ? 5 : 10) === 0 && userInteracted) {
-        if (failSound) {
-          failSound.currentTime = 0;
-          failSound.play().catch(() => {});
-        }
-      }
 
       const rotation = impossibleMode ? getRandomNumber(-15, 15) : 5;
       button.style.transform = `rotate(${rotation}deg)`;
@@ -726,18 +748,450 @@ function updateTimer() {
   }
 }
 
-// === Theme toggle ===
-if (themeToggle) {
-  themeToggle.addEventListener("click", () => {
-    const current = document.body.dataset.theme;
-    const newTheme = current === "light" ? "dark" : "light";
-    document.body.dataset.theme = newTheme;
-    if (quoteDiv) {
-      quoteDiv.textContent =
-        newTheme === "light" ? "Welcome to the light. It won’t help." : "Back to the void.";
+// === Theme System ===
+const themes = {
+  dark: {
+    name: 'Dark Purple',
+    icon: '🌙',
+    bgStart: '#667eea',
+    bgEnd: '#764ba2',
+    textColor: '#fff',
+    cardBg: 'rgba(255, 255, 255, 0.15)',
+    accentColor: '#ff6b6b',
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    buttonStart: '#ff6b6b',
+    buttonEnd: '#ff9a76'
+  },
+  light: {
+    name: 'Light Rose',
+    icon: '☀️',
+    bgStart: '#fdf2ec',
+    bgEnd: '#ffd8d8',
+    textColor: '#1f1f1f',
+    cardBg: 'rgba(255, 255, 255, 0.95)',
+    accentColor: '#ff5a5a',
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    buttonStart: '#ff867c',
+    buttonEnd: '#ff5a5a'
+  },
+  neon: {
+    name: 'Neon Cyberpunk',
+    icon: '⚡',
+    bgStart: '#0a0e27',
+    bgEnd: '#1a1a2e',
+    textColor: '#00ff88',
+    cardBg: 'rgba(0, 255, 136, 0.1)',
+    accentColor: '#ff006e',
+    borderColor: 'rgba(0, 255, 136, 0.3)',
+    buttonStart: '#ff006e',
+    buttonEnd: '#00d9ff'
+  },
+  retro: {
+    name: 'Retro Sunset',
+    icon: '🕹️',
+    bgStart: '#ff6b9d',
+    bgEnd: '#c94b4b',
+    textColor: '#fff5e1',
+    cardBg: 'rgba(255, 245, 225, 0.2)',
+    accentColor: '#ffc93c',
+    borderColor: 'rgba(255, 245, 225, 0.4)',
+    buttonStart: '#ffc93c',
+    buttonEnd: '#ff6b9d'
+  },
+  pastel: {
+    name: 'Pastel Dreams',
+    icon: '🦄',
+    bgStart: '#ffcce7',
+    bgEnd: '#d5f5e3',
+    textColor: '#5d5d5d',
+    cardBg: 'rgba(255, 255, 255, 0.8)',
+    accentColor: '#ff8fa3',
+    borderColor: 'rgba(93, 93, 93, 0.2)',
+    buttonStart: '#ffb3c6',
+    buttonEnd: '#ff8fa3'
+  },
+  solarized: {
+    name: 'Solarized Dark',
+    icon: '🌅',
+    bgStart: '#002b36',
+    bgEnd: '#073642',
+    textColor: '#839496',
+    cardBg: 'rgba(0, 43, 54, 0.8)',
+    accentColor: '#268bd2',
+    borderColor: 'rgba(131, 148, 150, 0.3)',
+    buttonStart: '#268bd2',
+    buttonEnd: '#2aa198'
+  },
+  ocean: {
+    name: 'Deep Ocean',
+    icon: '🌊',
+    bgStart: '#004e92',
+    bgEnd: '#000428',
+    textColor: '#e0f7fa',
+    cardBg: 'rgba(224, 247, 250, 0.15)',
+    accentColor: '#00bcd4',
+    borderColor: 'rgba(224, 247, 250, 0.3)',
+    buttonStart: '#00bcd4',
+    buttonEnd: '#00acc1'
+  },
+  forest: {
+    name: 'Forest Grove',
+    icon: '🌲',
+    bgStart: '#134e4a',
+    bgEnd: '#064e3b',
+    textColor: '#d1fae5',
+    cardBg: 'rgba(209, 250, 229, 0.15)',
+    accentColor: '#34d399',
+    borderColor: 'rgba(209, 250, 229, 0.3)',
+    buttonStart: '#34d399',
+    buttonEnd: '#10b981'
+  },
+  sunset: {
+    name: 'Warm Sunset',
+    icon: '🌇',
+    bgStart: '#ff7e5f',
+    bgEnd: '#feb47b',
+    textColor: '#3d1f00',
+    cardBg: 'rgba(255, 255, 255, 0.3)',
+    accentColor: '#ff6b35',
+    borderColor: 'rgba(61, 31, 0, 0.2)',
+    buttonStart: '#ff6b35',
+    buttonEnd: '#f7931e'
+  },
+  midnight: {
+    name: 'Midnight Blue',
+    icon: '🌃',
+    bgStart: '#2c3e50',
+    bgEnd: '#000000',
+    textColor: '#ecf0f1',
+    cardBg: 'rgba(236, 240, 241, 0.1)',
+    accentColor: '#e74c3c',
+    borderColor: 'rgba(236, 240, 241, 0.3)',
+    buttonStart: '#e74c3c',
+    buttonEnd: '#c0392b'
+  }
+};
+
+let currentTheme = localStorage.getItem('currentTheme') || 'dark';
+const themeKeys = Object.keys(themes);
+
+// Theme Selector Elements
+const themeSelector = document.getElementById('theme-selector');
+const closeThemeSelector = document.getElementById('close-theme-selector');
+const themeTabs = document.querySelectorAll('.theme-tab');
+const themeTabContents = document.querySelectorAll('.theme-tab-content');
+const themesGrid = document.getElementById('themes-grid');
+
+// Custom Theme Elements
+const customBgStart = document.getElementById('custom-bg-start');
+const customBgStartText = document.getElementById('custom-bg-start-text');
+const customBgEnd = document.getElementById('custom-bg-end');
+const customBgEndText = document.getElementById('custom-bg-end-text');
+const customTextColor = document.getElementById('custom-text-color');
+const customTextColorText = document.getElementById('custom-text-color-text');
+const customAccentColor = document.getElementById('custom-accent-color');
+const customAccentColorText = document.getElementById('custom-accent-color-text');
+const customButtonStart = document.getElementById('custom-button-start');
+const customButtonStartText = document.getElementById('custom-button-start-text');
+const customButtonEnd = document.getElementById('custom-button-end');
+const customButtonEndText = document.getElementById('custom-button-end-text');
+const customFontFamily = document.getElementById('custom-font-family');
+const previewCustomTheme = document.getElementById('preview-custom-theme');
+const saveCustomTheme = document.getElementById('save-custom-theme');
+const resetCustomTheme = document.getElementById('reset-custom-theme');
+
+// Apply theme to the page
+function applyTheme(themeName) {
+  const theme = themes[themeName];
+  if (!theme) return;
+
+  document.body.dataset.theme = themeName;
+  
+  // Apply CSS variables
+  document.documentElement.style.setProperty('--bg-start', theme.bgStart);
+  document.documentElement.style.setProperty('--bg-end', theme.bgEnd);
+  document.documentElement.style.setProperty('--text-color', theme.textColor);
+  document.documentElement.style.setProperty('--card-bg', theme.cardBg);
+  document.documentElement.style.setProperty('--accent-color', theme.accentColor);
+  document.documentElement.style.setProperty('--border-color', theme.borderColor);
+  document.documentElement.style.setProperty('--button-gradient-start', theme.buttonStart);
+  document.documentElement.style.setProperty('--button-gradient-end', theme.buttonEnd);
+  
+  // Apply font family if custom theme has it
+  if (theme.fontFamily) {
+    document.body.style.fontFamily = theme.fontFamily;
+  } else {
+    document.body.style.fontFamily = "'Poppins', sans-serif";
+  }
+  
+  currentTheme = themeName;
+  localStorage.setItem('currentTheme', themeName);
+  
+  updateThemeCards();
+}
+
+// Generate theme cards
+function generateThemeCards() {
+  if (!themesGrid) return;
+  
+  themesGrid.innerHTML = '';
+  
+  Object.keys(themes).forEach(themeKey => {
+    const theme = themes[themeKey];
+    const card = document.createElement('div');
+    card.className = 'theme-card';
+    if (themeKey === currentTheme) {
+      card.classList.add('active');
+    }
+    
+    // Set background gradient for preview
+    card.style.background = `linear-gradient(135deg, ${theme.bgStart}, ${theme.bgEnd})`;
+    card.style.color = theme.textColor;
+    
+    card.innerHTML = `
+      <h3>${theme.icon} ${theme.name}</h3>
+      <div class="theme-preview">
+        <div class="theme-color-dot" style="background: ${theme.bgStart}"></div>
+        <div class="theme-color-dot" style="background: ${theme.bgEnd}"></div>
+        <div class="theme-color-dot" style="background: ${theme.buttonStart}"></div>
+        <div class="theme-color-dot" style="background: ${theme.accentColor}"></div>
+      </div>
+    `;
+    
+    card.addEventListener('click', () => {
+      applyTheme(themeKey);
+      if (quoteDiv) {
+        quoteDiv.textContent = `✨ ${theme.name} theme activated!`;
+      }
+    });
+    
+    themesGrid.appendChild(card);
+  });
+}
+
+// Update active theme card
+function updateThemeCards() {
+  const cards = themesGrid.querySelectorAll('.theme-card');
+  cards.forEach((card, index) => {
+    if (themeKeys[index] === currentTheme) {
+      card.classList.add('active');
+    } else {
+      card.classList.remove('active');
     }
   });
 }
+
+// Theme toggle button - cycles through themes
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const currentIndex = themeKeys.indexOf(currentTheme);
+    const nextIndex = (currentIndex + 1) % themeKeys.length;
+    const nextTheme = themeKeys[nextIndex];
+    
+    applyTheme(nextTheme);
+    
+    if (quoteDiv) {
+      quoteDiv.textContent = `${themes[nextTheme].icon} Switched to ${themes[nextTheme].name}!`;
+    }
+  });
+}
+
+// Open theme selector (double click on theme toggle or right click)
+if (themeToggle) {
+  themeToggle.addEventListener('dblclick', (e) => {
+    e.preventDefault();
+    themeSelector.classList.add('show');
+    generateThemeCards();
+  });
+  
+  themeToggle.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    themeSelector.classList.add('show');
+    generateThemeCards();
+  });
+}
+
+// Close theme selector
+if (closeThemeSelector) {
+  closeThemeSelector.addEventListener('click', () => {
+    themeSelector.classList.remove('show');
+  });
+}
+
+// Close when clicking outside
+if (themeSelector) {
+  themeSelector.addEventListener('click', (e) => {
+    if (e.target === themeSelector) {
+      themeSelector.classList.remove('show');
+    }
+  });
+}
+
+// Theme tabs switching
+themeTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const targetTab = tab.dataset.tab;
+    
+    // Update active tab
+    themeTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    
+    // Update active content
+    themeTabContents.forEach(content => {
+      if (content.id === `${targetTab}-tab`) {
+        content.classList.add('active');
+      } else {
+        content.classList.remove('active');
+      }
+    });
+  });
+});
+
+// Custom Theme Creator - Sync color pickers with text inputs
+function syncColorInputs(colorInput, textInput) {
+  colorInput.addEventListener('input', () => {
+    textInput.value = colorInput.value;
+  });
+  
+  textInput.addEventListener('input', () => {
+    if (/^#[0-9A-F]{6}$/i.test(textInput.value)) {
+      colorInput.value = textInput.value;
+    }
+  });
+}
+
+syncColorInputs(customBgStart, customBgStartText);
+syncColorInputs(customBgEnd, customBgEndText);
+syncColorInputs(customTextColor, customTextColorText);
+syncColorInputs(customAccentColor, customAccentColorText);
+syncColorInputs(customButtonStart, customButtonStartText);
+syncColorInputs(customButtonEnd, customButtonEndText);
+
+// Preview custom theme
+if (previewCustomTheme) {
+  previewCustomTheme.addEventListener('click', () => {
+    const customTheme = {
+      name: 'Custom',
+      icon: '🎨',
+      bgStart: customBgStart.value,
+      bgEnd: customBgEnd.value,
+      textColor: customTextColor.value,
+      cardBg: `${hexToRgba(customTextColor.value, 0.15)}`,
+      accentColor: customAccentColor.value,
+      borderColor: `${hexToRgba(customTextColor.value, 0.3)}`,
+      buttonStart: customButtonStart.value,
+      buttonEnd: customButtonEnd.value,
+      fontFamily: customFontFamily.value
+    };
+    
+    // Temporarily apply custom theme
+    document.documentElement.style.setProperty('--bg-start', customTheme.bgStart);
+    document.documentElement.style.setProperty('--bg-end', customTheme.bgEnd);
+    document.documentElement.style.setProperty('--text-color', customTheme.textColor);
+    document.documentElement.style.setProperty('--card-bg', customTheme.cardBg);
+    document.documentElement.style.setProperty('--accent-color', customTheme.accentColor);
+    document.documentElement.style.setProperty('--border-color', customTheme.borderColor);
+    document.documentElement.style.setProperty('--button-gradient-start', customTheme.buttonStart);
+    document.documentElement.style.setProperty('--button-gradient-end', customTheme.buttonEnd);
+    document.body.style.fontFamily = customTheme.fontFamily;
+    
+    if (quoteDiv) {
+      quoteDiv.textContent = '👁️ Previewing your custom theme!';
+    }
+  });
+}
+
+// Save custom theme
+if (saveCustomTheme) {
+  saveCustomTheme.addEventListener('click', () => {
+    const customTheme = {
+      name: 'My Custom Theme',
+      icon: '🎨',
+      bgStart: customBgStart.value,
+      bgEnd: customBgEnd.value,
+      textColor: customTextColor.value,
+      cardBg: `${hexToRgba(customTextColor.value, 0.15)}`,
+      accentColor: customAccentColor.value,
+      borderColor: `${hexToRgba(customTextColor.value, 0.3)}`,
+      buttonStart: customButtonStart.value,
+      buttonEnd: customButtonEnd.value,
+      fontFamily: customFontFamily.value
+    };
+    
+    // Add to themes
+    themes.custom = customTheme;
+    if (!themeKeys.includes('custom')) {
+      themeKeys.push('custom');
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('customTheme', JSON.stringify(customTheme));
+    
+    // Apply theme
+    applyTheme('custom');
+    
+    // Regenerate theme cards
+    generateThemeCards();
+    
+    if (quoteDiv) {
+      quoteDiv.textContent = '💾 Custom theme saved successfully!';
+    }
+    
+    // Close selector
+    setTimeout(() => {
+      themeSelector.classList.remove('show');
+    }, 1500);
+  });
+}
+
+// Reset custom theme
+if (resetCustomTheme) {
+  resetCustomTheme.addEventListener('click', () => {
+    customBgStart.value = customBgStartText.value = '#667eea';
+    customBgEnd.value = customBgEndText.value = '#764ba2';
+    customTextColor.value = customTextColorText.value = '#ffffff';
+    customAccentColor.value = customAccentColorText.value = '#ff6b6b';
+    customButtonStart.value = customButtonStartText.value = '#ff6b6b';
+    customButtonEnd.value = customButtonEndText.value = '#ff9a76';
+    customFontFamily.value = "'Poppins', sans-serif";
+    
+    if (quoteDiv) {
+      quoteDiv.textContent = '🔄 Custom theme reset to defaults!';
+    }
+  });
+}
+
+// Helper function to convert hex to rgba
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+// Load custom theme from localStorage if exists
+function loadCustomTheme() {
+  const savedCustomTheme = localStorage.getItem('customTheme');
+  if (savedCustomTheme) {
+    try {
+      const customTheme = JSON.parse(savedCustomTheme);
+      themes.custom = customTheme;
+      if (!themeKeys.includes('custom')) {
+        themeKeys.push('custom');
+      }
+      // Update custom theme form if saved theme exists
+      if (customFontFamily && customTheme.fontFamily) {
+        customFontFamily.value = customTheme.fontFamily;
+      }
+    } catch (e) {
+      console.error('Failed to load custom theme:', e);
+    }
+  }
+}
+
+// Initialize themes
+loadCustomTheme();
+applyTheme(currentTheme);
 
 // === Impossible Mode Toggle ===
 if (impossibleToggle) {
