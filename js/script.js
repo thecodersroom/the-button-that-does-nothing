@@ -7,7 +7,7 @@ const clickSoundFiles = [
 
 // DOM Elements
 const button = document.getElementById("useless-button");
-const counterDiv = document.getElementById("counter");
+const counterDiv = document.getElementById("counter"); // Note: 'button' is already used for the main button
 const quoteDiv = document.getElementById("quote");
 const timerDiv = document.getElementById("timer");
 const clickSound = document.getElementById("click-sound");
@@ -69,18 +69,84 @@ if (canvas) {
   });
 }
 
-// Messages
-const messages = [
-  "You are a legend… in another universe. 🌌",
-  "Clicking skills: unparalleled. 💪",
-  "You could be a professional nothing-doer. 🎯",
-  "Your dedication to nothing is inspiring. ✨",
-  "Almost… there… keep clicking! 🚀",
-  "Warning: excessive clicking may lead to existential thoughts. 🤔",
-  "The button has accepted you as its master. 👑",
-  "NASA called, they want your reaction time. 📞",
-  "Achievement unlocked: Ultimate Time Waster! 🏆",
-  "Your parents would be so proud... maybe. 😅",
+// Action Prompts with Categories and Rarity
+const actions = [
+ // Physical (Common: 10)
+{ text: "Do 20 jumping jacks.", category: "Physical", rarity: 10 },
+{ text: "Hold a wall sit for 30 seconds.", category: "Physical", rarity: 10 },
+{ text: "Do 10 lunges on each leg.", category: "Physical", rarity: 10 },
+{ text: "Roll your shoulders forward and backward for 1 minute.", category: "Physical", rarity: 10 },
+{ text: "Touch your toes slowly 10 times.", category: "Physical", rarity: 10 },
+{ text: "Do 15 calf raises.", category: "Physical", rarity: 10 },
+{ text: "Walk up and down the stairs for 2 minutes.", category: "Physical", rarity: 10 },
+{ text: "Swing your arms in big circles for 1 minute.", category: "Physical", rarity: 10 },
+{ text: "Do 10 side bends on each side.", category: "Physical", rarity: 10 },
+{ text: "Lie down and do 10 gentle leg lifts.", category: "Physical", rarity: 10 },
+
+// Mindful (Common: 10)
+{ text: "Notice 3 sounds you’ve never paid attention to before.", category: "Mindful", rarity: 10 },
+{ text: "Close your eyes and feel the texture of an object near you.", category: "Mindful", rarity: 10 },
+{ text: "Take 3 slow, deep breaths and focus on the rise and fall of your chest.", category: "Mindful", rarity: 10 },
+{ text: "Observe one cloud or tree for 2 minutes, noting details.", category: "Mindful", rarity: 10 },
+{ text: "Spend a minute noticing the temperature of the air on your skin.", category: "Mindful", rarity: 10 },
+{ text: "Slowly eat a piece of fruit or snack, noticing flavor and texture.", category: "Mindful", rarity: 10 },
+{ text: "Trace the outline of an object with your eyes slowly, noticing details.", category: "Mindful", rarity: 10 },
+{ text: "Sit quietly for 1 minute, focusing only on your breath.", category: "Mindful", rarity: 10 },
+{ text: "Notice your posture and gently adjust to feel comfortable.", category: "Mindful", rarity: 10 },
+{ text: "Pay attention to your heartbeat for one minute, noticing rhythm and pace.", category: "Mindful", rarity: 10 },
+// Social (Uncommon: 5)
+{ text: "Send a positive message to a colleague or classmate.", category: "Social", rarity: 5 },
+{ text: "Invite a friend to share a short walk or coffee.", category: "Social", rarity: 5 },
+{ text: "Call or text someone just to say 'hi' without an agenda.", category: "Social", rarity: 5 },
+{ text: "Write down a compliment about someone you know and send it to them.", category: "Social", rarity: 5 },
+{ text: "Share a helpful tip or resource with someone who might need it.", category: "Social", rarity: 5 },
+{ text: "Reach out to someone you haven’t spoken to in a while.", category: "Social", rarity: 5 },
+{ text: "Ask a friend about a goal they’re working on and encourage them.", category: "Social", rarity: 5 },
+{ text: "Leave a kind note or message for someone you see regularly.", category: "Social", rarity: 5 },
+{ text: "Offer help to someone today, even if small.", category: "Social", rarity: 5 },
+{ text: "Share a happy memory with a loved one.", category: "Social", rarity: 5 },
+
+// Purposeful (Uncommon: 5)
+{ text: "Set a timer for 5 minutes and declutter one small space.", category: "Purposeful", rarity: 5 },
+{ text: "Write down one thing you want to accomplish before the day ends.", category: "Purposeful", rarity: 5 },
+{ text: "Plan one small act of kindness you can do tomorrow.", category: "Purposeful", rarity: 5 },
+{ text: "Review your schedule and prioritize the most important task.", category: "Purposeful", rarity: 5 },
+{ text: "Write a short note about your long-term goal progress.", category: "Purposeful", rarity: 5 },
+{ text: "Organize one folder or section on your computer or phone.", category: "Purposeful", rarity: 5 },
+{ text: "Reflect on your top 3 priorities today.", category: "Purposeful", rarity: 5 },
+{ text: "Make a small plan to finish an unfinished task.", category: "Purposeful", rarity: 5 },
+{ text: "Write down one thing that would make tomorrow better.", category: "Purposeful", rarity: 5 },
+{ text: "Set a mini-challenge for yourself to complete in 10 minutes.", category: "Purposeful", rarity: 5 },
+
+
+// Growth (Rare: 2)
+{ text: "Write down one thing you learned today.", category: "Growth", rarity: 2 },
+{ text: "Listen to a 3-minute educational podcast or video on a topic you’re curious about.", category: "Growth", rarity: 2 },
+{ text: "Try a quick brain teaser or logic puzzle.", category: "Growth", rarity: 2 },
+{ text: "Learn a short phrase in a new language.", category: "Growth", rarity: 2 },
+{ text: "Read an interesting article headline and summarize it in one sentence.", category: "Growth", rarity: 2 },
+{ text: "Research a famous person who inspires you and note one key lesson from them.", category: "Growth", rarity: 2 },
+{ text: "Write down one skill you’d like to improve and a small first step.", category: "Growth", rarity: 2 },
+{ text: "Try a new creative activity for 5 minutes (drawing, writing, music).", category: "Growth", rarity: 2 },
+{ text: "Find and memorize one inspiring quote.", category: "Growth", rarity: 2 },
+{ text: "Think of a problem you faced recently and brainstorm one alternative solution.", category: "Growth", rarity: 2 },
+{ text: "Watch a short tutorial on something practical (e.g., cooking, tech tip, exercise).", category: "Growth", rarity: 2 },
+{ text: "Read a random page from a book you’ve never read before.", category: "Growth", rarity: 2 },
+
+
+// Special (Super Rare: 1)
+{ text: "Take a moment to write a note of encouragement to your future self.", category: "Growth", rarity: 1 },
+{ text: "Stand up, stretch, and silently say 'I am proud of myself' three times.", category: "Growth", rarity: 1 },
+{ text: "Treat yourself to a small indulgence mindfully (like a favorite snack or drink).", category: "Growth", rarity: 1 },
+{ text: "Reflect on one recent accomplishment and celebrate it in writing.", category: "Growth", rarity: 1 },
+{ text: "Spend 2 minutes imagining your ideal day and savor the feeling.", category: "Growth", rarity: 1 },
+{ text: "Close your eyes and think of someone who makes your life better; send them gratitude silently.", category: "Growth", rarity: 1 },
+{ text: "Give yourself a mini award for completing a recent task—say it out loud.", category: "Growth", rarity: 1 },
+{ text: "Draw or doodle something that represents how you feel right now.", category: "Growth", rarity: 1 },
+{ text: "Write down one quality about yourself that you admire.", category: "Growth", rarity: 1 },
+{ text: "Take a mindful pause and truly notice one beautiful thing in your surroundings.", category: "Growth", rarity: 1 },
+
+
 ];
 
 const failedClickMessages = [
@@ -470,6 +536,7 @@ if (button) {
     e.stopPropagation();
     clicks++;
     checkCombo();
+    getNewAction(); // This will now update the quoteDiv
     
     // Prevent mouseover from registering a failed click when clicking
     isButtonMoving = true;
@@ -503,13 +570,9 @@ if (button) {
 
     if (clicks === 20) {
       quoteDiv.textContent = "✨ 20-CLICK POWER UP! Particles Erupt! ✨";
-      burstButtonParticles(); // Power Up 
-    } else {
-      quoteDiv.textContent = quoteDiv.textContent;
-      buttonDisableTeleport(); // Reset 
     }
 
-    // 🎉 Confetti animation at 50 clicks
+    //  Confetti animation at 50 clicks
     if (clicks === 50 && typeof createConfetti === "function") {
       createConfetti();
     }
@@ -527,6 +590,48 @@ if (button) {
     updateActivityTime();
   });
 }
+
+// === Action Prompt System (Rarity + Cooldown) ===
+
+// Cooldown period in milliseconds (e.g., 10 minutes)
+const CATEGORY_COOLDOWN = 10 * 60 * 1000; 
+
+// Load cooldowns from localStorage to make them persistent
+let categoryCooldowns = JSON.parse(localStorage.getItem('categoryCooldowns')) || {};
+
+function getNewAction() {
+    const now = Date.now();
+
+    // 1️ Filter actions whose categories are NOT in cooldown
+    const available = actions.filter(a => {
+        const lastShown = categoryCooldowns[a.category];
+        return !lastShown || now - lastShown > CATEGORY_COOLDOWN;
+    });
+
+    // 2️ random show when cooldown 
+    const pool = available.length > 0 ? available : actions;
+
+    // 3️ Weighted random selection (rarity logic)
+    const totalWeight = pool.reduce((sum, a) => sum + (1 / a.rarity), 0);
+    let rand = Math.random() * totalWeight;
+    let selected = pool[0];
+
+    for (const a of pool) {
+        rand -= (1 / a.rarity);
+        if (rand <= 0) {
+            selected = a;
+            break;
+        }
+    }
+
+    // 4 Display the prompt
+    quoteDiv.textContent = selected.text;
+
+    // 5️ Update cooldown for that category
+    categoryCooldowns[selected.category] = now;
+    localStorage.setItem('categoryCooldowns', JSON.stringify(categoryCooldowns));
+}
+
 
 
 // === Count failed clicks when clicking anywhere but the button ===
@@ -1119,7 +1224,7 @@ function updateActivityTime() {
 
 // Function to get a random inactivity time between 15-30 seconds
 function getRandomInactivityTime() {
-  return Math.floor(Math.random() * (30000 - 15000 + 1)) + 15000; // 15-30 seconds
+  return Math.floor(Math.random() * (60000 - 30000 + 1)) + 30000; // 30-60 seconds
 }
 
 // Function to show the popup
@@ -1130,10 +1235,10 @@ function showPopup() {
   popupActive = true;
   popupContainer.classList.add("show");
 
-  // Auto-close popup after 8 seconds
+  // Auto-close popup after 15 seconds
   popupAutoCloseTimer = setTimeout(() => {
     hidePopup();
-  }, 8000);
+  }, 15000);
 }
 
 // Function to hide the popup
@@ -1224,6 +1329,9 @@ window.addEventListener("load", () => {
   // initial background
   changeBackgroundColor();
 });
+
+// Load an initial action prompt when the page first loads
+document.addEventListener('DOMContentLoaded', getNewAction);
 
 // === Sound Settings System ===
 function playBackgroundMusic(trackName) {
