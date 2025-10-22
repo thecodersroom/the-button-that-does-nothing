@@ -3,57 +3,271 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Button That Does Nothing</title>
+    <title>The Button That Does Nothing - Extreme Edition</title>
+    
+    <!-- Fonts -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Press+Start+2P&display=swap"
       rel="stylesheet"
     />
+    
+    <!-- Font Awesome Icons - Updated CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/themes.css" />
+    <link rel="stylesheet" href="css/enhanced.css" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/clock.css" />
     <link rel="icon" type="image/x-icon" href="/image/favicon.ico" />
   </head>
 
-  <body>
+  <body data-theme="dark">
+    <!-- Particle Canvas Background -->
+    <canvas id="particle-canvas"></canvas>
+    
+    <!-- Matrix Rain Effect -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- Clock -->
     <div class="clock-container">
       <div class="clock">
-        <span id="hrs">00</span>:<span id="min">00</span>:<span id="sec"
-          >00</span
-        >
+        <span id="hrs">00</span>:<span id="min">00</span>:<span id="sec">00</span>
       </div>
     </div>
+
+    <!-- Stats Panel Toggle -->
+    <button id="stats-toggle" class="floating-btn" title="Statistics">
+      <i class="fas fa-chart-line"></i>
+      <span class="emoji-fallback">📊</span>
+    </button>
+    <button id="powerups-toggle" class="floating-btn" title="Power-ups">
+      <i class="fas fa-bolt"></i>
+      <span class="emoji-fallback">⚡</span>
+    </button>
+    <button id="challenge-toggle" class="floating-btn" title="Challenges">
+      <i class="fas fa-trophy"></i>
+      <span class="emoji-fallback">🎯</span>
+    </button>
+    
     <div class="app-container">
-      <h1>The Button That Does Nothing</h1>
-
-      <!-- NEW: Impossible Mode Toggle -->
-      <div class="toggle-container">
-        <label class="toggle-label">
-          <input type="checkbox" id="impossible-toggle" />
-          <span class="toggle-slider"></span>
-          <span class="toggle-text">🔥 IMPOSSIBLE MODE</span>
-        </label>
+      <h1 class="glitch" data-text="The Button That Does Nothing">The Button That Does Nothing</h1>
+      
+      <!-- Game Mode Selector -->
+      <div class="mode-selector">
+        <button class="mode-btn active" data-mode="normal">
+          <i class="fas fa-gamepad"></i> Normal
+        </button>
+        <button class="mode-btn" data-mode="hard">
+          <i class="fas fa-dumbbell"></i> Hard
+        </button>
+        <button class="mode-btn" data-mode="impossible">
+          <i class="fas fa-fire"></i> Impossible
+        </button>
+        <button class="mode-btn" data-mode="god">
+          <i class="fas fa-crown"></i> God Mode
+        </button>
       </div>
-
+      
+      <!-- Theme Selector -->
+      <div class="theme-selector">
+        <button class="theme-btn active" data-theme="dark">
+          <i class="fas fa-moon"></i> Dark
+        </button>
+        <button class="theme-btn" data-theme="light">
+          <i class="fas fa-sun"></i> Light
+        </button>
+        <button class="theme-btn" data-theme="neon">
+          <i class="fas fa-gem"></i> Neon
+        </button>
+        <button class="theme-btn" data-theme="retro">
+          <i class="fas fa-gamepad"></i> Retro
+        </button>
+        <button class="theme-btn" data-theme="matrix">
+          <i class="fas fa-terminal"></i> Matrix
+        </button>
+      </div>
+      
+      <!-- The Main Button -->
       <div class="button-container">
-        <button id="useless-button">Click Me!</button>
+        <button id="useless-button" class="button-3d">
+          <span class="button-text">Click Me!</span>
+          <span class="button-shine"></span>
+        </button>
       </div>
+      
+      <!-- Active Power-ups Display -->
+      <div id="active-powerups" class="active-powerups"></div>
+      
       <!--Control buttons-->
       <div class="control-buttons">
-        <button id="theme-toggle">Toggle Theme</button>
-        <button id="sound-toggle">🎵</button>
+        <button id="sound-toggle" title="Sound Settings">
+          <i class="fas fa-volume-up"></i>
+          <span class="emoji-fallback">🎵</span>
+        </button>
       </div>
-      <div id="counter">Clicks: 0 | Failed clicks: 0</div>
+      
+      <!-- Stats Display -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="click-count">0</div>
+          <div class="stat-label">Successful Clicks</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="miss-count">0</div>
+          <div class="stat-label">Missed Clicks</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="accuracy">100%</div>
+          <div class="stat-label">Accuracy</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="combo-display">0x</div>
+          <div class="stat-label">Combo</div>
+        </div>
+      </div>
+      
+      <!-- Quote & Timer -->
       <div id="achievement-popup">
         <span class="achievement-icon"> </span>
         <span class="achievement-text"> </span>
       </div>
       <div id="quote" class="quote">"Loading some wisdom..."</div>
       <div id="timer" class="timer">Time spent doing nothing: 00:00</div>
+      
+      <!-- Progress Bar -->
+      <div class="progress-container">
+        <div class="progress-label">Next Achievement</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Sounds -->
     <audio id="click-sound" src="audio/click1.mp3"></audio>
     <audio id="fail-sound" src="audio/failedClick.mp3"></audio>
+    <audio id="powerup-sound" src="audio/click1.mp3"></audio>
+    <audio id="achievement-sound" src="audio/click1.mp3"></audio>
     <audio id="bg-music" loop></audio>
+
+    <!-- Statistics Dashboard -->
+    <div id="stats-panel" class="side-panel">
+      <div class="panel-header">
+        <h2><i class="fas fa-chart-line"></i> Statistics</h2>
+        <button class="close-panel"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="panel-content">
+        <div class="stat-item">
+          <span>Total Clicks:</span>
+          <strong id="total-clicks-stat">0</strong>
+        </div>
+        <div class="stat-item">
+          <span>Total Misses:</span>
+          <strong id="total-misses-stat">0</strong>
+        </div>
+        <div class="stat-item">
+          <span>Best Combo:</span>
+          <strong id="best-combo-stat">0</strong>
+        </div>
+        <div class="stat-item">
+          <span>Time Played:</span>
+          <strong id="time-played-stat">00:00</strong>
+        </div>
+        <div class="stat-item">
+          <span>Clicks per Minute:</span>
+          <strong id="cpm-stat">0</strong>
+        </div>
+        <div class="stat-item">
+          <span>High Score:</span>
+          <strong id="high-score-stat">0</strong>
+        </div>
+        <div class="leaderboard">
+          <h3><i class="fas fa-trophy"></i> Top Scores</h3>
+          <ol id="leaderboard-list">
+            <li>No scores yet!</li>
+          </ol>
+        </div>
+        <button id="reset-stats" class="danger-btn">
+          <i class="fas fa-trash-alt"></i> Reset Statistics
+        </button>
+      </div>
+    </div>
+
+    <!-- Power-ups Panel -->
+    <div id="powerups-panel" class="side-panel">
+      <div class="panel-header">
+        <h2><i class="fas fa-bolt"></i> Power-ups</h2>
+        <button class="close-panel"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="panel-content">
+        <div class="powerup-item" data-powerup="shield">
+          <div class="powerup-icon"><i class="fas fa-shield-alt"></i></div>
+          <div class="powerup-info">
+            <h4>Shield</h4>
+            <p>Button can't run for 10 seconds</p>
+            <button class="powerup-activate" data-cost="50">Activate (50 clicks)</button>
+          </div>
+        </div>
+        <div class="powerup-item" data-powerup="magnet">
+          <div class="powerup-icon"><i class="fas fa-magnet"></i></div>
+          <div class="powerup-info">
+            <h4>Magnet</h4>
+            <p>Button is attracted to cursor</p>
+            <button class="powerup-activate" data-cost="30">Activate (30 clicks)</button>
+          </div>
+        </div>
+        <div class="powerup-item" data-powerup="freeze">
+          <div class="powerup-icon"><i class="fas fa-snowflake"></i></div>
+          <div class="powerup-info">
+            <h4>Freeze Time</h4>
+            <p>Slow down button movement</p>
+            <button class="powerup-activate" data-cost="40">Activate (40 clicks)</button>
+          </div>
+        </div>
+        <div class="powerup-item" data-powerup="giant">
+          <div class="powerup-icon"><i class="fas fa-expand-arrows-alt"></i></div>
+          <div class="powerup-info">
+            <h4>Giant Button</h4>
+            <p>Makes button huge for 15 seconds</p>
+            <button class="powerup-activate" data-cost="25">Activate (25 clicks)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Challenge Panel -->
+    <div id="challenge-panel" class="side-panel">
+      <div class="panel-header">
+        <h2><i class="fas fa-trophy"></i> Challenges</h2>
+        <button class="close-panel"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="panel-content">
+        <div class="challenge-active" id="active-challenge">
+          <p>No active challenge</p>
+        </div>
+        <div class="challenge-item">
+          <h4><i class="fas fa-bolt"></i> Speed Demon</h4>
+          <p>Click 10 times in 5 seconds</p>
+          <button class="challenge-start" data-challenge="speed">Start Challenge</button>
+        </div>
+        <div class="challenge-item">
+          <h4><i class="fas fa-bullseye"></i> Accuracy Master</h4>
+          <p>Achieve 95% accuracy for 20 clicks</p>
+          <button class="challenge-start" data-challenge="accuracy">Start Challenge</button>
+        </div>
+        <div class="challenge-item">
+          <h4><i class="fas fa-fire"></i> Combo King</h4>
+          <p>Reach a 10x combo</p>
+          <button class="challenge-start" data-challenge="combo">Start Challenge</button>
+        </div>
+        <div class="challenge-item">
+          <h4><i class="fas fa-clock"></i> Time Attack</h4>
+          <p>100 clicks in 60 seconds</p>
+          <button class="challenge-start" data-challenge="timeattack">Start Challenge</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Are You Still Clicking Popup -->
     <div id="still-clicking-popup" class="popup-container">
@@ -66,15 +280,27 @@
       </div>
     </div>
 
+    </div>
+
     <!-- Sound Settings Panel -->
     <div id="sound-panel" class="popup-container">
       <div class="popup-content">
-        <h2>🎵 Sound Settings</h2>
+        <h2><i class="fas fa-music"></i> Sound Settings</h2>
         <div class="sound-controls">
-          <label><input type="checkbox" id="sounds-toggle" checked> 🔊 Sounds</label>
-          <label><input type="checkbox" id="music-toggle" checked> 🎵 Music</label>
-          <label>🔉 Volume: <input type="range" id="volume-slider" min="0" max="100" value="50"></label>
-          <label>🎶 Track: 
+          <label>
+            <input type="checkbox" id="sounds-toggle" checked> 
+            <i class="fas fa-volume-up"></i> Sounds
+          </label>
+          <label>
+            <input type="checkbox" id="music-toggle" checked> 
+            <i class="fas fa-music"></i> Music
+          </label>
+          <label>
+            <i class="fas fa-volume-down"></i> Volume: 
+            <input type="range" id="volume-slider" min="0" max="100" value="50">
+          </label>
+          <label>
+            <i class="fas fa-list"></i> Track: 
             <select id="track-selector">
               <option value="8bit" selected>8-Bit Retro</option>
               <option value="lofi">Lo-Fi Chill</option>
@@ -87,8 +313,36 @@
         </div>
       </div>
     </div>
+    
+    <!-- Easter Egg Notification -->
+    <div id="easter-egg-notification" class="notification"></div>
 
-    <script src="js/script.js"></script>
+    <!-- Icon Fallback Script -->
+    <script>
+      // Check if Font Awesome loaded, if not show emoji fallback
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const testIcon = document.querySelector('i.fas');
+          if (testIcon) {
+            const computed = window.getComputedStyle(testIcon);
+            const fontFamily = computed.getPropertyValue('font-family');
+            
+            // If Font Awesome didn't load, show emojis
+            if (!fontFamily.includes('Font Awesome')) {
+              document.querySelectorAll('.emoji-fallback').forEach(function(emoji) {
+                emoji.style.display = 'inline';
+              });
+              document.querySelectorAll('i.fas').forEach(function(icon) {
+                icon.style.display = 'none';
+              });
+            }
+          }
+        }, 100);
+      });
+    </script>
+
+    <script src="js/enhanced.js"></script>
+    <script src="js/integration.js"></script>
     <script src="js/clock.js"></script>
   </body>
 </html>

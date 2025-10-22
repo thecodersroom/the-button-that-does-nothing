@@ -1,0 +1,159 @@
+/* ========================================
+   🎨 THEME SYSTEM - Modern & Impressive
+   ======================================== */
+
+/* Dark Theme (Default) */
+:root,
+[data-theme="dark"] {
+  --bg-start: #0a0e27;
+  --bg-mid: #16213e;
+  --bg-end: #0f3460;
+  --text-color: #e8f1f5;
+  --text-secondary: #94a9c9;
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --accent-color: #4cc9f0;
+  --accent-secondary: #7209b7;
+  --accent-glow: rgba(76, 201, 240, 0.4);
+  --success-color: #06ffa5;
+  --warning-color: #ffbe0b;
+  --danger-color: #f72585;
+  --button-gradient-start: #4361ee;
+  --button-gradient-end: #4cc9f0;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.4);
+  --blur-amount: 20px;
+}
+
+/* Light Theme */
+[data-theme="light"] {
+  --bg-start: #f8f9fa;
+  --bg-mid: #e9ecef;
+  --bg-end: #dee2e6;
+  --text-color: #212529;
+  --text-secondary: #495057;
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --card-border: rgba(0, 0, 0, 0.08);
+  --accent-color: #0077b6;
+  --accent-secondary: #7209b7;
+  --accent-glow: rgba(0, 119, 182, 0.3);
+  --success-color: #06d6a0;
+  --warning-color: #ffd60a;
+  --danger-color: #ef476f;
+  --button-gradient-start: #0096c7;
+  --button-gradient-end: #00b4d8;
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.12);
+  --blur-amount: 25px;
+}
+
+/* Neon Theme */
+[data-theme="neon"] {
+  --bg-start: #000000;
+  --bg-mid: #0d0221;
+  --bg-end: #1a1a2e;
+  --text-color: #00fff5;
+  --text-secondary: #00d9ff;
+  --card-bg: rgba(0, 255, 245, 0.04);
+  --card-border: rgba(0, 255, 245, 0.2);
+  --accent-color: #ff006e;
+  --accent-secondary: #8338ec;
+  --accent-glow: rgba(255, 0, 110, 0.6);
+  --success-color: #06ffa5;
+  --warning-color: #ffbe0b;
+  --danger-color: #ff006e;
+  --button-gradient-start: #ff006e;
+  --button-gradient-end: #8338ec;
+  --glass-bg: rgba(0, 255, 245, 0.08);
+  --glass-border: rgba(0, 255, 245, 0.3);
+  --shadow-color: rgba(255, 0, 110, 0.3);
+  --blur-amount: 15px;
+}
+
+[data-theme="neon"] * {
+  text-shadow: 0 0 10px currentColor;
+}
+
+[data-theme="neon"] .app-container {
+  box-shadow: 0 0 50px var(--accent-glow), 
+              0 0 100px var(--accent-glow);
+}
+
+/* Retro Theme */
+[data-theme="retro"] {
+  --bg-start: #2c003e;
+  --bg-mid: #512b58;
+  --bg-end: #2c003e;
+  --text-color: #ffff00;
+  --text-secondary: #ffa500;
+  --card-bg: rgba(255, 255, 0, 0.05);
+  --card-border: rgba(255, 255, 0, 0.3);
+  --accent-color: #ff00ff;
+  --accent-glow: rgba(255, 0, 255, 0.6);
+  --success-color: #00ff00;
+  --warning-color: #ffff00;
+  --danger-color: #ff0000;
+  --button-gradient-start: #ff00ff;
+  --button-gradient-end: #ffff00;
+  --glass-bg: rgba(255, 255, 0, 0.1);
+  --glass-border: rgba(255, 255, 0, 0.3);
+  --shadow-color: rgba(255, 0, 255, 0.5);
+}
+
+[data-theme="retro"] * {
+  font-family: 'Press Start 2P', cursive !important;
+  font-size: 0.85em;
+  letter-spacing: 2px;
+}
+
+[data-theme="retro"] .app-container {
+  border: 4px solid var(--accent-color);
+  box-shadow: 0 0 20px var(--accent-glow);
+  image-rendering: pixelated;
+}
+
+/* Matrix Theme */
+[data-theme="matrix"] {
+  --bg-start: #000000;
+  --bg-mid: #001a00;
+  --bg-end: #000000;
+  --text-color: #00ff00;
+  --text-secondary: #00aa00;
+  --card-bg: rgba(0, 255, 0, 0.03);
+  --card-border: rgba(0, 255, 0, 0.2);
+  --accent-color: #00ff00;
+  --accent-glow: rgba(0, 255, 0, 0.6);
+  --success-color: #00ff00;
+  --warning-color: #ffff00;
+  --danger-color: #ff0000;
+  --button-gradient-start: #003300;
+  --button-gradient-end: #00ff00;
+  --glass-bg: rgba(0, 255, 0, 0.05);
+  --glass-border: rgba(0, 255, 0, 0.3);
+  --shadow-color: rgba(0, 255, 0, 0.3);
+}
+
+[data-theme="matrix"] * {
+  font-family: 'Courier New', monospace !important;
+  text-shadow: 0 0 5px currentColor;
+}
+
+[data-theme="matrix"] #matrix-canvas {
+  display: block !important;
+  opacity: 0.5;
+}
+
+/* Gradient Animation */
+body {
+  background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

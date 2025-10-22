@@ -1,39 +1,40 @@
 /* === Clock Styles === */
 .clock-container {
     position: fixed;
-    top: 30px;
-    right: 30px;
+    top: 20px;
+    right: 20px;
     z-index: 100;
 }
 
 .clock {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    padding: 15px 25px;
-    border-radius: 50px;
-    color: #fff;
-    font-size: 1.5em;
-    font-weight: 600;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    letter-spacing: 2px;
-    animation: clockPulse 2s ease-in-out infinite;
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 12px 20px;
+    border-radius: 12px;
+    color: var(--text-color);
+    font-size: 1.2em;
+    font-weight: 700;
+    text-shadow: 0 2px 8px var(--shadow-color);
+    box-shadow: 0 4px 16px var(--shadow-color);
+    border: 1px solid var(--glass-border);
+    letter-spacing: 1.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes clockPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+.clock:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px var(--accent-glow);
 }
 
 @media (max-width: 768px) {
     .clock-container {
-        top: 15px;
-        right: 15px;
+        top: 12px;
+        right: 12px;
     }
     
     .clock {
-        font-size: 1.2em;
-        padding: 10px 20px;
+        font-size: 1rem;
+        padding: 10px 16px;
     }
 }
