@@ -470,6 +470,12 @@ if (button) {
     e.stopPropagation();
     clicks++;
     checkCombo();
+    
+    // Prevent mouseover from registering a failed click when clicking
+    isButtonMoving = true;
+    setTimeout(() => {
+      isButtonMoving = false;
+    }, 300);
 
     const randomMessage = messages[Math.floor(Math.random() * messages.length)];
     updateCounter(`— ${randomMessage}`);
@@ -523,6 +529,32 @@ if (button) {
 }
 
 
+// === Count failed clicks when clicking anywhere but the button ===
+document.addEventListener("click", (e) => {
+  // Check if the click target is a button or inside a button
+  const clickedButton = e.target.closest('button');
+  const clickedInput = e.target.closest('input');
+  const clickedLabel = e.target.closest('label');
+  
+  // Only count as failed click if NOT clicking on any interactive element
+  if (!clickedButton && !clickedInput && !clickedLabel) {
+    failedClicks++;
+    
+    const messageArray = impossibleMode ? impossibleFailMessages : failedClickMessages;
+    const randomFail = messageArray[Math.floor(Math.random() * messageArray.length)];
+    updateCounter(`— ${randomFail}`);
+
+    // Play fail sound occasionally
+    if (failedClicks % (impossibleMode ? 5 : 10) === 0 && userInteracted) {
+      if (failSound) {
+        failSound.volume = masterVolume;
+        failSound.currentTime = 0;
+        failSound.play().catch(() => {});
+      }
+    }
+  }
+});
+
 // === Button Dodge / Mouseover ===
 if (button) {
   button.addEventListener("mouseover", () => {
@@ -539,19 +571,6 @@ if (button) {
     const dodgeChance = impossibleMode ? 1 : 0.9;
     if (Math.random() < dodgeChance) {
       isButtonMoving = true;
-      failedClicks++;
-
-      const messageArray = impossibleMode ? impossibleFailMessages : failedClickMessages;
-      const randomFail = messageArray[Math.floor(Math.random() * messageArray.length)];
-      updateCounter(`— ${randomFail}`);
-
-      // Play fail sound occasionally
-      if (failedClicks % (impossibleMode ? 5 : 10) === 0 && userInteracted) {
-        if (failSound) {
-          failSound.currentTime = 0;
-          failSound.play().catch(() => {});
-        }
-      }
 
       const rotation = impossibleMode ? getRandomNumber(-15, 15) : 5;
       button.style.transform = `rotate(${rotation}deg)`;
