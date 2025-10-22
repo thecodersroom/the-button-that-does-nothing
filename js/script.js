@@ -535,8 +535,12 @@ if (button) {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
     clicks++;
+    updateCounter(); // Update click counts on every click
     checkCombo();
-    getNewAction(); // This will now update the quoteDiv
+
+    if (clicks % 10 === 0) {
+      getNewAction();
+    }
 
     // Change button appearance
     button.style.backgroundColor = getRandomColor();
@@ -578,7 +582,6 @@ if (button) {
     const { randomX, randomY } = getRandomLocation();
     buttonTeleport(randomX, randomY);
 
-    updateActivityTime();
   });
 }
 
