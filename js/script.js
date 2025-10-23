@@ -535,7 +535,7 @@ if (button) {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
     clicks++;
-    updateCounter(); // Update click counts on every click
+    updateCounter();
     checkCombo();
 
 
