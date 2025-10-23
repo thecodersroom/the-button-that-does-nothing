@@ -7,23 +7,16 @@
 }
 
 .clock {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    padding: 15px 25px;
+    background: rgba(255, 255, 255, 0.25);
+    padding: 12px 20px;
     border-radius: 50px;
     color: #fff;
-    font-size: 1.5em;
+    font-size: 1.2em;
     font-weight: 600;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    letter-spacing: 2px;
-    animation: clockPulse 2s ease-in-out infinite;
-}
-
-@keyframes clockPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    letter-spacing: 1px;
 }
 
 @media (max-width: 768px) {
@@ -31,9 +24,9 @@
         top: 15px;
         right: 15px;
     }
-    
+
     .clock {
-        font-size: 1.2em;
-        padding: 10px 20px;
+        font-size: 1em;
+        padding: 8px 16px;
     }
 }

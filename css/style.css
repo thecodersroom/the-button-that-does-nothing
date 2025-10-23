@@ -57,16 +57,16 @@
   --transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* Theme Colors - Default (Dark Purple) */
-  --bg-start: #667eea;
-  --bg-end: #764ba2;
+  --bg-start: #5b63d3;
+  --bg-end: #6b46a8;
   --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --card-bg: rgba(255, 255, 255, 0.1);
-  --card-bg-solid: rgba(255, 255, 255, 0.15);
-  --accent-color: #ff6b6b;
-  --border-color: rgba(255, 255, 255, 0.2);
-  --button-gradient-start: #ff6b6b;
-  --button-gradient-end: #ff9a76;
+  --text-secondary: rgba(255, 255, 255, 0.85);
+  --card-bg: rgba(255, 255, 255, 0.12);
+  --card-bg-solid: rgba(255, 255, 255, 0.18);
+  --accent-color: #ffd93d;
+  --border-color: rgba(255, 255, 255, 0.25);
+  --button-gradient-start: #6bcf7f;
+  --button-gradient-end: #4ec9db;
   --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* Utility Colors */
@@ -241,9 +241,9 @@ body {
 .app-container {
   position: relative;
   width: 100%;
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: var(--space-3xl) var(--space-2xl);
+  padding: var(--space-2xl) var(--space-xl);
   background: var(--card-bg-solid);
   backdrop-filter: blur(20px) saturate(180%);
   border-radius: var(--radius-xl);
@@ -260,11 +260,10 @@ body {
 
 /* === TYPOGRAPHY === */
 h1 {
-  font-size: clamp(var(--text-3xl), 5vw, var(--text-6xl));
+  font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
   font-weight: 700;
-  margin: 0 0 var(--space-xl) 0;
-  margin-top: var(--space-3xl);
-  background: linear-gradient(135deg, var(--text-color), var(--accent-color));
+  margin: 0 0 var(--space-lg) 0;
+  background: linear-gradient(135deg, #ffffff, var(--accent-color));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -373,8 +372,8 @@ h1::after {
 
 /* === THE BUTTON (STAR OF THE SHOW) === */
 .button-container {
-  margin: var(--space-4xl) 0;
-  min-height: 200px;
+  margin: var(--space-2xl) 0;
+  min-height: 160px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -401,36 +400,36 @@ h1::after {
   --magnetic-y: 0px;
   
   /* 3D Depth Effect */
-  box-shadow: 
-    0 4px 6px rgba(0, 0, 0, 0.1),
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.2),
     0 10px 20px rgba(0, 0, 0, 0.15),
     0 20px 40px rgba(0, 0, 0, 0.1),
-    0 0 60px rgba(255, 107, 107, 0.3),
+    0 0 60px rgba(107, 207, 127, 0.4),
     inset 0 -2px 0 rgba(0, 0, 0, 0.2),
-    inset 0 2px 0 rgba(255, 255, 255, 0.2);
-  
+    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+
   /* Glow animation */
   animation: buttonBreath 3s ease-in-out infinite;
 }
 
 @keyframes buttonBreath {
   0%, 100% {
-    box-shadow: 
-      0 4px 6px rgba(0, 0, 0, 0.1),
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.2),
       0 10px 20px rgba(0, 0, 0, 0.15),
       0 20px 40px rgba(0, 0, 0, 0.1),
-      0 0 40px rgba(255, 107, 107, 0.3),
+      0 0 40px rgba(107, 207, 127, 0.4),
       inset 0 -2px 0 rgba(0, 0, 0, 0.2),
-      inset 0 2px 0 rgba(255, 255, 255, 0.2);
+      inset 0 2px 0 rgba(255, 255, 255, 0.3);
   }
   50% {
-    box-shadow: 
-      0 4px 6px rgba(0, 0, 0, 0.1),
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.2),
       0 10px 20px rgba(0, 0, 0, 0.15),
       0 20px 40px rgba(0, 0, 0, 0.1),
-      0 0 80px rgba(255, 107, 107, 0.5),
+      0 0 80px rgba(78, 201, 219, 0.6),
       inset 0 -2px 0 rgba(0, 0, 0, 0.2),
-      inset 0 2px 0 rgba(255, 255, 255, 0.2);
+      inset 0 2px 0 rgba(255, 255, 255, 0.3);
   }
 }
 
@@ -446,13 +445,13 @@ h1::after {
 
 #useless-button:hover {
   transform: translate(var(--magnetic-x), calc(var(--magnetic-y) - 8px)) scale(1.05);
-  box-shadow: 
+  box-shadow:
     0 8px 12px rgba(0, 0, 0, 0.15),
     0 20px 40px rgba(0, 0, 0, 0.2),
     0 30px 60px rgba(0, 0, 0, 0.15),
-    0 0 100px rgba(255, 107, 107, 0.6),
+    0 0 100px rgba(78, 201, 219, 0.7),
     inset 0 -2px 0 rgba(0, 0, 0, 0.2),
-    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+    inset 0 2px 0 rgba(255, 255, 255, 0.4);
 }
 
 #useless-button:hover::before {
@@ -461,46 +460,46 @@ h1::after {
 
 #useless-button:active {
   transform: translate(var(--magnetic-x), calc(var(--magnetic-y) - 2px)) scale(0.98);
-  box-shadow: 
+  box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.1),
     0 5px 10px rgba(0, 0, 0, 0.15),
-    0 0 40px rgba(255, 107, 107, 0.4),
+    0 0 40px rgba(107, 207, 127, 0.5),
     inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 #share-button {
-  /* Basic Styling */
-  background-color: #007bff; /* A nice blue color */
-  color: white;
+  background: linear-gradient(135deg, var(--accent-color), #ffb93d);
+  color: #2d2d2d;
   border: none;
-  padding: 10px 16px; /* 10px top/bottom, 16px left/right */
-  
-  /* Appearance */
+  padding: 12px 24px;
   font-size: 14px;
-  font-weight: 600;
-  border-radius: 8px; /* Rounded corners */
+  font-weight: 700;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  
-  /* Smooth Hover Effect */
-  transition: background-color 0.2s ease;
-}
-/* For the "My High Score: 7" line */
-.high-score-display {
-  font-size: 1.1rem;   
-  font-weight: 600;  
-  color: #4a4a4a;   
-  margin-top: 15px;   
-  margin-bottom: 15px; 
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+  margin-top: var(--space-md);
 }
 
-/* To make the score number (e.g., "7") stand out */
-#high-score {
-  font-weight: 800;  
-  color: #0056b3;   
-  font-size: 1.2rem; 
-  margin-left: 5px;  
+.high-score-display {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-top: var(--space-lg);
+  margin-bottom: 0;
+  text-align: center;
 }
+
+#high-score {
+  font-weight: 800;
+  color: var(--accent-color);
+  font-size: 1.4rem;
+  margin-left: 5px;
+  text-shadow: 0 2px 8px rgba(255, 217, 61, 0.4);
+}
+
 #share-button:hover {
-  background-color: #0056b3; 
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 /* Ripple effect */
 #useless-button::after {
@@ -540,12 +539,15 @@ h1::after {
 
 /* === STATS DISPLAY (CARD-BASED) === */
 #counter {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-lg);
-  margin: var(--space-xl) 0;
+  text-align: center;
+  margin: var(--space-lg) 0;
   font-size: var(--text-lg);
   font-weight: 600;
+  padding: var(--space-md);
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
 }
 
 .stat-card {
@@ -586,7 +588,7 @@ h1::after {
 
 /* === QUOTE & TIMER === */
 .quote, .timer {
-  margin: var(--space-lg) 0;
+  margin: var(--space-md) 0;
   padding: var(--space-lg);
   background: var(--card-bg);
   backdrop-filter: blur(10px);
@@ -597,19 +599,20 @@ h1::after {
 }
 
 .quote {
-  font-size: var(--text-lg);
+  font-size: var(--text-base);
   font-style: italic;
-  min-height: 60px;
+  min-height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
   animation: fadeIn 0.5s ease;
+  line-height: 1.5;
 }
 
 .timer {
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-color);
 }
 
 @keyframes fadeIn {
