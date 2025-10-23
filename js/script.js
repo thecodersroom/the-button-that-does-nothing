@@ -29,9 +29,17 @@ const volumeSlider = document.getElementById("volume-slider");
 const trackSelector = document.getElementById("track-selector");
 const closeSoundPanel = document.getElementById("close-sound-panel");
 
+// === FIX: High Score aur Share Button Elements ko Yahaan Add Karein ===
+const highScoreDisplay = document.getElementById('high-score');
+const shareButton = document.getElementById('share-button');
+
 // State
+// ... jahaan 'let clicks = 0;' aur 'let failedClicks = 0;' likha hai
 let clicks = 0;
 let failedClicks = 0;
+
+// YEH CODE YAHIN ADD KAREIN (Yeh aapne sahi kiya tha)
+let highScore = Number(localStorage.getItem('nothingHighScore')) || 0;
 let userInteracted = false;
 let impossibleMode = false;
 let isButtonMoving = false;
@@ -469,6 +477,18 @@ if (button) {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
     clicks++;
+
+    // === FIX: High Score Logic ko Yahaan Merge Karein ===
+    if (clicks > highScore) {
+      highScore = clicks; // high score (number) ko update karein
+      if (highScoreDisplay) { //  element hai ya nahi
+        highScoreDisplay.textContent = highScore; // Page par (number) dikhaayein
+      }
+      // Save karte waqt localStorage use string mein badal dega
+      localStorage.setItem('nothingHighScore', highScore);
+    }
+    // === END FIX ===
+
     checkCombo();
 
     const randomMessage = messages[Math.floor(Math.random() * messages.length)];
@@ -651,22 +671,22 @@ if (impossibleToggle) {
   });
 }
 
-// === Are You Still Clicking Popup ===
 
-// Function to update the last activity time
+
+
 function updateActivityTime() {
   lastActivityTime = Date.now();
 
-  // Reset popup timer if it exists
+  
   if (popupTimer) {
     clearTimeout(popupTimer);
   }
 
-  // Set new popup timer
+  
   popupTimer = setTimeout(showPopup, getRandomInactivityTime());
 }
 
-// Function to get a random inactivity time between 15-30 seconds
+
 function getRandomInactivityTime() {
   return Math.floor(Math.random() * (30000 - 15000 + 1)) + 15000; // 15-30 seconds
 }
@@ -699,7 +719,36 @@ function hidePopup() {
   updateActivityTime();
 }
 
-// Function to randomize button position within the popup (keeps button inside container)
+
+
+if (shareButton) { 
+  shareButton.addEventListener('click', () => {
+    
+    const shareMessage = `😲 I have clicked the button 'The Button That Does Nothing'  ${clicks} times! and now my High Score is  ${highScore} . can you beat it?`;
+    
+   
+    const gameUrl = 'https://ashasaini-033.github.io/the-button-that-does-nothing/'; 
+
+    
+    navigator.clipboard.writeText(shareMessage + '\n' + gameUrl)
+      .then(() => {
+       
+        shareButton.textContent = 'Copied to Clipboard!';
+        setTimeout(() => {
+          shareButton.textContent = 'Share My Score';
+        }, 2000); 
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+        alert('Score copy nahi ho paaya!');
+      });
+  });
+}
+
+
+
+
+
 function randomizeButtonPosition(buttonEl, containerWidth, containerHeight) {
   const buttonWidth = buttonEl.offsetWidth;
   const buttonHeight = buttonEl.offsetHeight;
@@ -758,23 +807,29 @@ if (popupNoButton) {
   document.addEventListener(eventType, updateActivityTime);
 });
 
-// Initialize on load
+
 window.addEventListener("load", () => {
-  // Timer tick every second
+  
   setInterval(updateTimer, 1000);
+
+  
+  if (highScoreDisplay) {
+    highScoreDisplay.textContent = highScore;
+  }
+  // === END FIX ===
 
   if (quoteDiv) {
     quoteDiv.textContent = "Click the button to begin your pointless journey! 🚀";
   }
 
-  // start the inactivity timer
+  
   updateActivityTime();
 
-  // initial background
+
   changeBackgroundColor();
 });
 
-// === Sound Settings System ===
+
 function playBackgroundMusic(trackName) {
   if (!musicEnabled || !trackName || !tracks[trackName]) {
     bgMusic.pause();
@@ -850,7 +905,7 @@ trackSelector.addEventListener('change', () => {
   updateMusicPlayback();
 });
 
-// Initialize on load
+
 window.addEventListener('load', () => {
   initSoundSettings();
 });

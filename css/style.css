@@ -195,7 +195,41 @@ body[data-theme="light"] #useless-button {
   75% { filter: hue-rotate(270deg) brightness(1.2); }
   100% { filter: hue-rotate(360deg) brightness(1.1); }
 }
+#share-button {
+  /* Basic Styling */
+  background-color: #007bff; /* A nice blue color */
+  color: white;
+  border: none;
+  padding: 10px 16px; /* 10px top/bottom, 16px left/right */
+  
+  /* Appearance */
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px; /* Rounded corners */
+  cursor: pointer;
+  
+  /* Smooth Hover Effect */
+  transition: background-color 0.2s ease;
+}
+/* For the "My High Score: 7" line */
+.high-score-display {
+  font-size: 1.1rem;   
+  font-weight: 600;  
+  color: #4a4a4a;   
+  margin-top: 15px;   
+  margin-bottom: 15px; 
+}
 
+/* To make the score number (e.g., "7") stand out */
+#high-score {
+  font-weight: 800;  
+  color: #0056b3;   
+  font-size: 1.2rem; 
+  margin-left: 5px;  
+}
+#share-button:hover {
+  background-color: #0056b3; 
+}
 #useless-button::after {
   content: "";
   position: absolute;
