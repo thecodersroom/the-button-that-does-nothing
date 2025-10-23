@@ -642,6 +642,42 @@ function showAchievement(clickCount) {
   }
 }
 
+function randomizeButtonPositionBasedOnMouse(clickCount, buttonEl, containerWidth, containerHeight) {
+  if(clickCount < 1000) return;
+  let mouseX = 0;
+  let mouseY = 0;
+
+  document.addEventListener('mousemove', (event) => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+
+    const rect = buttonEl.getBoundingClientRect();
+    const buttonCenterX = rect.left + rect.width / 2;
+    const buttonCenterY = rect.top + rect.height / 2;
+
+    const dx = mouseX - buttonCenterX;
+    const dy = mouseY - buttonCenterY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    const dangerZone = 500;
+    if(distance < dangerZone) {
+      const buttonWidth = buttonEl.offsetWidth;
+      const buttonHeight = buttonEl.offsetHeight;
+      const maxX = Math.max(0, containerWidth - buttonWidth);
+      const maxY = Math.max(0, containerHeight - buttonHeight);
+
+      const randomX = Math.random() * maxX;
+      const randomY = Math.random() * maxY;
+
+      buttonEl.style.position = "absolute";
+      buttonEl.style.left = `${randomX}px`;
+      buttonEl.style.top = `${randomY}px`;
+      buttonEl.style.transform = "none";
+    }
+  });
+}
+
+
 // === Combo System ===
 function checkCombo() {
   const now = Date.now();
@@ -1483,7 +1519,8 @@ function hidePopup() {
 }
 
 // Function to randomize button position within the popup (keeps button inside container)
-function randomizeButtonPosition(buttonEl, containerWidth, containerHeight) {
+function randomizeButtonPosition(clickCount, buttonEl, containerWidth, containerHeight) {
+  if(clickCount>=1000) return;
   const buttonWidth = buttonEl.offsetWidth;
   const buttonHeight = buttonEl.offsetHeight;
 
