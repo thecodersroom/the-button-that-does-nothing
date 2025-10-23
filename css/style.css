@@ -1125,6 +1125,18 @@ h1::after {
   box-shadow: var(--shadow-lg);
 }
 
+#random-color-theme {
+  background: linear-gradient(45deg, #9c27b0, #e040fb);
+  color: white;
+  box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4);
+  transition: all 0.3s ease;
+}
+
+#random-color-theme:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(156, 39, 176, 0.6);
+}
+
 /* Sound Panel */
 .sound-controls {
   display: flex;

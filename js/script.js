@@ -977,6 +977,7 @@ const customFontFamily = document.getElementById('custom-font-family');
 const previewCustomTheme = document.getElementById('preview-custom-theme');
 const saveCustomTheme = document.getElementById('save-custom-theme');
 const resetCustomTheme = document.getElementById('reset-custom-theme');
+const randomizeCustomTheme = document.getElementById("random-color-theme");
 
 // Apply theme to the page
 function applyTheme(themeName) {
@@ -1055,6 +1056,57 @@ function updateThemeCards() {
       card.classList.add('active');
     } else {
       card.classList.remove('active');
+    }
+  });
+}
+
+function getRandomColor() {
+  const letters = "0123456789abcdef";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+function assignRandomColorsToCustomTheme() {
+  for (let i = 0; i < 6; i++) {
+    const randomColor = getRandomColor();
+    switch (i) {
+      case 0:
+        customBgStart.value = randomColor;
+        customBgStartText.value = randomColor;
+        break;
+      case 1:
+        customBgEnd.value = randomColor;
+        customBgEndText.value = randomColor;
+        break;
+      case 2:
+        customTextColor.value = randomColor;
+        customTextColorText.value = randomColor;
+        break;
+      case 3:
+        customAccentColor.value = randomColor;
+        customAccentColorText.value = randomColor;
+        break;
+      case 4:
+        customButtonStart.value = randomColor;
+        customButtonStartText.value = randomColor;
+        break;
+      case 5:
+        customButtonEnd.value = randomColor;
+        customButtonEndText.value = randomColor;
+        break;
+    }
+  }
+}
+
+// Randomize custom theme colors
+if (randomizeCustomTheme) {
+  randomizeCustomTheme.addEventListener("click", () => {
+    assignRandomColorsToCustomTheme();
+    if (quoteDiv) {
+      quoteDiv.textContent = "🎲 Custom theme colors randomized!";
     }
   });
 }
