@@ -44,6 +44,7 @@ let popupActive = false;
 let popupAutoCloseTimer = null;
 let lastDodgeTime = 0;
 let seconds = 0;
+let isCelebrationAnimationComplete = false; // FIX: Added missing state variable
 
 // Sound Settings
 let soundsEnabled = localStorage.getItem('soundsEnabled') !== 'false';
@@ -533,6 +534,94 @@ function explode(x, y) {
       isCelebrationAnimationComplete  = true;
   }
 }
+// === NEW MINI-EVENT FUNCTIONS FOR ISSUE #42 (Random Mini Events) ===
+
+function flipScreen() {
+    document.body.classList.add('flipped');
+    if (quoteDiv) quoteDiv.textContent = "😵 Whoa! The screen just flipped for 5 seconds!";
+    
+    // Revert after 5 seconds
+    setTimeout(() => {
+        document.body.classList.remove('flipped');
+        // Revert quote if still showing the event message
+        if (quoteDiv.textContent.includes("flipped")) {
+             getNewAction(); 
+        }
+    }, 5000);
+}
+
+function cloneButton() {
+    const button = document.getElementById("useless-button");
+    const clone = button.cloneNode(true); // Copy HTML only
+    clone.classList.add("button-clone");   // Apply the CSS class for clones
+
+    // Set initial random position near the original button
+    const rect = button.getBoundingClientRect();
+    clone.style.left = rect.left + Math.random() * 50 - 25 + "px";
+    clone.style.top = rect.top + Math.random() * 50 - 25 + "px";
+
+    // Set scale and rotation
+    const scale = Math.random() * 0.5 + 0.8; // random size
+    const rotation = 0;                       // rotation 0
+    clone.style.transform = `scale(${scale}) rotate(${rotation}deg)`;
+
+    document.body.appendChild(clone);
+
+    // Remove clone after a short duration
+    setTimeout(() => {
+        clone.remove();
+    }, 3000); // 3 seconds
+}
+
+function emojiRain() {
+    const emojis = ['😂', '🙃', '🥳', '✨', '🔥', '💖', '⭐']; 
+    if (quoteDiv) quoteDiv.textContent = "🎊 EMOJI PARTY! Enjoy the pointless rain!";
+
+    for (let i = 0; i < 60; i++) { // Create 60 emojis
+        const emoji = document.createElement('span');
+        emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        emoji.classList.add('falling-emoji');
+        
+        // Randomize position, delay, and speed
+        emoji.style.left = Math.random() * 100 + 'vw';
+        emoji.style.animationDelay = (Math.random() * -5) + 's'; 
+        emoji.style.animationDuration = (Math.random() * 4 + 4) + 's'; 
+        
+        document.body.appendChild(emoji);
+        
+        // Cleanup after max animation time
+        setTimeout(() => {
+            emoji.remove();
+        }, 8500); 
+    }
+    
+    // Set a timeout to clear the quoteDiv text after the initial event duration
+    setTimeout(() => {
+        if (quoteDiv.textContent.includes("EMOJI PARTY")) {
+            getNewAction();
+        }
+    }, 5000);
+}
+
+function timeFreeze() {
+    if (quoteDiv) quoteDiv.textContent = "❄️ TIME FREEZE! The button is stuck for 3 seconds!";
+    
+    // Disable dodge and teleport temporarily (using existing state and class)
+    isButtonMoving = true; 
+    button.classList.add('frozen');
+
+    setTimeout(() => {
+        button.classList.remove('frozen');
+        isButtonMoving = false; // Allow dodge and teleport again
+        // Revert quote if still showing the event message
+        if (quoteDiv.textContent.includes("TIME FREEZE")) {
+            getNewAction();
+        }
+    }, 3000);
+}
+
+// --- Event List Definition (Place this immediately after the functions) ---
+const miniEvents = [flipScreen, cloneButton, emojiRain, timeFreeze];
 
 // === Achievement Display ===
 function showAchievement(clickCount) {
@@ -660,6 +749,14 @@ if (button) {
       document.body.classList.add("page-shake");
       setTimeout(() => document.body.classList.remove("page-shake"), 500);
     }
+
+    // --- NEW CODE INSERTION: Random Mini Event Trigger (Issue #42) ---
+    // 15% chance to trigger one of the events
+    if (Math.random() < 0.15) { 
+        const randomIndex = Math.floor(Math.random() * miniEvents.length);
+        miniEvents[randomIndex]();
+    }
+    // ---------------------------------------------------
 
     // Teleport button
     const { randomX, randomY } = getRandomLocation();
