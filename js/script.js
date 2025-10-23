@@ -537,6 +537,12 @@ if (button) {
     clicks++;
     updateCounter();
     checkCombo();
+
+
+    if (clicks % 10 === 0) {
+      getNewAction();
+    }
+
     getNewAction(); // This will now update the quoteDiv
     
     // Prevent mouseover from registering a failed click when clicking
@@ -545,6 +551,9 @@ if (button) {
       isButtonMoving = false;
     }, 300);
 
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    updateCounter(`— ${randomMessage}`);
+ 
     // Change button appearance
     button.style.backgroundColor = getRandomColor();
     const width = getRandomNumber(150, 250);
@@ -585,7 +594,6 @@ if (button) {
     const { randomX, randomY } = getRandomLocation();
     buttonTeleport(randomX, randomY);
 
-    updateActivityTime();
   });
 }
 
