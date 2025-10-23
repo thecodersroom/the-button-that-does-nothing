@@ -149,6 +149,19 @@ const actions = [
 
 ];
 
+const messages = [
+  "Nice click!",
+  "You did it!",
+  "Another one!",
+  "Keep going!",
+  "Fantastic!",
+  "Amazing work!",
+  "You're on fire! 🔥",
+  "Incredible!",
+  "Spectacular!",
+  "Magnificent!",
+];
+
 const failedClickMessages = [
   "Choppy fingers. 🍗",
   "My mom's sandal clicks more precise. 👡",
@@ -262,10 +275,64 @@ function buttonTeleport(posX, posY) {
   button.style.transition = "all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)";
 }
 
+// Initialize modern card-based counter
+function initializeCounter() {
+  if (!counterDiv) return;
+  
+  counterDiv.innerHTML = `
+    <div class="stat-card">
+      <span class="stat-icon">👆</span>
+      <div class="stat-value" id="clicks-value">0</div>
+      <div class="stat-label">Total Clicks</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">❌</span>
+      <div class="stat-value" id="failed-value">0</div>
+      <div class="stat-label">Failed Clicks</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">🎯</span>
+      <div class="stat-value" id="accuracy-value">100%</div>
+      <div class="stat-label">Accuracy</div>
+    </div>
+  `;
+}
+
+function animateNumber(element, newValue) {
+  if (!element) return;
+  const current = parseInt(element.textContent) || 0;
+  const diff = newValue - current;
+  const duration = 300;
+  const steps = 15;
+  const increment = diff / steps;
+  let step = 0;
+  
+  const timer = setInterval(() => {
+    step++;
+    const value = Math.round(current + (increment * step));
+    element.textContent = value;
+    
+    if (step >= steps) {
+      clearInterval(timer);
+      element.textContent = newValue;
+    }
+  }, duration / steps);
+}
+
 function updateCounter(extraText = "") {
-  if (counterDiv) {
-    counterDiv.textContent = `Clicks: ${clicks} | Failed clicks: ${failedClicks}`;
+  const clicksEl = document.getElementById('clicks-value');
+  const failedEl = document.getElementById('failed-value');
+  const accuracyEl = document.getElementById('accuracy-value');
+  
+  if (clicksEl) animateNumber(clicksEl, clicks);
+  if (failedEl) animateNumber(failedEl, failedClicks);
+  
+  if (accuracyEl) {
+    const total = clicks + failedClicks;
+    const accuracy = total > 0 ? Math.round((clicks / total) * 100) : 100;
+    accuracyEl.textContent = `${accuracy}%`;
   }
+  
   if (extraText && quoteDiv) {
     quoteDiv.textContent = extraText;
     quoteDiv.style.animation = "none";
@@ -273,6 +340,14 @@ function updateCounter(extraText = "") {
       quoteDiv.style.animation = "fadeIn 0.5s ease-in forwards";
     }, 10);
   }
+}
+
+// Add ripple effect to button
+function addRippleEffect(event) {
+  button.classList.add('ripple');
+  setTimeout(() => {
+    button.classList.remove('ripple');
+  }, 600);
 }
 
 function playSound(sound) {
@@ -535,15 +610,20 @@ if (button) {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
     clicks++;
-    updateCounter();
     checkCombo();
     getNewAction(); // This will now update the quoteDiv
+    
+    // Add ripple effect
+    addRippleEffect(e);
     
     // Prevent mouseover from registering a failed click when clicking
     isButtonMoving = true;
     setTimeout(() => {
       isButtonMoving = false;
     }, 300);
+
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    updateCounter(`— ${randomMessage}`);
 
     // Change button appearance
     button.style.backgroundColor = getRandomColor();
@@ -1407,7 +1487,99 @@ trackSelector.addEventListener('change', () => {
   updateMusicPlayback();
 });
 
+// === Magnetic Hover Effect (Normal Mode Only) ===
+if (button) {
+  button.addEventListener('mousemove', (e) => {
+    // Only apply magnetic effect in normal mode
+    if (impossibleMode || isButtonMoving) return;
+    
+    const rect = button.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    // Calculate distance from center
+    const deltaX = e.clientX - centerX;
+    const deltaY = e.clientY - centerY;
+    
+    // Subtle movement toward cursor (max 10px)
+    const moveX = deltaX * 0.15;
+    const moveY = deltaY * 0.15;
+    
+    // Set CSS custom properties (composes with existing transforms)
+    button.style.setProperty('--magnetic-x', `${moveX}px`);
+    button.style.setProperty('--magnetic-y', `${moveY}px`);
+  });
+  
+  button.addEventListener('mouseleave', () => {
+    // Reset magnetic properties when mouse leaves
+    if (!impossibleMode && !isButtonMoving) {
+      button.style.setProperty('--magnetic-x', '0px');
+      button.style.setProperty('--magnetic-y', '0px');
+    }
+  });
+}
+
+// Reset magnetic properties when Impossible Mode is toggled
+if (impossibleToggle) {
+  impossibleToggle.addEventListener('change', () => {
+    if (impossibleMode) {
+      // Clear magnetic hover when entering Impossible Mode
+      button.style.setProperty('--magnetic-x', '0px');
+      button.style.setProperty('--magnetic-y', '0px');
+    }
+  });
+}
+
+// === Keyboard Navigation (Accessibility) ===
+document.addEventListener('keydown', (e) => {
+  // Prevent if user is typing in an input field
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+    return;
+  }
+  
+  // Space or Enter to click the button
+  if (e.key === ' ' || e.key === 'Enter') {
+    if (document.activeElement === button || !document.activeElement || document.activeElement === document.body) {
+      e.preventDefault();
+      button?.click();
+    }
+  }
+  
+  // T key to toggle theme selector
+  if (e.key === 't' || e.key === 'T') {
+    e.preventDefault();
+    themeToggle?.click();
+  }
+  
+  // S key to toggle sound panel
+  if (e.key === 's' || e.key === 'S') {
+    e.preventDefault();
+    soundToggle?.click();
+  }
+  
+  // I key to toggle impossible mode
+  if (e.key === 'i' || e.key === 'I') {
+    e.preventDefault();
+    impossibleToggle?.click();
+  }
+  
+  // Escape to close modals
+  if (e.key === 'Escape') {
+    const themeSelector = document.getElementById('theme-selector');
+    if (themeSelector?.classList.contains('show')) {
+      themeSelector.classList.remove('show');
+    }
+    if (soundPanel?.classList.contains('show')) {
+      soundPanel.classList.remove('show');
+    }
+    if (popupContainer?.classList.contains('show')) {
+      popupContainer.classList.remove('show');
+    }
+  }
+});
+
 // Initialize on load
 window.addEventListener('load', () => {
+  initializeCounter();
   initSoundSettings();
 });
