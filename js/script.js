@@ -535,6 +535,7 @@ if (button) {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
     clicks++;
+    updateCounter();
     checkCombo();
     getNewAction(); // This will now update the quoteDiv
     
@@ -543,9 +544,6 @@ if (button) {
     setTimeout(() => {
       isButtonMoving = false;
     }, 300);
-
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    updateCounter(`— ${randomMessage}`);
 
     // Change button appearance
     button.style.backgroundColor = getRandomColor();
