@@ -466,6 +466,73 @@ function buttonDisableTeleport() {
   button.style.top = "";
 }
 
+const buttons = document.getElementById('blast-button');
+let clickss = 0;
+
+
+function createSparkles() {
+  const sparkleCount = 20;
+  for (let i = 0; i < sparkleCount; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.classList.add('sparkle');
+    sparkle.style.left = (button.offsetLeft + Math.random() * button.offsetWidth) + 'px';
+    sparkle.style.top = (button.offsetTop + Math.random() * button.offsetHeight) + 'px';
+    sparkle.style.backgroundColor = '#FFD700';
+    document.body.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 1000);
+  }
+}
+
+function blastButtonParticles(button) {
+  const particleCount = 30;
+  const btnRect = button.getBoundingClientRect();
+
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement("div");
+    particle.classList.add("particle");
+
+    particle.style.left = btnRect.left + btnRect.width / 2 + "px";
+    particle.style.top = btnRect.top + btnRect.height / 2 + "px";
+
+    
+    const angle = Math.random() * 2 * Math.PI;
+    const speed = Math.random() * 8 + 4;
+
+    let x = 0, y = 0;
+    const animation = setInterval(() => {
+      x += Math.cos(angle) * speed;
+      y += Math.sin(angle) * speed;
+      particle.style.transform = `translate(${x}px, ${y}px)`;
+      particle.style.opacity = 1 - Math.sqrt(x*x + y*y) / 100;
+
+      if (Math.sqrt(x*x + y*y) > 100) {
+        clearInterval(animation);
+        particle.remove();
+      }
+    }, 16);
+
+    document.body.appendChild(particle);
+  }
+
+  button.style.visibility = "hidden";
+  setTimeout(() => {
+    button.style.visibility = "visible";
+  }, 1000);
+}
+
+
+button.addEventListener("click", () => {
+  clicks++;
+
+ 
+  createSparkles();
+
+s
+  if (clicks % 5 === 0) {
+    blastButtonParticles(button);
+  }
+});
+
 // === Main Burst Particles Method === 
 function burstButtonParticles() {
   isCelebrationAnimationComplete = false;
@@ -795,8 +862,8 @@ if (button) {
       quoteDiv.textContent = "✨ 20-CLICK POWER UP! Particles Erupt! ✨";
     }
 
-    //  Confetti animation at 50 clicks
-    if (clicks === 50 && typeof createConfetti === "function") {
+    //  Confetti animation at 100 clicks
+    if (clicks === 100 && typeof createConfetti === "function") {
       createConfetti();
     }
 
