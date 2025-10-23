@@ -535,6 +535,7 @@ if (button) {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
     clicks++;
+    updateCounter();
     checkCombo();
     getNewAction(); // This will now update the quoteDiv
     
@@ -543,14 +544,6 @@ if (button) {
     setTimeout(() => {
       isButtonMoving = false;
     }, 300);
-
-    // ***************************************************************
-    // FIX: Removed the line below which was causing the error
-    // const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    //
-    // FIX: Changed updateCounter call to not use the error-causing variable
-    updateCounter();
-    // ***************************************************************
 
     // Change button appearance
     button.style.backgroundColor = getRandomColor();
