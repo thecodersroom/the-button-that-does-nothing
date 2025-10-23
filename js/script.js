@@ -1830,113 +1830,49 @@ window.addEventListener('load', () => {
 });
 
 
-// --------- Nothing coins & store -------------
 
-let nothingCoins = 0;
-let click = 0; // Correct variable name
 
-let upgrades = {
-  shinierNothing: {
-    cost: 5,
-    purchased: false,
-  },
-};
+// -----------Fake Crash -------------
+function simulateFakeCrash() {
+  console.warn("⚠️ WARNING: Critical style corruption detected!");
+  console.error("💥 Memory overflow in CSS module! Aborting styles...");
+  console.log("🧠 Attempting fail-safe recovery... nope, too late.");
 
-// Upgrade active flag
-let shinierActive = false;
+  // Flashing and glitch effects
+  document.body.classList.add('fake-crash');
+  const glitchInterval = setInterval(() => {
+    const hue = Math.floor(Math.random() * 360);
+    const skew = Math.random() * 30 - 15;
+    document.body.style.filter = `hue-rotate(${hue}deg) saturate(2)`;
+    document.body.style.transform = `skew(${skew}deg)`;
+  }, 200);
 
-// Function to update the currency display
-function updateCurrencyUI() {
-  const coinCountEl = document.getElementById("coin-count");
-  if (coinCountEl) {
-    coinCountEl.textContent = nothingCoins;
-  }
+  // Play glitch sound effects
+  const crashSound = new Audio('audio/error-glitch.mp3');
+  crashSound.volume = 0.8;
+  crashSound.play().catch(() => {});
+
+  // Flashing screen simulation
+  let flash = true;
+  const flashInterval = setInterval(() => {
+    document.body.style.backgroundColor = flash ? '#ff0000' : '#000';
+    flash = !flash;
+  }, 100);
+
+  // Stop chaos after 7 seconds
+  setTimeout(() => {
+    clearInterval(glitchInterval);
+    clearInterval(flashInterval);
+    document.body.classList.remove('fake-crash');
+    document.body.style = '';
+    console.info("✅ System rebooted successfully.");
+  }, 7000);
 }
 
-// Sparkle particle effect on clicks
-function createSparkles() {
-  const sparkleCount = 20;
-  for (let i = 0; i < sparkleCount; i++) {
-    const sparkle = document.createElement('div');
-    sparkle.classList.add('sparkle');
-    sparkle.style.left = (button.offsetLeft + Math.random() * button.offsetWidth) + 'px';
-    sparkle.style.top = (button.offsetTop + Math.random() * button.offsetHeight) + 'px';
-    sparkle.style.backgroundColor = '#FFD700';
-    document.body.appendChild(sparkle);
-    setTimeout(() => sparkle.remove(), 1000);
-  }
+// Trigger after 500 clicks
+if (button) {
+  button.addEventListener("click", () => {
+    if (clicks === 500) simulateFakeCrash();
+  });
 }
 
-// Audio shimmer (optional, set your own audio file URL)
-const shinySound = new Audio('audio/shimmer.mp3');
-
-// Handle button clicks with bonus coins when upgrade is active
-button.addEventListener("click", (e) => {
-  e.stopPropagation();
-  clicks++;
-
-  // Base coins per click
-  let earnedCoins = 1;
-
-  if (shinierActive && clicks % 10 === 0) {
-    earnedCoins = 2; // Bonus coins every 10th click
-
-    if (quoteDiv) {
-      quoteDiv.textContent = "🔥 Combo Bonus! You earned 2 Nothing Coins!";
-      setTimeout(() => getNewAction(), 2000); // Reset message after 2 seconds
-    }
-
-    // Button scale and color animation for bonus
-    button.style.transform = "scale(1.3)";
-    button.style.backgroundColor = "#ffdb58"; // golden color
-    setTimeout(() => {
-      button.style.transform = "scale(1)";
-      button.style.backgroundColor = "";
-    }, 300);
-
-    // Play shimmer sound on bonus click
-    shinySound.play().catch(() => {});
-  }
-
-  nothingCoins += earnedCoins;
-  updateCurrencyUI();
-
-  // Sparkle effect if upgrade active
-  if (shinierActive) createSparkles();
-
-  // Your existing click logic here (ripple, teleport, etc.)
-});
-
-// Single event listener for upgrade purchase that activates the bonus
-const buyButton = document.getElementById("buy-shinier");
-buyButton.addEventListener("click", () => {
-  if (nothingCoins >= upgrades.shinierNothing.cost && !upgrades.shinierNothing.purchased) {
-    nothingCoins -= upgrades.shinierNothing.cost;
-    upgrades.shinierNothing.purchased = true;
-    shinierActive = true;  // Activate bonus
-    updateCurrencyUI();
-
-    buyButton.disabled = true;
-    buyButton.textContent = "Purchased";
-
-    if (button) {
-      button.style.boxShadow = "0 0 30px 6px #FFD700";  // Golden glow effect
-      button.style.transition = "box-shadow 0.4s ease-in-out";
-      button.classList.add('golden-pulse'); // Start glow pulse animation
-    }
-
-    // Play shimmer purchase sound
-    shinySound.play().catch(() => {});
-
-    // Hide the shop after purchase
-    const shopPanel = document.getElementById('shop');
-    if (shopPanel) {
-      shopPanel.style.display = 'none';
-    }
-  } else {
-    alert("Not enough Nothing Coins!");
-  }
-});
-
-// Initialize UI on page load
-updateCurrencyUI();
