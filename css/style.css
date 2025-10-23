@@ -674,6 +674,7 @@ body[data-theme="light"] #theme-toggle {
   z-index: 999;
   border-radius: 50%;
   animation: confettiFall 5s ease-out forwards;
+  pointer-events: none; /* <-- FIX: Prevents confetti from blocking clicks */
 }
 
 .confetti:nth-child(odd) {
@@ -874,7 +875,10 @@ body[data-theme="light"] #sound-toggle {
   max-width: 900px;
   width: 90%;
   max-height: 85vh;
-  overflow-y: auto;
+  /* overflow-y: auto; <-- REMOVED */
+  overflow: hidden; /* <-- ADDED */
+  display: flex; /* <-- ADDED */
+  flex-direction: column; /* <-- ADDED */
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   border: 2px solid var(--border-color);
   animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -896,6 +900,17 @@ body[data-theme="light"] #sound-toggle {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
+  flex-shrink: 0; /* <-- ADDED: Prevents header from shrinking */
+}
+
+/* This new rule makes the body scrollable */
+.theme-selector-body {
+  flex: 1; /* Take remaining space */
+  overflow-y: auto; /* Allow scrolling */
+  /* Use negative margin to break out of parent padding */
+  margin: 0 -40px -40px -40px;
+  /* Re-apply padding inside the scrollable area */
+  padding: 30px 40px 40px 40px;
 }
 
 .theme-selector-header h2 {
@@ -923,9 +938,10 @@ body[data-theme="light"] #sound-toggle {
 .theme-tabs {
   display: flex;
   gap: 10px;
-  margin-bottom: 30px;
+  /* margin-bottom: 30px; <-- REMOVED */
   border-bottom: 2px solid var(--border-color);
   padding-bottom: 10px;
+  flex-shrink: 0; /* Prevent tabs from shrinking */
 }
 
 .theme-tab {
@@ -1157,22 +1173,22 @@ body[data-theme="light"] #sound-toggle {
   box-shadow: 0 6px 20px rgba(255, 82, 82, 0.6);
 }
 
-/* Theme selector scrollbar */
-.theme-selector-content::-webkit-scrollbar {
+/* Theme selector scrollbar - NOW TARGETS .theme-selector-body */
+.theme-selector-body::-webkit-scrollbar {
   width: 10px;
 }
 
-.theme-selector-content::-webkit-scrollbar-track {
+.theme-selector-body::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
 }
 
-.theme-selector-content::-webkit-scrollbar-thumb {
+.theme-selector-body::-webkit-scrollbar-thumb {
   background: var(--accent-color);
   border-radius: 10px;
 }
 
-.theme-selector-content::-webkit-scrollbar-thumb:hover {
+.theme-selector-body::-webkit-scrollbar-thumb:hover {
   background: var(--text-color);
 }
 
@@ -1182,6 +1198,12 @@ body[data-theme="light"] #sound-toggle {
     padding: 25px;
   }
   
+  .theme-selector-body {
+    /* Adjust negative margins for new padding */
+    margin: 0 -25px -25px -25px;
+    padding: 30px 25px 25px 25px;
+  }
+
   .theme-selector-header h2 {
     font-size: 1.5rem;
   }
