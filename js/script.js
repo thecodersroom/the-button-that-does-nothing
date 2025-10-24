@@ -730,6 +730,23 @@ document.addEventListener("contextmenu", (e) => {
   updateCounter("💥 SIKE YOU THOUGHT! 💥");
   playSound(failSound); // Use playSound utility
 });
+// === Dev Comments Toggle ===
+
+// 1. Get the container element
+const devComments = document.getElementById('dev-comments-container');
+
+// 2. Listen for key presses on the whole page
+document.addEventListener('keydown', (event) => {
+
+  // 3. Check for the combo: Ctrl + Alt + C
+  if (event.ctrlKey && event.altKey && event.key === 'c') {
+    
+    // 4. Toggle the 'show' class
+    // This will either add it (making comments visible)
+    // or remove it (hiding them again).
+    devComments.classList.toggle('show');
+  }
+});
 
 // === Timer ===
 function formatTime(sec) {
