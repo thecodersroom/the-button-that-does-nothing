@@ -716,8 +716,8 @@ h1::after {
 /* === FLOATING CONTROL PANEL === */
 .control-buttons {
   position: fixed;
-  bottom: var(--space-xl);
   right: var(--space-xl);
+  bottom: var(--space-xl);
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
@@ -1540,11 +1540,15 @@ body.flipped {
   gap: 8px;
 }
 
+.shop-and-user{
+  display: flex;
+  margin-top: 60px;
+}
 /* Shop Panel */
 .shop-panel {
-  position: fixed;
-  bottom: 30px;
-  right: 20px;
+  /* position: fixed; */
+  /* bottom: 30px;
+  right: 20px; */
   width: 240px;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 10px;
@@ -1552,7 +1556,7 @@ body.flipped {
   padding: 15px 20px;
   font-family: 'Poppins', sans-serif;
   color: #222;
-  z-index: 1000;
+  margin-left: 100px;
 }
 
 .shop-panel h3 {
@@ -1646,12 +1650,17 @@ body.flipped {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 15vh;
+  height: 30vh;
   gap: 15px;
   font-family: "Poppins", sans-serif;
-  background: radial-gradient(circle at center, #0474e4 30%, #111 100%);
-  color: #f5f5f5;
-  border-radius: 50px;
+  width: 270px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+  padding: 15px 20px;
+  /* background: radial-gradient(circle at center, #0474e4 30%, #111 100%); */
+  color: #e7e7e7;
+  border-radius: 10px;
 }
 
 /* Input field styling */
@@ -1663,9 +1672,11 @@ body.flipped {
   border-radius: 8px;
   outline: none;
   background-color: transparent;
-  color: #fff;
+  color: black;
   text-align: center;
   transition: all 0.3s ease;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 #username::placeholder {
@@ -1733,7 +1744,7 @@ body.flipped {
   border-radius: 8px;
   font-size: 0.9em;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  text-align: right;
+  text-align: center;
   white-space: nowrap;
 }
 

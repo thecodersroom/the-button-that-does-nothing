@@ -1192,5 +1192,6 @@ window.addEventListener('load', () => {
 
   updateActivityTime(); // Start inactivity timer
 });
+
 initializeCounter();
 initSoundSettings();
