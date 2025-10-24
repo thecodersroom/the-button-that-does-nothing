@@ -49,7 +49,7 @@
 </div>
 <button id="share-button">Share My Score</button>
       <div class="control-buttons">
-        <button id="theme-toggle">Toggle Theme</button>
+        <button id="theme-toggle">🎨</button>
         <button id="sound-toggle">🎵</button>
       </div>
       <div id="counter">Clicks: 0 | Failed clicks: 0</div>
@@ -63,7 +63,10 @@
       <div id="counter"></div>
 
       <div id="quote" class="quote">Click the button to begin your pointless journey! 🚀</div>
-    </div> <div class="top-right-controls">
+    </div>
+
+     <div class="top-right-controls">
+
       <div class="clock-container">
         <div class="clock">
           <span id="hrs">00</span>:<span id="min">00</span>:<span id="sec"
@@ -73,9 +76,8 @@
       </div>
 
       <div id="timer" class="timer">⏱️ Time spent doing nothing: 00:00</div>
-      <button id="theme-toggle" title="Cycle themes" aria-label="Theme selector">🎨</button>
-      <button id="sound-toggle" title="Sound settings" aria-label="Sound settings">🎵</button>
     </div>
+
 
     <div id="achievement-popup">
       <span class="achievement-icon"></span>
@@ -213,27 +215,29 @@
       <span>🪙 Nothing Coins: </span><span id="coin-count">0</span>
     </div>
     
-    <div id="shop" class="shop-panel">
-      <h3>Nothing Shop</h3>
-      <div class="shop-item" id="shinier-nothing">
-        <div class="shop-info">
-          <p class="item-name">✨ Shinier Nothing</p>
-          <p class="item-cost">Cost: 50 Nothing Coins</p>
-        </div>
-        <button id="buy-shinier">Buy</button>
+    <div class="shop-and-user">
+
+      <div id="user-section">
+        <input type="text" id="username" placeholder="Enter your name" />
+        <button id="saveName">Save</button>
+        <p id="greeting"></p>
       </div>
+
+      <div id="shop" class="shop-panel">
+        <h3>Nothing Shop</h3>
+        <div class="shop-item" id="shinier-nothing">
+          <div class="shop-info">
+            <p class="item-name">✨ Shinier Nothing</p>
+            <p class="item-cost">Cost: 50 Nothing Coins</p>
+          </div>
+          <button id="buy-shinier">Buy</button>
+        </div>
+      </div>
+      
     </div>
-    
-    <div id="user-section">
-      <input type="text" id="username" placeholder="Enter your name" />
-      <button id="saveName">Save</button>
-      <p id="greeting"></p>
-    </div>
-    
 
     <script src="js/script.js"></script>
     <script src="js/clock.js"></script>
-    <script src="js/script.js"></script>
     
   </body>
 </html>
