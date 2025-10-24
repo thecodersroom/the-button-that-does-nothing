@@ -1333,16 +1333,39 @@ function endTimeAttack() {
     timeAttackProgressBar.style.display = 'none';
   }
 
-  // Show a simple alert. You can make a custom popup later.
-  alert(`Time's up! You clicked ${timeAttackScore} times!`);
-
-  if (timeAttackScore > timeAttackHighScore) {
+  // Check for new high score
+  const isNewHighScore = timeAttackScore > timeAttackHighScore;
+  if (isNewHighScore) {
     timeAttackHighScore = timeAttackScore;
     localStorage.setItem('timeAttackHighScore', timeAttackHighScore);
     if(timeAttackHighScoreDisplay) timeAttackHighScoreDisplay.textContent = timeAttackHighScore;
-    if(quoteDiv) quoteDiv.textContent = `🏆 New Time Attack High Score: ${timeAttackHighScore}!`;
   }
-  
+
+  // Update popup content
+  const finalScoreEl = document.getElementById('final-score');
+  const finalHighScoreEl = document.getElementById('final-high-score');
+  const highScoreTextEl = document.getElementById('time-attack-high-score-text');
+  const popup = document.getElementById('time-attack-end-popup');
+
+  if (finalScoreEl) finalScoreEl.textContent = timeAttackScore;
+  if (finalHighScoreEl) finalHighScoreEl.textContent = timeAttackHighScore;
+
+  if (isNewHighScore) {
+    if (highScoreTextEl) highScoreTextEl.style.display = 'block';
+    if (popup) popup.classList.add('new-high-score');
+    if (quoteDiv) quoteDiv.textContent = `🏆 New Time Attack High Score: ${timeAttackHighScore}!`;
+    // Trigger confetti for new high score
+    if (typeof createConfetti === "function") {
+      createConfetti();
+    }
+  } else {
+    if (highScoreTextEl) highScoreTextEl.style.display = 'none';
+    if (popup) popup.classList.remove('new-high-score');
+  }
+
+  // Show the popup
+  if (popup) popup.classList.add('show');
+
   if(timeAttackButton) timeAttackButton.disabled = false;
   if(impossibleToggle) impossibleToggle.disabled = false;
   if(timeAttackTimerDisplay) timeAttackTimerDisplay.style.display = 'none';
@@ -1363,6 +1386,17 @@ if (timeAttackButton) {
   timeAttackButton.addEventListener('click', () => {
     if (!isTimeAttackActive) {
       startTimeAttack();
+    }
+  });
+}
+
+// Close time attack popup
+const closeTimeAttackPopup = document.getElementById('close-time-attack-popup');
+if (closeTimeAttackPopup) {
+  closeTimeAttackPopup.addEventListener('click', () => {
+    const popup = document.getElementById('time-attack-end-popup');
+    if (popup) {
+      popup.classList.remove('show');
     }
   });
 }

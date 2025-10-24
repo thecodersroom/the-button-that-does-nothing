@@ -114,7 +114,7 @@
           <label><input type="checkbox" id="sounds-toggle" checked> 🔊 Sounds</label>
           <label><input type="checkbox" id="music-toggle" checked> 🎵 Music</label>
           <label>🔉 Volume: <input type="range" id="volume-slider" min="0" max="100" value="50"></label>
-          <label>🎶 Track: 
+          <label>🎶 Track:
             <select id="track-selector">
               <option value="8bit" selected>8-Bit Retro</option>
               <option value="lofi">Lo-Fi Chill</option>
@@ -124,6 +124,19 @@
             </select>
           </label>
           <button id="close-sound-panel">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="time-attack-end-popup" class="popup-container">
+      <div class="popup-content">
+        <h2 id="time-attack-end-title">⏱️ Time Attack Complete!</h2>
+        <div id="time-attack-results">
+          <p id="time-attack-score-text">You clicked <span id="final-score">0</span> times!</p>
+          <p id="time-attack-high-score-text" style="display: none;">🏆 New High Score: <span id="final-high-score">0</span>!</p>
+        </div>
+        <div class="popup-buttons">
+          <button id="close-time-attack-popup">Close</button>
         </div>
       </div>
     </div>
