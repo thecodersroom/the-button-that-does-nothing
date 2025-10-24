@@ -528,7 +528,7 @@ button.addEventListener("click", () => {
   createSparkles();
 
 s
-  if (clicks % 5 === 0) {
+  if (clicks % 20 === 0) {
     blastButtonParticles(button);
   }
 });
@@ -1635,7 +1635,7 @@ if (shareButton) {
 
 
 
-function randomizeButtonPosition(buttonEl, containerWidth, containerHeight) {
+
 // Function to randomize button position within the popup (keeps button inside container)
 function randomizeButtonPosition(clickCount, buttonEl, containerWidth, containerHeight) {
   if(clickCount>=1000) return;
@@ -1942,4 +1942,3 @@ if (button) {
     if (clicks === 500) simulateFakeCrash();
   });
 }
-
