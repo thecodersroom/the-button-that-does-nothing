@@ -457,7 +457,7 @@ function cloneButton() {
 }
 
 function emojiRain() {
-    const emojis = ['😂', '🙃', '🥳', '✨', '🔥', '💖', '⭐'];
+    const emojis = ['✨', '🔥', '🥳', '🙃', '😂', '💖', '⭐']; 
     if (quoteDiv) quoteDiv.textContent = "🎊 EMOJI PARTY! Enjoy the pointless rain!";
     for (let i = 0; i < 60; i++) {
         const emoji = document.createElement('span');
@@ -601,8 +601,17 @@ if (button) {
     playSound(clickSound);
     createSmokeTrail();
     showAchievement(clicks);
-    if (clicks === 20 && quoteDiv) quoteDiv.textContent = "✨ 20-CLICK POWER UP! Particles Erupt! ✨";
-    if (clicks === 50 && typeof createConfetti === "function") createConfetti();
+
+    if (clicks === 20) {
+      quoteDiv.textContent = "✨ 20-CLICK POWER UP! Particles Erupt! âœ¨";
+    }
+
+    //  Confetti animation at 50 clicks
+    if (clicks === 50 && typeof createConfetti === "function") {
+      createConfetti();
+    }
+
+    // Special effects at milestones
     if (clicks % 50 === 0) {
       document.body.classList.add("page-shake");
       setTimeout(() => document.body.classList.remove("page-shake"), 500);
@@ -625,11 +634,17 @@ const CATEGORY_COOLDOWN = 10 * 60 * 1000;
 let categoryCooldowns = {}; // Reset on load
 function getNewAction() {
     const now = Date.now();
+
+    // 1ï¸ Filter actions whose categories are NOT in cooldown
     const available = actions.filter(a => {
         const lastShown = categoryCooldowns[a.category];
         return !lastShown || now - lastShown > CATEGORY_COOLDOWN;
     });
+
+    // 2ï¸ random show when cooldown 
     const pool = available.length > 0 ? available : actions;
+
+    // 3ï¸ Weighted random selection (rarity logic)
     const totalWeight = pool.reduce((sum, a) => sum + (1 / a.rarity), 0);
     let randVal = Math.random() * totalWeight; // Renamed variable
     let selected = pool[0];
@@ -637,7 +652,11 @@ function getNewAction() {
         randVal -= (1 / a.rarity);
         if (randVal <= 0) { selected = a; break; }
     }
-    if (quoteDiv) quoteDiv.textContent = selected.text;
+
+    // 4 Display the prompt
+    quoteDiv.textContent = selected.text;
+
+    // 5ï¸ Update cooldown for that category
     categoryCooldowns[selected.category] = now;
 }
 
@@ -922,8 +941,13 @@ loadCustomTheme(); applyTheme(currentTheme); // Initialize themes
 if (impossibleToggle) {
   impossibleToggle.addEventListener("change", () => {
     impossibleMode = impossibleToggle.checked;
-    button?.classList.toggle("impossible-mode", impossibleMode);
-    updateCounter(impossibleMode ? "— 🔥 IMPOSSIBLE MODE ACTIVATED! 🔥" : "— Normal mode restored.");
+    if (impossibleMode) {
+      if (button) button.classList.add("impossible-mode");
+      updateCounter("— 🔥 IMPOSSIBLE MODE ACTIVATED! Good luck clicking now! ðŸ”¥");
+    } else {
+      if (button) button.classList.remove("impossible-mode");
+      updateCounter("— Normal mode restored. (Boring!)");
+    }
   });
 }
 
@@ -945,7 +969,13 @@ function hidePopup() {
   if (popupAutoCloseTimer) clearTimeout(popupAutoCloseTimer);
   updateActivityTime(); // Reset timer after interaction
 }
-// === MERGED: Use correct function signature from main for randomizeButtonPosition ===
+
+
+
+
+
+// function randomizeButtonPosition(buttonEl, containerWidth, containerHeight) {
+// // Function to randomize button position within the popup (keeps button inside container)
 function randomizeButtonPosition(clickCount, buttonEl, containerWidth, containerHeight) {
   if(clickCount>=1000 || !buttonEl) return; // Kept logic from main
   const buttonWidth = buttonEl.offsetWidth; const buttonHeight = buttonEl.offsetHeight;
@@ -1162,168 +1192,5 @@ window.addEventListener('load', () => {
 
   updateActivityTime(); // Start inactivity timer
 });
-
-// === MERGED: Kept DOMContentLoaded from main for initial action prompt ===
-document.addEventListener('DOMContentLoaded', () => {
-    if (clicks > 0 || failedClicks > 0) { // Should be false on fresh load now
-        getNewAction();
-    } else if (clicks === 0 && failedClicks === 0) {
-        // If it's truly a fresh start, maybe wait until first click?
-        // Or call getNewAction here if you always want one displayed.
-        // Let's keep the original logic: only show if returning user (which won't happen now)
-    }
-});
-// === END MERGE ===
-// Initialize on load
-window.addEventListener('load', () => {
-  initializeCounter();
-  initSoundSettings();
-});
-
-// --------- Nothing coins & store -------------
-
-let nothingCoins = 0;
-let clicks = 0; // Corrected variable name
-
-let upgrades = {
-  shinierNothing: {
-    cost: 5,
-    purchased: false,
-  },
-};
-
-// Upgrade active flag
-let shinierActive = false;
-
-// Function to update the currency display
-function updateCurrencyUI() {
-  const coinCountEl = document.getElementById("coin-count");
-  if (coinCountEl) {
-    coinCountEl.textContent = nothingCoins;
-  }
-}
-
-// Sparkle particle effect on clicks
-function createSparkles() {
-  const sparkleCount = 20;
-  for (let i = 0; i < sparkleCount; i++) {
-    const sparkle = document.createElement('div');
-    sparkle.classList.add('sparkle');
-    sparkle.style.left = (button.offsetLeft + Math.random() * button.offsetWidth) + 'px';
-    sparkle.style.top = (button.offsetTop + Math.random() * button.offsetHeight) + 'px';
-    sparkle.style.backgroundColor = '#FFD700';
-    document.body.appendChild(sparkle);
-    setTimeout(() => sparkle.remove(), 1000);
-  }
-}
-
-// Audio shimmer (optional)
-const shinySound = new Audio('audio/shimmer.mp3');
-
-// Handle button clicks with bonus coins when upgrade is active
-button.addEventListener("click", (e) => {
-  e.stopPropagation();
-  clicks++;
-
-  // Base coins per click
-  let earnedCoins = 1;
-
-  if (shinierActive && clicks % 10 === 0) {
-    earnedCoins = 2; // Bonus coins every 10th click
-
-    if (quoteDiv) {
-      quoteDiv.textContent = "🔥 Combo Bonus! You earned 2 Nothing Coins!";
-      setTimeout(() => getNewAction(), 2000);
-    }
-
-    // Button animation for bonus click
-    button.style.transform = "scale(1.3)";
-    button.style.backgroundColor = "#ffdb58";
-    setTimeout(() => {
-      button.style.transform = "scale(1)";
-      button.style.backgroundColor = "";
-    }, 300);
-
-    shinySound.play().catch(() => {});
-  }
-
-  nothingCoins += earnedCoins;
-  updateCurrencyUI();
-
-  // Sparkle effect if upgrade active
-  if (shinierActive) createSparkles();
-});
-
-// Handle upgrade purchase
-const buyButton = document.getElementById("buy-shinier");
-buyButton.addEventListener("click", () => {
-  if (nothingCoins >= upgrades.shinierNothing.cost && !upgrades.shinierNothing.purchased) {
-    nothingCoins -= upgrades.shinierNothing.cost;
-    upgrades.shinierNothing.purchased = true;
-    shinierActive = true;
-    updateCurrencyUI();
-
-    buyButton.disabled = true;
-    buyButton.textContent = "Purchased";
-
-    if (button) {
-      button.style.boxShadow = "0 0 30px 6px #FFD700";
-      button.style.transition = "box-shadow 0.4s ease-in-out";
-      button.classList.add('golden-pulse');
-    }
-
-    shinySound.play().catch(() => {});
-
-    const shopPanel = document.getElementById('shop');
-    if (shopPanel) {
-      shopPanel.style.display = 'none';
-    }
-  } else {
-    alert("Not enough Nothing Coins!");
-  }
-});
-
-// Initialize UI on page load
-updateCurrencyUI();
-
-// --------- User information - greeting --------------
-const nameInput = document.getElementById('username');
-const saveBtn = document.getElementById('saveName');
-const greeting = document.getElementById('greeting');
-
-// Check if name is already saved
-const storedName = localStorage.getItem('userName');
-
-if (storedName) {
-  greetUser(storedName);
-  hideInput();
-}
-
-// Save name when user clicks save
-saveBtn.addEventListener('click', () => {
-  const name = nameInput.value.trim();
-  if (name) {
-    localStorage.setItem('userName', name);
-    greetUser(name);
-    hideInput();
-  } else {
-    alert("Please enter your name first!");
-  }
-});
-
-function greetUser(name) {
-  const greetings = [
-    `Welcome back, ${name}!`,
-    `Hey ${name}, good to see you again!`,
-    `Hello ${name}! Ready to explore new universes?`,
-    `Glad you're here, ${name}!`,
-    `👋 ${name}, your button awaits!`
-  ];
-  greeting.textContent = greetings[Math.floor(Math.random() * greetings.length)];
-}
-
-function hideInput() {
-  nameInput.style.display = 'none';
-  saveBtn.style.display = 'none';
-}
-
+initializeCounter();
+initSoundSettings();
