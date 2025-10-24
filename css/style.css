@@ -525,31 +525,33 @@ h1::after {
 }
 
 #useless-button {
-  position: relative; /* Must be relative or absolute for z-index */
-  padding: var(--space-xl) var(--space-4xl);
-  font-size: clamp(var(--text-xl), 3vw, var(--text-3xl));
+  position: relative;
+  padding: var(--space-lg) var(--space-xl);
+  min-width: 200px;
+  max-width: 90%;
+  min-height: 80px;
+  font-size: clamp(var(--text-base), 2.5vw, var(--text-2xl));
   font-weight: 700;
   color: white;
   background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
   border: none;
   border-radius: var(--radius-lg);
   cursor: pointer;
-  
-  /* --- MERGED STYLES --- */
-  
-  /* Kept z-index fix from your branch */
-  z-index: 900; 
-
-  /* Kept new styles from main branch */
+  z-index: 900;
   transition: all var(--transition-base);
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  
-  /* Magnetic hover custom properties */
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   --magnetic-x: 0px;
   --magnetic-y: 0px;
-  
-  /* 3D Depth Effect */
   box-shadow: 
     0 4px 6px rgba(0, 0, 0, 0.1),
     0 10px 20px rgba(0, 0, 0, 0.15),
@@ -557,11 +559,7 @@ h1::after {
     0 0 60px rgba(255, 107, 107, 0.3),
     inset 0 -2px 0 rgba(0, 0, 0, 0.2),
     inset 0 2px 0 rgba(255, 255, 255, 0.2);
-  
-  /* Glow animation */
   animation: buttonBreath 3s ease-in-out infinite;
-  
-  /* --- END MERGE --- */
 }
 
 @keyframes buttonBreath {
@@ -783,6 +781,7 @@ h1::after {
     opacity: 0;
     transform: translateX(100px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -790,39 +789,46 @@ h1::after {
 }
 
 .control-buttons button {
-  width: 56px;
-  height: 56px;
+  width: 76px;
+  height: 90px;
   border: none;
   border-radius: var(--radius-full);
-  background: var(--card-bg-solid);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-color);
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
   font-size: var(--text-xl);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-lg);
-  transition: all var(--transition-base);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  overflow: hidden;
+  color: var(--text-color);
 }
 
 .control-buttons button:hover {
-  transform: scale(1.1);
-  box-shadow: var(--shadow-xl);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
   border-color: var(--accent-color);
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
 }
 
 .control-buttons button:active {
-  transform: scale(0.95);
+  transform: translateY(2px) scale(0.95);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
 }
 
 /* Tooltip */
-.control-buttons button::before {
+.control-buttons button::before,
+.top-right-controls button:before{
   content: attr(title);
   position: absolute;
   right: calc(100% + var(--space-md));
-  background: rgba(0, 0, 0, 0.9);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85));
   color: white;
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-sm);
@@ -830,11 +836,22 @@ h1::after {
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--transition-base);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.control-buttons button:hover::before {
+.control-buttons button:hover::before,
+.top-right-controls button:hover::before {
   opacity: 1;
+  transform: translateX(0);
+}
+
+/* make theme and sound in same line */
+.theme-sound {
+  display: flex;
+  gap: 10px;
 }
 
 @media (max-width: 768px) {
@@ -844,10 +861,34 @@ h1::after {
     right: var(--space-lg);
     left: var(--space-lg);
     justify-content: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
+
+  .control-buttons button {
+    width: 60px;
+    height: 70px;
+    font-size: var(--text-lg);
+  }
+
+  .control-buttons button:hover {
+    transform: translateY(-3px) scale(1.05);
+  }
+
   .control-buttons button::before {
-    display: none;
+    bottom: calc(100% + var(--space-sm));
+    right: 50%;
+    transform: translateX(50%) translateY(10px);
+    text-align: center;
+  }
+
+  .control-buttons button:hover::before {
+    transform: translateX(50%) translateY(0);
   }
 }
 
@@ -883,9 +924,19 @@ h1::after {
 }
 
 @keyframes celebrate {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(-10deg) scale(1.1); }
-  75% { transform: rotate(10deg) scale(1.1); }
+
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  25% {
+    transform: rotate(-10deg) scale(1.1);
+  }
+
+  75% {
+    transform: rotate(10deg) scale(1.1);
+  }
 }
 
 .achievement-text {
@@ -940,6 +991,7 @@ h1::after {
     transform: scale(0.8);
     opacity: 0;
   }
+
   100% {
     transform: scale(1);
     opacity: 1;
@@ -989,6 +1041,98 @@ h1::after {
   transform: translateY(0);
 }
 
+/* === TIME ATTACK RESULT MODAL === */
+.time-attack-result {
+  max-width: 450px;
+  text-align: center;
+}
+
+.result-icon {
+  font-size: 80px;
+  margin-bottom: var(--space-lg);
+  animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 20px var(--accent-color));
+  }
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 40px var(--accent-color));
+  }
+}
+
+.result-stats {
+  margin: var(--space-2xl) 0;
+  padding: var(--space-xl);
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border-color);
+}
+
+.result-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.result-label {
+  font-size: var(--text-lg);
+  color: var(--text-color);
+  opacity: 0.9;
+}
+
+.result-value {
+  font-size: 64px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-color), var(--button-gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin: var(--space-sm) 0;
+  animation: countUp 0.5s ease-out;
+}
+
+@keyframes countUp {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.new-record {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  margin: var(--space-lg) 0;
+  animation: celebrateRecord 1s infinite;
+}
+
+@keyframes celebrateRecord {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+#time-attack-close-btn {
+  background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
+  color: white;
+  padding: var(--space-md) var(--space-3xl);
+  font-size: var(--text-xl);
+  min-width: 150px;
+}
+
 /* === THEME SELECTOR MODAL === */
 #theme-selector {
   position: fixed;
@@ -1029,6 +1173,7 @@ h1::after {
     transform: translateY(50px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -1147,7 +1292,7 @@ h1::after {
   z-index: 0;
 }
 
-.theme-card > * {
+.theme-card>* {
   position: relative;
   z-index: 1;
 }
@@ -1495,95 +1640,110 @@ h1::after {
 
 /* 1. Screen Flip Effect */
 body.flipped {
-    /* Use a standard performant transform on the entire body */
-    transform: rotate(180deg);
-    transition: transform 0.5s ease-in-out;
+  /* Use a standard performant transform on the entire body */
+  transform: rotate(180deg);
+  transition: transform 0.5s ease-in-out;
 }
 
 /* 2. Time Freeze Effect (Applied to the button) */
 #useless-button.frozen {
-    /* Pauses any existing movement or pulsing animations */
-    animation-play-state: paused !important;
-    /* Visual cue for freezing */
-    box-shadow: 0 0 30px 5px rgba(255, 255, 255, 0.9); 
+  /* Pauses any existing movement or pulsing animations */
+  animation-play-state: paused !important;
+  /* Visual cue for freezing */
+  box-shadow: 0 0 30px 5px rgba(255, 255, 255, 0.9);
 }
 
 /* 3. Button Clone Style (Applied to temporary clones) */
 .button-clone {
 
-    /* Keep original button styles: gradient, border-radius, box-shadow */
-    background: linear-gradient(45deg, var(--button-gradient-start), var(--button-gradient-end));
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
-    color: white;
-    padding: 20px 40px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    position: absolute; /* So JS can move it freely */
-    z-index: 1;
+  /* Keep original button styles: gradient, border-radius, box-shadow */
+  background: linear-gradient(45deg, var(--button-gradient-start), var(--button-gradient-end));
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+  color: white;
+  padding: 20px 40px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  position: absolute;
+  /* So JS can move it freely */
+  z-index: 1;
 
-    /* Optional "jitter" effect */
-    animation: cloneJitter 0.5s infinite alternate;
+  /* Optional "jitter" effect */
+  animation: cloneJitter 0.5s infinite alternate;
 }
 
 /* 4. Emoji Rain Effect */
 .falling-emoji {
-    position: fixed;
-    top: -5%; /* Start slightly above the screen */
-    z-index: 10000; /* Ensure they appear over everything */
-    font-size: 3em; 
-    pointer-events: none; /* Allow clicks to pass through */
-    line-height: 1;
-    animation-name: fall; /* Link the elements to the keyframe */
+  position: fixed;
+  top: -5%;
+  /* Start slightly above the screen */
+  z-index: 10000;
+  /* Ensure they appear over everything */
+  font-size: 3em;
+  pointer-events: none;
+  /* Allow clicks to pass through */
+  line-height: 1;
+  animation-name: fall;
+  /* Link the elements to the keyframe */
 }
 
 #time-attack-progress-bar {
   /* --- Floating --- */
-  position: fixed; /* Floats on the screen */
+  position: fixed;
+  /* Floats on the screen */
   top: 0;
   left: 0;
   width: 100%;
   height: 12px;
-  z-index: 9998; /* Keeps it on top, but below popups */
+  z-index: 9998;
+  /* Keeps it on top, but below popups */
 
   /* --- Style --- */
-  background-color: rgba(0, 0, 0, 0.3); /* A semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.3);
+  /* A semi-transparent background */
   border-bottom: 2px solid var(--accent-color, #ff6b6b);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 #time-attack-progress-inner {
   height: 100%;
-  width: 100%; /* Starts full */
+  width: 100%;
+  /* Starts full */
 
   /* --- Style --- */
   background: linear-gradient(90deg, var(--button-gradient-start, #ff6b6b), var(--button-gradient-end, #ff9a76));
-  transition: width 0.5s ease-out; /* Smoothly animates the time draining */
+  transition: width 0.5s ease-out;
+  /* Smoothly animates the time draining */
 }
 
 /* Define the falling animation */
 @keyframes fall {
-    /* Explicitly start the element at its initial top position (0 transform) */
-    0% {
-        transform: translateY(0); 
-    }
-    /* Move the element down the entire height of the viewport */
-    100% {
-        transform: translateY(105vh); 
-    }
+
+  /* Explicitly start the element at its initial top position (0 transform) */
+  0% {
+    transform: translateY(0);
+  }
+
+  /* Move the element down the entire height of the viewport */
+  100% {
+    transform: translateY(105vh);
+  }
 }
+
 /* --- Dev Comments --- */
 
 /* This is the container, hidden by default */
 #dev-comments-container {
-  display: none; /* Hidden! */
+  display: none;
+  /* Hidden! */
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: 9999;
-  pointer-events: none; /* So they don't block clicks on the button! */
+  pointer-events: none;
+  /* So they don't block clicks on the button! */
 }
 
 /* This class will be added by JS to show them */
@@ -1594,7 +1754,8 @@ body.flipped {
 /* This styles each individual comment */
 .dev-comment {
   position: absolute;
-  color: #28a745; /* A nice "comment green" */
+  color: #28a745;
+  /* A nice "comment green" */
   font-family: 'Courier New', Courier, monospace;
   font-size: 1.1rem;
   font-weight: 600;
@@ -1604,15 +1765,24 @@ body.flipped {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   opacity: 0.7;
 }
+
 /* Simple Button Pulse Animation - Add this to your CSS */
 .button-pulse {
   animation: button-pulse 0.3s ease-out;
 }
 
 @keyframes button-pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 
@@ -1623,11 +1793,25 @@ body.flipped {
 }
 
 @keyframes screenShake {
-  0% { transform: translate(0, 0); }
-  25% { transform: translate(5px, -5px); }
-  50% { transform: translate(-5px, 5px); }
-  75% { transform: translate(5px, 5px); }
-  100% { transform: translate(-5px, -5px); }
+  0% {
+    transform: translate(0, 0);
+  }
+
+  25% {
+    transform: translate(5px, -5px);
+  }
+
+  50% {
+    transform: translate(-5px, 5px);
+  }
+
+  75% {
+    transform: translate(5px, 5px);
+  }
+
+  100% {
+    transform: translate(-5px, -5px);
+  }
 }
 
 /* Currency Display Panel */
@@ -1651,13 +1835,14 @@ body.flipped {
   gap: 8px;
 }
 
-.shop-and-user{
+.shop-and-user {
   display: flex;
   justify-content: center;
   gap: var(--space-xl);
   flex-wrap: wrap;
   margin-top: var(--space-xl);
 }
+
 /* Shop Panel */
 .shop-panel {
   width: 280px;
@@ -1728,14 +1913,21 @@ body.flipped {
 
 .shop-item button:disabled {
   background: rgba(255, 255, 255, 0.1);
-  color: var(--text-secondary);
+  color: var (--text-secondary);
   cursor: not-allowed;
   box-shadow: none;
 }
 
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 30px 6px #FFD700; }
-  50% { box-shadow: 0 0 50px 12px #FFD700; }
+
+  0%,
+  100% {
+    box-shadow: 0 0 30px 6px #FFD700;
+  }
+
+  50% {
+    box-shadow: 0 0 50px 12px #FFD700;
+  }
 }
 
 .golden-pulse {
@@ -1753,8 +1945,15 @@ body.flipped {
 }
 
 @keyframes sparkleFade {
-  from {opacity: 0.8; transform: scale(1);}
-  to {opacity: 0; transform: scale(0.1);}
+  from {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.1);
+  }
 }
 
 /* Centering the greeting section */
@@ -1838,8 +2037,8 @@ body.flipped {
   z-index: 800;
 }
 
-.top-right-controls > div,
-.top-right-controls > button {
+.top-right-controls>div,
+.top-right-controls>button {
   position: relative !important;
   top: auto !important;
   right: auto !important;
@@ -1859,12 +2058,12 @@ body.flipped {
   font-size: 1.3em;
   cursor: pointer;
   transition: all var(--transition-base);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 #dark-mode-toggle:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 /* Time spent timer - reduced backdrop filter to prevent conflicts */
@@ -1875,9 +2074,8 @@ body.flipped {
   padding: 10px 16px;
   border-radius: 12px;
   font-size: 0.9em;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.2);
   text-align: center;
   white-space: nowrap;
 }
-

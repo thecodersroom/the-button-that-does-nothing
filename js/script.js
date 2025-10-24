@@ -461,17 +461,6 @@ function blastButtonParticles(button) {
 }
 
 
-button.addEventListener("click", () => {
-  clicks++;
-
- 
-  createSparkles();
-
-s
-  if (clicks % 20 === 0) {
-    blastButtonParticles(button);
-  }
-});
 
 // === Main Burst Particles Method === 
 function burstButtonParticles() {
@@ -1344,14 +1333,38 @@ function endTimeAttack() {
     timeAttackProgressBar.style.display = 'none';
   }
 
-  // Show a simple alert. You can make a custom popup later.
-  alert(`Time's up! You clicked ${timeAttackScore} times!`);
+  // Show custom themed modal instead of alert
+  const resultPopup = document.getElementById('time-attack-result-popup');
+  const finalScoreDisplay = document.getElementById('time-attack-final-score');
+  const newRecordDisplay = document.getElementById('time-attack-new-record');
+  
+  if (finalScoreDisplay) {
+    finalScoreDisplay.textContent = timeAttackScore;
+  }
 
-  if (timeAttackScore > timeAttackHighScore) {
+  // Check for new high score
+  const isNewRecord = timeAttackScore > timeAttackHighScore;
+  
+  if (isNewRecord) {
     timeAttackHighScore = timeAttackScore;
     localStorage.setItem('timeAttackHighScore', timeAttackHighScore);
     if(timeAttackHighScoreDisplay) timeAttackHighScoreDisplay.textContent = timeAttackHighScore;
     if(quoteDiv) quoteDiv.textContent = `🏆 New Time Attack High Score: ${timeAttackHighScore}!`;
+    
+    // Show new record message
+    if (newRecordDisplay) {
+      newRecordDisplay.style.display = 'block';
+    }
+  } else {
+    // Hide new record message
+    if (newRecordDisplay) {
+      newRecordDisplay.style.display = 'none';
+    }
+  }
+  
+  // Show the custom modal
+  if (resultPopup) {
+    resultPopup.classList.add('show');
   }
   
   if(timeAttackButton) timeAttackButton.disabled = false;
@@ -1374,6 +1387,28 @@ if (timeAttackButton) {
   timeAttackButton.addEventListener('click', () => {
     if (!isTimeAttackActive) {
       startTimeAttack();
+    }
+  });
+}
+
+// Add listener for Time Attack result modal close button
+const timeAttackCloseBtn = document.getElementById('time-attack-close-btn');
+if (timeAttackCloseBtn) {
+  timeAttackCloseBtn.addEventListener('click', () => {
+    const resultPopup = document.getElementById('time-attack-result-popup');
+    if (resultPopup) {
+      resultPopup.classList.remove('show');
+    }
+    playSound(clickSound);
+  });
+}
+
+// Close modal on background click
+const timeAttackResultPopup = document.getElementById('time-attack-result-popup');
+if (timeAttackResultPopup) {
+  timeAttackResultPopup.addEventListener('click', (e) => {
+    if (e.target === timeAttackResultPopup) {
+      timeAttackResultPopup.classList.remove('show');
     }
   });
 }
@@ -1415,7 +1450,11 @@ document.addEventListener('keydown', (e) => {
   if ((e.key === 's' || e.key === 'S') && !e.metaKey && !e.ctrlKey) { e.preventDefault(); soundToggle?.click(); }
   if ((e.key === 'i' || e.key === 'I') && !e.metaKey && !e.ctrlKey) { e.preventDefault(); impossibleToggle?.click(); }
   if (e.key === 'Escape') {
-    themeSelector?.classList.remove('show'); soundPanel?.classList.remove('show'); popupContainer?.classList.remove('show');
+    themeSelector?.classList.remove('show'); 
+    soundPanel?.classList.remove('show'); 
+    popupContainer?.classList.remove('show');
+    const timeAttackResultPopup = document.getElementById('time-attack-result-popup');
+    timeAttackResultPopup?.classList.remove('show');
   }
 });
 

@@ -21,12 +21,12 @@
   <div class="dev-comment" style="top: 75%; left: 70%;">// Hope the boss doesn't see this.</div>
   <div class="dev-comment" style="top: 85%; left: 30%;">// A single click... a single dream...</div>
 </div>
-    <div class="clock-container">
+    <!-- <div class="clock-container">
       <div class="clock">
         <span id="hrs">00</span>:<span id="min">00</span>:<span id="sec"
           >00</span
         >
-      </div>
+      </div> -->
     </div>
     <div id="time-attack-progress-bar" style="display: none;">
     <div id="time-attack-progress-inner"></div>
@@ -55,8 +55,6 @@
 </div>
 <button id="share-button">Share My Score</button>
       <div class="control-buttons">
-        <button id="theme-toggle">🎨</button>
-        <button id="sound-toggle">🎵</button>
         <button id="time-attack-button">⏱️ Time Attack</button>
       </div>
       <div id="counter">Clicks: 0 | Failed clicks: 0</div>
@@ -65,17 +63,17 @@
         <span class="achievement-text"> </span>
       </div>
       <div id="quote" class="quote">"Loading some wisdom..."</div>
-      <div id="timer" class="timer">Time spent doing nothing: 00:00</div>
-      <div id="time-attack-timer" class="timer" style="display: none;">Time Left: 60s</div>
+<div id="time-attack-timer" class="timer" style="display: none;">Time Left: 60s</div>
 
-      <div id="counter"></div>
-
-      <div id="quote" class="quote">Click the button to begin your pointless journey! 🚀</div>
     </div>
 
      <div class="top-right-controls">
       <button id="dark-mode-toggle" title="Toggle Dark Mode">🌙</button>
-
+      <div class="theme-sound">
+        <button id="theme-toggle" title="Theme">🎨</button>
+        <button id="sound-toggle" title="Sound Settings">🎵</button>
+      </div>
+    
       <div class="clock-container">
         <div class="clock">
           <span id="hrs">00</span>:<span id="min">00</span>:<span id="sec"
@@ -103,6 +101,27 @@
         <div class="popup-buttons">
           <button id="popup-yes">Yes</button>
           <button id="popup-no">No</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Time Attack Result Modal -->
+    <div id="time-attack-result-popup" class="popup-container">
+      <div class="popup-content time-attack-result">
+        <div class="result-icon">⏰</div>
+        <h2>Time's Up!</h2>
+        <div class="result-stats">
+          <div class="result-stat-item">
+            <span class="result-label">You clicked</span>
+            <span class="result-value" id="time-attack-final-score">0</span>
+            <span class="result-label">times!</span>
+          </div>
+        </div>
+        <div id="time-attack-new-record" class="new-record" style="display: none;">
+          🏆 NEW HIGH SCORE! 🏆
+        </div>
+        <div class="popup-buttons">
+          <button id="time-attack-close-btn">OK</button>
         </div>
       </div>
     </div>
