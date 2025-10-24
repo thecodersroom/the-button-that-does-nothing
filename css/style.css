@@ -788,35 +788,38 @@ h1::after {
   }
 }
 
-.control-buttons button,
-.top-right-controls button {
-  width: 56px;
-  height: 56px;
+.control-buttons button {
+  width: 76px;
+  height: 90px;
   border: none;
   border-radius: var(--radius-full);
-  background: var(--card-bg-solid);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-color);
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
   font-size: var(--text-xl);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-lg);
-  transition: all var(--transition-base);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  overflow: hidden;
+  color: var(--text-color);
 }
 
-.control-buttons button:hover,
-.top-right-controls button:hover {
-  transform: scale(1.1);
-  box-shadow: var(--shadow-xl);
+.control-buttons button:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
   border-color: var(--accent-color);
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
 }
 
-.control-buttons button:active,
-.top-right-controls button:active {
-  transform: scale(0.95);
+.control-buttons button:active {
+  transform: translateY(2px) scale(0.95);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
 }
 
 /* Tooltip */
@@ -825,7 +828,7 @@ h1::after {
   content: attr(title);
   position: absolute;
   right: calc(100% + var(--space-md));
-  background: rgba(0, 0, 0, 0.9);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85));
   color: white;
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-sm);
@@ -833,12 +836,16 @@ h1::after {
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--transition-base);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .control-buttons button:hover::before,
 .top-right-controls button:hover::before {
   opacity: 1;
+  transform: translateX(0);
 }
 
 /* make theme and sound in same line */
@@ -854,10 +861,34 @@ h1::after {
     right: var(--space-lg);
     left: var(--space-lg);
     justify-content: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .control-buttons button {
+    width: 60px;
+    height: 70px;
+    font-size: var(--text-lg);
+  }
+
+  .control-buttons button:hover {
+    transform: translateY(-3px) scale(1.05);
   }
 
   .control-buttons button::before {
-    display: none;
+    bottom: calc(100% + var(--space-sm));
+    right: 50%;
+    transform: translateX(50%) translateY(10px);
+    text-align: center;
+  }
+
+  .control-buttons button:hover::before {
+    transform: translateX(50%) translateY(0);
   }
 }
 
