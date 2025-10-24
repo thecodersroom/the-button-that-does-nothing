@@ -461,17 +461,6 @@ function blastButtonParticles(button) {
 }
 
 
-button.addEventListener("click", () => {
-  clicks++;
-
- 
-  createSparkles();
-
-s
-  if (clicks % 20 === 0) {
-    blastButtonParticles(button);
-  }
-});
 
 // === Main Burst Particles Method === 
 function burstButtonParticles() {
