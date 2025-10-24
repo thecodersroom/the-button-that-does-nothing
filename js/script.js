@@ -177,7 +177,7 @@ const failedClickMessages = [
   "You're a failing legend. 💀",
   "Even the cursor gave up on you. 🖱️",
   "You've achieved the rare 'Click Miss Combo'. 🎪",
-  "Pathetic reflexes — admirable persistence. 🐌",
+  "Pathetic reflexes â€” admirable persistence. 🐌",
   "Your aim is as good as a stormtrooper's. 🎯",
   "Button: 1, You: 0 😂",
 ];
@@ -287,7 +287,6 @@ function buttonTeleport(posX, posY) {
 // Initialize modern card-based counter
 function initializeCounter() {
   if (!counterDiv) return;
-  
   counterDiv.innerHTML = `
     <div class="stat-card">
       <span class="stat-icon">👆</span>
@@ -582,7 +581,7 @@ function cloneButton() {
 }
 
 function emojiRain() {
-    const emojis = ['😂', '🙃', '🥳', '✨', '🔥', '💖', '⭐']; 
+    const emojis = ['✨', '🔥', '🥳', '🙃', '😂', '💖', '⭐']; 
     if (quoteDiv) quoteDiv.textContent = "🎊 EMOJI PARTY! Enjoy the pointless rain!";
 
     for (let i = 0; i < 60; i++) { // Create 60 emojis
@@ -792,7 +791,7 @@ if (button) {
     showAchievement(clicks);
 
     if (clicks === 20) {
-      quoteDiv.textContent = "✨ 20-CLICK POWER UP! Particles Erupt! ✨";
+      quoteDiv.textContent = "✨ 20-CLICK POWER UP! Particles Erupt! âœ¨";
     }
 
     //  Confetti animation at 50 clicks
@@ -833,16 +832,16 @@ let categoryCooldowns = JSON.parse(localStorage.getItem('categoryCooldowns')) ||
 function getNewAction() {
     const now = Date.now();
 
-    // 1️ Filter actions whose categories are NOT in cooldown
+    // 1ï¸ Filter actions whose categories are NOT in cooldown
     const available = actions.filter(a => {
         const lastShown = categoryCooldowns[a.category];
         return !lastShown || now - lastShown > CATEGORY_COOLDOWN;
     });
 
-    // 2️ random show when cooldown 
+    // 2ï¸ random show when cooldown 
     const pool = available.length > 0 ? available : actions;
 
-    // 3️ Weighted random selection (rarity logic)
+    // 3ï¸ Weighted random selection (rarity logic)
     const totalWeight = pool.reduce((sum, a) => sum + (1 / a.rarity), 0);
     let rand = Math.random() * totalWeight;
     let selected = pool[0];
@@ -858,7 +857,7 @@ function getNewAction() {
     // 4 Display the prompt
     quoteDiv.textContent = selected.text;
 
-    // 5️ Update cooldown for that category
+    // 5ï¸ Update cooldown for that category
     categoryCooldowns[selected.category] = now;
     localStorage.setItem('categoryCooldowns', JSON.stringify(categoryCooldowns));
 }
@@ -1482,7 +1481,7 @@ if (impossibleToggle) {
     impossibleMode = impossibleToggle.checked;
     if (impossibleMode) {
       if (button) button.classList.add("impossible-mode");
-      updateCounter("— 🔥 IMPOSSIBLE MODE ACTIVATED! Good luck clicking now! 🔥");
+      updateCounter("— 🔥 IMPOSSIBLE MODE ACTIVATED! Good luck clicking now! ðŸ”¥");
     } else {
       if (button) button.classList.remove("impossible-mode");
       updateCounter("— Normal mode restored. (Boring!)");
@@ -1568,8 +1567,8 @@ if (shareButton) {
 
 
 
-function randomizeButtonPosition(buttonEl, containerWidth, containerHeight) {
-// Function to randomize button position within the popup (keeps button inside container)
+// function randomizeButtonPosition(buttonEl, containerWidth, containerHeight) {
+// // Function to randomize button position within the popup (keeps button inside container)
 function randomizeButtonPosition(clickCount, buttonEl, containerWidth, containerHeight) {
   if(clickCount>=1000) return;
   const buttonWidth = buttonEl.offsetWidth;
@@ -1822,9 +1821,5 @@ document.addEventListener('keydown', (e) => {
     }
   }
 });
-
-// Initialize on load
-window.addEventListener('load', () => {
-  initializeCounter();
-  initSoundSettings();
-});
+initializeCounter();
+initSoundSettings();
