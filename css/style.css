@@ -823,7 +823,8 @@ h1::after {
 }
 
 /* Tooltip */
-.control-buttons button::before {
+.control-buttons button::before,
+.top-right-controls button:before{
   content: attr(title);
   position: absolute;
   right: calc(100% + var(--space-md));
@@ -841,9 +842,16 @@ h1::after {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.control-buttons button:hover::before {
+.control-buttons button:hover::before,
+.top-right-controls button:hover::before {
   opacity: 1;
   transform: translateX(0);
+}
+
+/* make theme and sound in same line */
+.theme-sound {
+  display: flex;
+  gap: 10px;
 }
 
 @media (max-width: 768px) {
