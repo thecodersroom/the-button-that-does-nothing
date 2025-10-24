@@ -1881,3 +1881,47 @@ buyButton.addEventListener("click", () => {
 
 // Initialize UI on page load
 updateCurrencyUI();
+
+// ---------    user information - greeting --------------
+const nameInput = document.getElementById('username');
+const saveBtn = document.getElementById('saveName');
+const greeting = document.getElementById('greeting');
+
+// Check if name is already saved
+const storedName = localStorage.getItem('userName');
+
+if (storedName) {
+  greetUser(storedName);
+  hideInput();
+}
+
+// Save name when user clicks save
+saveBtn.addEventListener('click', () => {
+  const name = nameInput.value.trim();
+  if (name) {
+    localStorage.setItem('userName', name);
+    greetUser(name);
+    hideInput();
+  } else {
+    alert("Please enter your name first!");
+  }
+});
+
+function greetUser(name) {
+  const greetings = [
+    `Welcome back, ${name}!`,
+    `Hey ${name}, good to see you again!`,
+    `Hello ${name}! Ready to explore new universes?`,
+    `Glad you're here, ${name}!`,
+    `👋 ${name}, your button awaits!`
+  ];
+  greeting.textContent = greetings[Math.floor(Math.random() * greetings.length)];
+}
+
+// Hide input and save button after saving
+function hideInput() {
+  nameInput.style.display = 'none';
+  saveBtn.style.display = 'none';
+}
+
+
