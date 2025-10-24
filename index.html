@@ -31,19 +31,23 @@
     <div class="app-container">
       <h1>The Button That Does Nothing</h1>
 
-      <!-- NEW: Impossible Mode Toggle -->
       <div class="toggle-container">
         <label class="toggle-label">
-          <input type="checkbox" id="impossible-toggle" />
-          <span class="toggle-slider"></span>
+          <input type="checkbox" id="impossible-toggle" aria-label="Toggle Impossible Mode" />
+          <span class="toggle-slider"></span> 
           <span class="toggle-text">🔥 IMPOSSIBLE MODE</span>
         </label>
       </div>
 
       <div class="button-container">
-        <button id="useless-button">Click Me!</button>
+        <button id="useless-button" aria-label="The useless button">Click Me!</button>
       </div>
       <!--Control buttons-->
+      
+<div class="high-score-display">
+  My High Score: <span id="high-score">0</span>
+</div>
+<button id="share-button">Share My Score</button>
       <div class="control-buttons">
         <button id="theme-toggle">Toggle Theme</button>
         <button id="sound-toggle">🎵</button>
@@ -55,14 +59,33 @@
       </div>
       <div id="quote" class="quote">"Loading some wisdom..."</div>
       <div id="timer" class="timer">Time spent doing nothing: 00:00</div>
+
+      <div id="counter"></div>
+
+      <div id="quote" class="quote">Click the button to begin your pointless journey! 🚀</div>
+    </div> <div class="top-right-controls">
+      <div class="clock-container">
+        <div class="clock">
+          <span id="hrs">00</span>:<span id="min">00</span>:<span id="sec"
+            >00</span
+          >
+        </div>
+      </div>
+
+      <div id="timer" class="timer">⏱️ Time spent doing nothing: 00:00</div>
+      <button id="theme-toggle" title="Cycle themes" aria-label="Theme selector">🎨</button>
+      <button id="sound-toggle" title="Sound settings" aria-label="Sound settings">🎵</button>
     </div>
 
-    <!-- Sounds -->
+    <div id="achievement-popup">
+      <span class="achievement-icon"></span>
+      <span class="achievement-text"></span>
+    </div>
+
     <audio id="click-sound" src="audio/click1.mp3"></audio>
     <audio id="fail-sound" src="audio/failedClick.mp3"></audio>
     <audio id="bg-music" loop></audio>
 
-    <!-- Are You Still Clicking Popup -->
     <div id="still-clicking-popup" class="popup-container">
       <div class="popup-content">
         <h2>Are you still clicking?</h2>
@@ -73,7 +96,6 @@
       </div>
     </div>
 
-    <!-- Sound Settings Panel -->
     <div id="sound-panel" class="popup-container">
       <div class="popup-content">
         <h2>🎵 Sound Settings</h2>
@@ -95,7 +117,123 @@
       </div>
     </div>
 
+    <div id="theme-selector">
+      <div class="theme-selector-content">
+        <div class="theme-selector-header">
+          <h2>🎨 Theme Selector</h2>
+          <button id="close-theme-selector">✕</button>
+        </div>
+        
+        <div class="theme-tabs">
+          <button class="theme-tab active" data-tab="predefined">Predefined Themes</button>
+          <button class="theme-tab" data-tab="custom">Custom Theme</button>
+        </div>
+        
+        <div class="theme-tab-content active" id="predefined-tab">
+          <div class="themes-grid" id="themes-grid">
+            </div>
+        </div>
+        
+        <div class="theme-tab-content" id="custom-tab">
+          <div class="custom-theme-creator">
+            <h3>✨ Create Your Custom Theme</h3>
+            <div class="color-picker-group">
+              <div class="color-picker-item">
+                <label>Background Start Color</label>
+                <div class="color-input-wrapper">
+                  <input type="color" id="custom-bg-start" value="#667eea">
+                  <input type="text" id="custom-bg-start-text" value="#667eea">
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <label>Background End Color</label>
+                <div class="color-input-wrapper">
+                  <input type="color" id="custom-bg-end" value="#764ba2">
+                  <input type="text" id="custom-bg-end-text" value="#764ba2">
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <label>Text Color</label>
+                <div class="color-input-wrapper">
+                  <input type="color" id="custom-text-color" value="#ffffff">
+                  <input type="text" id="custom-text-color-text" value="#ffffff">
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <label>Accent Color</label>
+                <div class="color-input-wrapper">
+                  <input type="color" id="custom-accent-color" value="#ff6b6b">
+                  <input type="text" id="custom-accent-color-text" value="#ff6b6b">
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <label>Button Start Color</label>
+                <div class="color-input-wrapper">
+                  <input type="color" id="custom-button-start" value="#ff6b6b">
+                  <input type="text" id="custom-button-start-text" value="#ff6b6b">
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <label>Button End Color</label>
+                <div class="color-input-wrapper">
+                  <input type="color" id="custom-button-end" value="#ff9a76">
+                  <input type="text" id="custom-button-end-text" value="#ff9a76">
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <label>Font Family</label>
+                <select id="custom-font-family">
+                  <option value="'Poppins', sans-serif">Poppins (Default)</option>
+                  <option value="'Arial', sans-serif">Arial</option>
+                  <option value="'Helvetica', sans-serif">Helvetica</option>
+                  <option value="'Georgia', serif">Georgia</option>
+                  <option value="'Times New Roman', serif">Times New Roman</option>
+                  <option value="'Courier New', monospace">Courier New</option>
+                  <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
+                  <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                  <option value="'Verdana', sans-serif">Verdana</option>
+                  <option value="'Impact', sans-serif">Impact</option>
+                  <option value="'Brush Script MT', cursive">Brush Script</option>
+                  <option value="'Palatino', serif">Palatino</option>
+                </select>
+              </div>
+            </div>
+            <div class="custom-theme-actions">
+              <button id="preview-custom-theme">👁️ Preview</button>
+              <button id="save-custom-theme">💾 Save Theme</button>
+              <button id="reset-custom-theme">🔄 Reset</button>
+              <button id="random-color-theme">🎲 Random</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="currency-display" class="currency-panel">
+      <span>🪙 Nothing Coins: </span><span id="coin-count">0</span>
+    </div>
+    
+    <div id="shop" class="shop-panel">
+      <h3>Nothing Shop</h3>
+      <div class="shop-item" id="shinier-nothing">
+        <div class="shop-info">
+          <p class="item-name">✨ Shinier Nothing</p>
+          <p class="item-cost">Cost: 50 Nothing Coins</p>
+        </div>
+        <button id="buy-shinier">Buy</button>
+      </div>
+    </div>
+    
+    <div id="user-section">
+      <input type="text" id="username" placeholder="Enter your name" />
+      <button id="saveName">Save</button>
+      <p id="greeting"></p>
+    </div>
+    
+
     <script src="js/script.js"></script>
     <script src="js/clock.js"></script>
+    <script src="js/script.js"></script>
+    
   </body>
 </html>
