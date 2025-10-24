@@ -589,6 +589,7 @@ if (button) {
     checkCombo();
     getNewAction();
     addRippleEffect(e);
+    button.textContent = getNewButtonText();
     isButtonMoving = true; setTimeout(() => { isButtonMoving = false; }, 300);
     const randomMessage = messages[Math.floor(Math.random() * messages.length)];
     updateCounter(`— ${randomMessage}`);
@@ -1209,5 +1210,36 @@ window.addEventListener('load', () => {
 
   updateActivityTime(); // Start inactivity timer
 });
+
+// Add this array around line 256
+const buttonTexts = [
+  "Again?",
+  "Seriously?",
+  "Don't you have work?",
+  "Okay, one more...",
+  "Push it.",
+  "Why?",
+  "Nothing will happen.",
+  "Stop it.",
+  "Find a hobby.",
+  "Click Me!",
+  "Is this fun?",
+  "Pointless, isn't it?"
+];
+
+// Add this function right after the buttonTexts array
+function getNewButtonText() {
+  const currentText = button.textContent; // Get the button's current text
+  let newText = currentText;
+
+  // Keep picking a new text until it's different
+  while (newText === currentText) {
+    const randomIndex = Math.floor(Math.random() * buttonTexts.length);
+    newText = buttonTexts[randomIndex];
+  }
+  
+  return newText;
+}
+
 initializeCounter();
 initSoundSettings();
