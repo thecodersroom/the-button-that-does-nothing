@@ -7,7 +7,7 @@ const clickSoundFiles = [
 
 // DOM Elements
 const button = document.getElementById("useless-button");
-const counterDiv = document.getElementById("counter"); // Note: 'button' is already used for the main button
+const counterDiv = document.getElementById("counter");
 const quoteDiv = document.getElementById("quote");
 const timerDiv = document.getElementById("timer");
 const clickSound = document.getElementById("click-sound");
@@ -29,9 +29,18 @@ const volumeSlider = document.getElementById("volume-slider");
 const trackSelector = document.getElementById("track-selector");
 const closeSoundPanel = document.getElementById("close-sound-panel");
 
+// === MERGED: Added High Score and Share Button Elements from main ===
+const highScoreDisplay = document.getElementById('high-score');
+const shareButton = document.getElementById('share-button');
+// === END MERGE ===
+
 // State
+// --- MERGED: Keep game reset from fix/game-bugs, add high score from main ---
 let clicks = 0;
 let failedClicks = 0;
+let highScore = Number(localStorage.getItem('nothingHighScore')) || 0; // High score still saved
+// --- END MERGE ---
+
 let userInteracted = false;
 let impossibleMode = false;
 let isButtonMoving = false;
@@ -44,29 +53,38 @@ let popupActive = false;
 let popupAutoCloseTimer = null;
 let lastDodgeTime = 0;
 let seconds = 0;
-let isCelebrationAnimationComplete = false; // FIX: Added missing state variable
+let isCelebrationAnimationComplete = false; // Kept from fix/game-bugs
 
 // Sound Settings
 let soundsEnabled = localStorage.getItem('soundsEnabled') !== 'false';
 let musicEnabled = localStorage.getItem('musicEnabled') !== 'false';
 let masterVolume = parseFloat(localStorage.getItem('masterVolume')) || 1.0;
-let currentTrack = localStorage.getItem('currentTrack') || '8bit';
+let currentTrack = '8bit'; // Reset track on load
 
+// MODIFIED: Re-ordered the tracks so '8bit' is the default (index 0)
 const tracks = {
-  'lofi': 'audio/lo-fi.mp3',
-  '8bit': 'audio/8-bit.mp3',
-  'boss': 'audio/boss.mp3',
-  'suspense': 'audio/suspense.mp3',
-  'horror': 'audio/horror.mp3'
+  '8bit': 'audio/8-bit.mp3',   // Default (0 clicks)
+  'lofi': 'audio/lo-fi.mp3', // Unlocks at 100
+  'boss': 'audio/boss.mp3',   // Unlocks at 200
+  'suspense': 'audio/suspense.mp3', // Unlocks at 300
+  'horror': 'audio/horror.mp3'  // Unlocks at 400
 };
+
+// Defined allTrackKeys globally
+const allTrackKeys = Object.keys(tracks);
+
+// Will be populated by loadUnlockedTracks()
+let unlockedTracks = [];
 
 // Canvas setup
 if (canvas) {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   window.addEventListener("resize", () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
   });
 }
 
@@ -146,102 +164,44 @@ const actions = [
 { text: "Draw or doodle something that represents how you feel right now.", category: "Growth", rarity: 1 },
 { text: "Write down one quality about yourself that you admire.", category: "Growth", rarity: 1 },
 { text: "Take a mindful pause and truly notice one beautiful thing in your surroundings.", category: "Growth", rarity: 1 },
-
-
 ];
 
 const messages = [
-  "Nice click!",
-  "You did it!",
-  "Another one!",
-  "Keep going!",
-  "Fantastic!",
-  "Amazing work!",
-  "You're on fire! 🔥",
-  "Incredible!",
-  "Spectacular!",
-  "Magnificent!",
+  "Nice click!", "You did it!", "Another one!", "Keep going!", "Fantastic!",
+  "Amazing work!", "You're on fire! 🔥", "Incredible!", "Spectacular!", "Magnificent!",
 ];
 
 const failedClickMessages = [
-  "Choppy fingers. 🍗",
-  "My mom's sandal clicks more precise. 👡",
-  "You're a failing legend. 💀",
-  "Even the cursor gave up on you. 🖱️",
-  "You've achieved the rare 'Click Miss Combo'. 🎪",
-  "Pathetic reflexes — admirable persistence. 🐌",
-  "Your aim is as good as a stormtrooper's. 🎯",
+  "Choppy fingers. 🍗", "My mom's sandal clicks more precise. 👡", "You're a failing legend. 💀",
+  "Even the cursor gave up on you. 🖱️", "You've achieved the rare 'Click Miss Combo'. 🎪",
+  "Pathetic reflexes — admirable persistence. 🐌", "Your aim is as good as a stormtrooper's. 🎯",
   "Button: 1, You: 0 😂",
 ];
 
 const impossibleFailMessages = [
-  "Did you really think it would be that easy?",
-  "IMPOSSIBLE MODE activated! Good luck! 😈",
-  "The button is now sentient and afraid of you.",
-  "Physics don't apply here anymore.",
-  "You're fighting a losing battle, friend.",
-  "The button has evolved beyond your reach.",
-  "Welcome to the nightmare dimension.",
-  "This is what peak performance looks like.",
+  "Did you really think it would be that easy?", "IMPOSSIBLE MODE activated! Good luck! 😈",
+  "The button is now sentient and afraid of you.", "Physics don't apply here anymore.",
+  "You're fighting a losing battle, friend.", "The button has evolved beyond your reach.",
+  "Welcome to the nightmare dimension.", "This is what peak performance looks like.",
 ];
 
 const comboMessages = [
-  "🔥 COMBO x2! You're on fire!",
-  "⚡ COMBO x3! Lightning speed!",
-  "💫 COMBO x4! Unstoppable!",
-  "🌟 COMBO x5! LEGENDARY!",
-  "👑 MEGA COMBO! You're the chosen one!",
+  "🔥 COMBO x2! You're on fire!", "⚡ COMBO x3! Lightning speed!", "💫 COMBO x4! Unstoppable!",
+  "🌟 COMBO x5! LEGENDARY!", "👑 MEGA COMBO! You're the chosen one!",
 ];
 
 // Achievements
 const achievements = {
-  10: {
-    icon: "🥉",
-    text: "Novice Nothing-Doer — 10 clicks! You've officially wasted your first minute productively doing nothing!",
-  },
-  25: {
-    icon: "🧤",
-    text: "Casual Clicker — 25 clicks! You’re getting suspiciously good at being unproductive.",
-  },
-  50: {
-    icon: "🥈",
-    text: "Master of Useless Clicking — 50 clicks! Your dedication to pointlessness is unmatched!",
-  },
-  100: {
-    icon: "🥇",
-    text: "Legendary Button Slayer — 100 clicks! The button now fears your existence.",
-  },
-  200: {
-    icon: "🚀",
-    text: "Galactic Click Commander — 200 clicks! You've officially left the orbit of sanity.",
-  },
-  500: {
-    icon: "👑",
-    text: "Click Royalty — 500 clicks! Bow down to the Emperor of Empty Effort!",
-  },
-  1000: {
-    icon: "🏆",
-    text: "Ultimate Button God — 1000 clicks! You’ve ascended beyond purpose, beyond reason, beyond… everything.",
-  },
+  10: { icon: "🥉", text: "Novice Nothing-Doer — 10 clicks! You've officially wasted your first minute productively doing nothing!" },
+  25: { icon: "🧤", text: "Casual Clicker — 25 clicks! You’re getting suspiciously good at being unproductive." },
+  50: { icon: "🥈", text: "Master of Useless Clicking — 50 clicks! Your dedication to pointlessness is unmatched!" },
+  100: { icon: "🥇", text: "Legendary Button Slayer — 100 clicks! The button now fears your existence." },
+  200: { icon: "🚀", text: "Galactic Click Commander — 200 clicks! You've officially left the orbit of sanity." },
+  500: { icon: "👑", text: "Click Royalty — 500 clicks! Bow down to the Emperor of Empty Effort!" },
+  1000: { icon: "🏆", text: "Ultimate Button God — 1000 clicks! You’ve ascended beyond purpose, beyond reason, beyond… everything." },
 };
 
 // Utils
-function getRandomColor() {
-  const colors = [
-    "#FF6B6B",
-    "#4ECDC4",
-    "#45B7D1",
-    "#FFA07A",
-    "#98D8C8",
-    "#F7DC6F",
-    "#BB8FCE",
-    "#85C1E2",
-    "#F8B739",
-    "#52B788",
-  ];
-  return colors[Math.floor(Math.random() * colors.length)];
-}
-
 function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -249,27 +209,28 @@ function getRandomNumber(min, max) {
 /**
  * Returns location values:
  * - left/top are relative to button.parentNode (suitable for style.left/top)
- * - randomX/randomY are provided as aliases (equal to left/top) so older calls still work
  */
 function getRandomLocation() {
   const padding = 20;
-  const maxX = window.innerWidth - (button ? button.offsetWidth : 100) - padding;
-  const maxY = window.innerHeight - (button ? button.offsetHeight : 50) - padding;
+  const btnWidth = button ? button.offsetWidth : 100;
+  const btnHeight = button ? button.offsetHeight : 50;
+  const maxX = window.innerWidth - btnWidth - padding;
+  const maxY = window.innerHeight - btnHeight - padding;
   const minX = padding;
   const minY = padding;
 
   const randomXAbs = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
   const randomYAbs = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
 
-  const parentNodeRect = button.parentNode.getBoundingClientRect();
+  const parentNodeRect = button?.parentNode?.getBoundingClientRect() || { left: 0, top: 0 };
   const left = randomXAbs - parentNodeRect.left;
   const top = randomYAbs - parentNodeRect.top;
 
-  return { left, top, randomX: left, randomY: top };
+  return { left, top };
 }
 
 function buttonTeleport(posX, posY) {
-  // posX/posY are expected to be left/top relative to parent (as returned by getRandomLocation)
+  if (!button) return;
   button.style.position = "absolute";
   button.style.left = `${posX}px`;
   button.style.top = `${posY}px`;
@@ -279,22 +240,20 @@ function buttonTeleport(posX, posY) {
 // Initialize modern card-based counter
 function initializeCounter() {
   if (!counterDiv) return;
-  
+  const totalInitial = clicks + failedClicks;
+  const initialAccuracy = totalInitial > 0 ? Math.round((clicks / totalInitial) * 100) : 100;
   counterDiv.innerHTML = `
     <div class="stat-card">
       <span class="stat-icon">👆</span>
-      <div class="stat-value" id="clicks-value">0</div>
-      <div class="stat-label">Total Clicks</div>
+      <div class="stat-value" id="clicks-value">${clicks}</div> <div class="stat-label">Total Clicks</div>
     </div>
     <div class="stat-card">
       <span class="stat-icon">❌</span>
-      <div class="stat-value" id="failed-value">0</div>
-      <div class="stat-label">Failed Clicks</div>
+      <div class="stat-value" id="failed-value">${failedClicks}</div> <div class="stat-label">Failed Clicks</div>
     </div>
     <div class="stat-card">
       <span class="stat-icon">🎯</span>
-      <div class="stat-value" id="accuracy-value">100%</div>
-      <div class="stat-label">Accuracy</div>
+      <div class="stat-value" id="accuracy-value">${initialAccuracy}%</div> <div class="stat-label">Accuracy</div>
     </div>
   `;
 }
@@ -303,16 +262,15 @@ function animateNumber(element, newValue) {
   if (!element) return;
   const current = parseInt(element.textContent) || 0;
   const diff = newValue - current;
+  if (diff === 0) return;
   const duration = 300;
   const steps = 15;
   const increment = diff / steps;
   let step = 0;
-  
   const timer = setInterval(() => {
     step++;
     const value = Math.round(current + (increment * step));
     element.textContent = value;
-    
     if (step >= steps) {
       clearInterval(timer);
       element.textContent = newValue;
@@ -324,27 +282,25 @@ function updateCounter(extraText = "") {
   const clicksEl = document.getElementById('clicks-value');
   const failedEl = document.getElementById('failed-value');
   const accuracyEl = document.getElementById('accuracy-value');
-  
   if (clicksEl) animateNumber(clicksEl, clicks);
   if (failedEl) animateNumber(failedEl, failedClicks);
-  
   if (accuracyEl) {
     const total = clicks + failedClicks;
     const accuracy = total > 0 ? Math.round((clicks / total) * 100) : 100;
     accuracyEl.textContent = `${accuracy}%`;
   }
-  
   if (extraText && quoteDiv) {
     quoteDiv.textContent = extraText;
     quoteDiv.style.animation = "none";
     setTimeout(() => {
-      quoteDiv.style.animation = "fadeIn 0.5s ease-in forwards";
+      if(quoteDiv) quoteDiv.style.animation = "fadeIn 0.5s ease-in forwards";
     }, 10);
   }
 }
 
 // Add ripple effect to button
 function addRippleEffect(event) {
+  if (!button) return;
   button.classList.add('ripple');
   setTimeout(() => {
     button.classList.remove('ripple');
@@ -364,52 +320,36 @@ function playSound(sound) {
 // === Particle System (canvas) ===
 class Particle {
   constructor(x, y, isSuccess = true) {
-    this.x = x;
-    this.y = y;
+    this.x = x; this.y = y;
     this.size = Math.random() * 5 + 2;
     this.speedX = (Math.random() - 0.5) * 10;
     this.speedY = (Math.random() - 0.5) * 10;
-    this.color = isSuccess
-      ? `hsl(${Math.random() * 60 + 120}, 100%, 60%)`
-      : `hsl(${Math.random() * 30}, 100%, 60%)`;
+    this.color = isSuccess ? `hsl(${Math.random() * 60 + 120}, 100%, 60%)` : `hsl(${Math.random() * 30}, 100%, 60%)`;
     this.life = 100;
   }
-
   update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    this.speedY += 0.2;
-    this.life -= 2;
+    this.x += this.speedX; this.y += this.speedY;
+    this.speedY += 0.2; this.life -= 2;
   }
-
   draw() {
     if (!ctx) return;
-    ctx.fillStyle = this.color;
-    ctx.globalAlpha = Math.max(this.life / 100, 0);
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.fillStyle = this.color; ctx.globalAlpha = Math.max(this.life / 100, 0);
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
     ctx.globalAlpha = 1;
   }
 }
-
 function createParticles(x, y, count = 20, isSuccess = true) {
-  for (let i = 0; i < count; i++) {
-    particles.push(new Particle(x, y, isSuccess));
-  }
+  for (let i = 0; i < count; i++) particles.push(new Particle(x, y, isSuccess));
 }
-
 function animateParticles() {
   if (!ctx) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (let i = particles.length - 1; i >= 0; i--) {
-    particles[i].update();
-    particles[i].draw();
+    particles[i].update(); particles[i].draw();
     if (particles[i].life <= 0) particles.splice(i, 1);
   }
   requestAnimationFrame(animateParticles);
 }
-
 if (ctx) animateParticles();
 
 // === Confetti System ===
@@ -418,10 +358,9 @@ function createConfetti() {
     const confetti = document.createElement('div');
     confetti.className = 'confetti';
     confetti.style.left = Math.random() * 100 + 'vw';
-    confetti.style.backgroundColor = getRandomColor();
+    confetti.style.backgroundColor = getRandomColor(); // Re-using getRandomColor util
     confetti.style.animationDelay = Math.random() * 2 + 's';
     document.body.appendChild(confetti);
-    
     setTimeout(() => confetti.remove(), 6000);
   }
 }
@@ -431,303 +370,206 @@ function createSmokeTrail() {
   if (!button) return;
   for (let i = 0; i < 8; i++) {
     const particle = document.createElement("span");
-    particle.classList.add("particle");
-
-    const offsetX = (Math.random() - 0.5) * button.offsetWidth;
-    const offsetY = (Math.random() - 0.5) * button.offsetHeight;
-
-    particle.style.left = `${
-      button.offsetLeft + button.offsetWidth / 2 + offsetX
-    }px`;
-    particle.style.top = `${
-      button.offsetTop + button.offsetHeight / 2 + offsetY
-    }px`;
-    particle.style.background = getRandomColor();
-
+    particle.classList.add("particle"); // Ensure CSS targets .particle
+    const rect = button.getBoundingClientRect();
+    const offsetX = (Math.random() - 0.5) * rect.width;
+    const offsetY = (Math.random() - 0.5) * rect.height;
+    particle.style.left = `${rect.left + rect.width / 2 + offsetX + window.scrollX}px`;
+    particle.style.top = `${rect.top + rect.height / 2 + offsetY + window.scrollY}px`;
+    particle.style.background = getRandomColor(); // Re-using getRandomColor util
     document.body.appendChild(particle);
-
     setTimeout(() => particle.remove(), 1000);
   }
 }
 
-// === Disable Teleport Method === 
-function buttonDisableTeleport() { 
+// === Disable Teleport Method ===
+function buttonDisableTeleport() {
+  if (!button) return;
   button.style.transition = "none";
   button.style.position = "relative";
   button.style.left = "";
   button.style.top = "";
 }
 
-// === Main Burst Particles Method === 
-function burstButtonParticles() {
-  isCelebrationAnimationComplete = false;
-
-  const rect = button.getBoundingClientRect();
-  const centerX = rect.left + rect.width / 2;
-  const centerY = rect.top + rect.height / 2;
-  explode(centerX, centerY);
-
-  if (isCelebrationAnimationComplete === true) {
-    const randomLoc = getRandomLocation();
-    targetX = randomLoc.left;
-    targetY = randomLoc.top;
-    buttonTeleport(targetX, targetY);
-  }
-}
- 
-// === Rand Utility === 
+// === Rand Utility ===
 function rand(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// === Burst Method === 
+// === Burst Method ===
 function explode(x, y) {
-  // === Rand (required utility) === 
-  if (typeof rand !== 'function') {
-      console.error("The 'rand' utility function is required for explode().");
-      return;
-  }
-
-  const particles = 1200;
+  const particles = 150; // Reduced particle count for performance
   const explosion = document.createElement('div');
   explosion.classList.add('explosion');
-
   document.body.appendChild(explosion);
-
-  explosion.style.position = 'absolute';
-  explosion.style.left = `${x - explosion.offsetWidth / 2}px`;
-  explosion.style.top = `${y - explosion.offsetHeight / 2}px`;
+  explosion.style.position = 'fixed'; // Use fixed for viewport positioning
+  explosion.style.left = `${x}px`;
+  explosion.style.top = `${y}px`;
+  explosion.style.transform = 'translate(-50%, -50%)'; // Center it
+  explosion.style.pointerEvents = 'none'; // Prevent interaction
+  explosion.style.zIndex = '9999'; // Ensure it's on top
 
   for (let i = 0; i < particles; i++) {
-
-      const distanceX = rand(80, 500);
-      const distanceY = rand(80, 500);
-      const angleFactor = rand(particles - 10, particles + 10);
-      
-      const particleX = (explosion.offsetWidth / 2) + distanceX * Math.cos(2 * Math.PI * i / angleFactor);
-      const particleY = (explosion.offsetHeight / 2) + distanceY * Math.sin(2 * Math.PI * i / angleFactor);
-      
-      // === Color Generation in RGB === 
-      const r = rand(50, 255);
-      const g = rand(50, 255);
-      const b = rand(50, 255);
+      const distance = rand(50, 250); // Adjusted range
+      const angle = (i / particles) * 360; // Spread evenly
+      const radians = angle * (Math.PI / 180);
+      const particleX = distance * Math.cos(radians);
+      const particleY = distance * Math.sin(radians);
+      const r = rand(50, 255); const g = rand(50, 255); const b = rand(50, 255);
       const color = `rgb(${r}, ${g}, ${b})`;
-
-      // === Particle element === 
       const elm = document.createElement('div');
       elm.classList.add('particle-burst');
-      
-      // === Apply inline styles === 
       elm.style.backgroundColor = color;
       elm.style.top = `${particleY}px`;
       elm.style.left = `${particleX}px`;
-
       if (i === 0) {
-          // ===  CSS defines a keyframe animation === 
           elm.addEventListener('animationend', function cleanup() {
               explosion.remove();
-              elm.removeEventListener('animationend', cleanup); 
+              isCelebrationAnimationComplete = true; // Set flag *after* animation
           }, { once: true });
       }
-      
       explosion.appendChild(elm);
-      isCelebrationAnimationComplete  = true;
   }
 }
-// === NEW MINI-EVENT FUNCTIONS FOR ISSUE #42 (Random Mini Events) ===
 
+// === MERGED: Added Mini-Event Functions from main ===
 function flipScreen() {
     document.body.classList.add('flipped');
     if (quoteDiv) quoteDiv.textContent = "😵 Whoa! The screen just flipped for 5 seconds!";
-    
-    // Revert after 5 seconds
     setTimeout(() => {
         document.body.classList.remove('flipped');
-        // Revert quote if still showing the event message
-        if (quoteDiv.textContent.includes("flipped")) {
-             getNewAction(); 
-        }
+        if (quoteDiv?.textContent.includes("flipped")) getNewAction();
     }, 5000);
 }
 
 function cloneButton() {
-    const button = document.getElementById("useless-button");
-    const clone = button.cloneNode(true); // Copy HTML only
-    clone.classList.add("button-clone");   // Apply the CSS class for clones
-
-    // Set initial random position near the original button
+    if (!button) return;
+    const clone = button.cloneNode(true);
+    clone.classList.add("button-clone");
     const rect = button.getBoundingClientRect();
-    clone.style.left = rect.left + Math.random() * 50 - 25 + "px";
-    clone.style.top = rect.top + Math.random() * 50 - 25 + "px";
-
-    // Set scale and rotation
-    const scale = Math.random() * 0.5 + 0.8; // random size
-    const rotation = 0;                       // rotation 0
+    clone.style.left = rect.left + Math.random() * 50 - 25 + window.scrollX + "px";
+    clone.style.top = rect.top + Math.random() * 50 - 25 + window.scrollY + "px";
+    const scale = Math.random() * 0.5 + 0.8;
+    const rotation = 0;
     clone.style.transform = `scale(${scale}) rotate(${rotation}deg)`;
-
     document.body.appendChild(clone);
-
-    // Remove clone after a short duration
-    setTimeout(() => {
-        clone.remove();
-    }, 3000); // 3 seconds
+    setTimeout(() => clone.remove(), 3000);
 }
 
 function emojiRain() {
-    const emojis = ['😂', '🙃', '🥳', '✨', '🔥', '💖', '⭐']; 
+    const emojis = ['😂', '🙃', '🥳', '✨', '🔥', '💖', '⭐'];
     if (quoteDiv) quoteDiv.textContent = "🎊 EMOJI PARTY! Enjoy the pointless rain!";
-
-    for (let i = 0; i < 60; i++) { // Create 60 emojis
+    for (let i = 0; i < 60; i++) {
         const emoji = document.createElement('span');
         emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
         emoji.classList.add('falling-emoji');
-        
-        // Randomize position, delay, and speed
         emoji.style.left = Math.random() * 100 + 'vw';
-        emoji.style.animationDelay = (Math.random() * -5) + 's'; 
-        emoji.style.animationDuration = (Math.random() * 4 + 4) + 's'; 
-        
+        emoji.style.animationDelay = (Math.random() * -5) + 's';
+        emoji.style.animationDuration = (Math.random() * 4 + 4) + 's';
         document.body.appendChild(emoji);
-        
-        // Cleanup after max animation time
-        setTimeout(() => {
-            emoji.remove();
-        }, 8500); 
+        setTimeout(() => emoji.remove(), 8500);
     }
-    
-    // Set a timeout to clear the quoteDiv text after the initial event duration
     setTimeout(() => {
-        if (quoteDiv.textContent.includes("EMOJI PARTY")) {
-            getNewAction();
-        }
+        if (quoteDiv?.textContent.includes("EMOJI PARTY")) getNewAction();
     }, 5000);
 }
 
 function timeFreeze() {
     if (quoteDiv) quoteDiv.textContent = "❄️ TIME FREEZE! The button is stuck for 3 seconds!";
-    
-    // Disable dodge and teleport temporarily (using existing state and class)
-    isButtonMoving = true; 
-    button.classList.add('frozen');
-
+    isButtonMoving = true;
+    button?.classList.add('frozen');
     setTimeout(() => {
-        button.classList.remove('frozen');
-        isButtonMoving = false; // Allow dodge and teleport again
-        // Revert quote if still showing the event message
-        if (quoteDiv.textContent.includes("TIME FREEZE")) {
-            getNewAction();
-        }
+        button?.classList.remove('frozen');
+        isButtonMoving = false;
+        if (quoteDiv?.textContent.includes("TIME FREEZE")) getNewAction();
     }, 3000);
 }
-
-// --- Event List Definition (Place this immediately after the functions) ---
+// Event List Definition
 const miniEvents = [flipScreen, cloneButton, emojiRain, timeFreeze];
+// === END MERGE ===
 
 // === Achievement Display ===
 function showAchievement(clickCount) {
   if (!achievements[clickCount]) return;
-
   const achievement = achievements[clickCount];
   const popup = document.getElementById("achievement-popup");
-
   if (popup) {
     const icon = popup.querySelector(".achievement-icon");
     const text = popup.querySelector(".achievement-text");
-
-    icon.textContent = achievement.icon;
-    text.textContent = achievement.text;
+    if (icon) icon.textContent = achievement.icon;
+    if (text) text.textContent = achievement.text;
     popup.classList.add("show");
-
     setTimeout(() => popup.classList.remove("show"), 3000);
   }
 }
 
+// === MERGED: Added randomizeButtonPositionBasedOnMouse from main ===
 function randomizeButtonPositionBasedOnMouse(clickCount, buttonEl, containerWidth, containerHeight) {
-  if(clickCount < 1000) return;
-  let mouseX = 0;
-  let mouseY = 0;
+  if (clickCount < 1000 || !buttonEl) return;
+  let mouseX = 0, mouseY = 0;
 
-  document.addEventListener('mousemove', (event) => {
+  const mouseMoveHandler = (event) => {
     mouseX = event.clientX;
     mouseY = event.clientY;
 
     const rect = buttonEl.getBoundingClientRect();
     const buttonCenterX = rect.left + rect.width / 2;
     const buttonCenterY = rect.top + rect.height / 2;
-
     const dx = mouseX - buttonCenterX;
     const dy = mouseY - buttonCenterY;
     const distance = Math.sqrt(dx * dx + dy * dy);
+    const dangerZone = 500; // Increased danger zone
 
-    const dangerZone = 500;
-    if(distance < dangerZone) {
-      const buttonWidth = buttonEl.offsetWidth;
-      const buttonHeight = buttonEl.offsetHeight;
-      const maxX = Math.max(0, containerWidth - buttonWidth);
-      const maxY = Math.max(0, containerHeight - buttonHeight);
-
-      const randomX = Math.random() * maxX;
-      const randomY = Math.random() * maxY;
-
-      buttonEl.style.position = "absolute";
-      buttonEl.style.left = `${randomX}px`;
-      buttonEl.style.top = `${randomY}px`;
-      buttonEl.style.transform = "none";
+    if (distance < dangerZone) {
+      const { left, top } = getRandomLocation(); // Use existing function
+      buttonTeleport(left, top); // Use existing teleport function
     }
-  });
-}
+  };
 
+  // Add listener only if needed, consider removing later if performance is an issue
+  document.addEventListener('mousemove', mouseMoveHandler);
+
+  // Optional: Add a way to remove the listener if needed
+  // return () => document.removeEventListener('mousemove', mouseMoveHandler);
+}
+// === END MERGE ===
 
 // === Combo System ===
 function checkCombo() {
   const now = Date.now();
   const timeDiff = now - lastClickTime;
-
   if (timeDiff < 500) {
     comboCount++;
     if (comboCount >= 2 && comboCount <= 6) {
-      const comboMessage =
-        comboMessages[Math.min(comboCount - 2, comboMessages.length - 1)];
+      const comboMessage = comboMessages[Math.min(comboCount - 2, comboMessages.length - 1)];
       if (quoteDiv) {
         quoteDiv.textContent = comboMessage;
         quoteDiv.style.color = "#FFD700";
         setTimeout(() => {
-          quoteDiv.style.color = "#fff";
+          if (quoteDiv) quoteDiv.style.color = "";
         }, 1000);
       }
     }
   } else {
     comboCount = 0;
   }
-
   lastClickTime = now;
 }
 
 // === Unlock audio on first user interaction ===
-window.addEventListener(
-  "click",
-  () => {
+window.addEventListener("click", () => {
     if (!userInteracted) {
       userInteracted = true;
-      if (clickSound) {
-        clickSound
-          .play()
-          .then(() => clickSound.pause())
-          .catch(() => {});
-      }
-      if (failSound) {
-        failSound
-          .play()
-          .then(() => failSound.pause())
-          .catch(() => {});
-      }
-      // Start background music if enabled
+      // Initialize audio elements only once
+      clickSound?.load(); failSound?.load(); bgMusic?.load();
+      // Attempt to play and pause to unlock on mobile
+      clickSound?.play().then(() => clickSound.pause()).catch(() => {});
+      failSound?.play().then(() => failSound.pause()).catch(() => {});
       if (musicEnabled && currentTrack) {
-        playBackgroundMusic(currentTrack);
+        playBackgroundMusic(currentTrack); // This will attempt play
       }
     }
-  },
-  { once: true }
+  }, { once: true }
 );
 
 // === Button Click Handler ===
@@ -735,139 +577,86 @@ if (button) {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
     clicks++;
-    checkCombo();
-    getNewAction(); // This will now update the quoteDiv
-    
-    // Add ripple effect
-    addRippleEffect(e);
-    
-    // Prevent mouseover from registering a failed click when clicking
-    isButtonMoving = true;
-    setTimeout(() => {
-      isButtonMoving = false;
-    }, 300);
 
+    // === MERGED: High Score Logic from main ===
+    if (clicks > highScore) {
+      highScore = clicks;
+      if (highScoreDisplay) highScoreDisplay.textContent = highScore;
+      localStorage.setItem('nothingHighScore', highScore); // Save high score
+    }
+    // === END MERGE ===
+
+    checkCombo();
+    getNewAction();
+    addRippleEffect(e);
+    isButtonMoving = true; setTimeout(() => { isButtonMoving = false; }, 300);
     const randomMessage = messages[Math.floor(Math.random() * messages.length)];
     updateCounter(`— ${randomMessage}`);
-
-    // Change button appearance
     button.style.backgroundColor = getRandomColor();
-    const width = getRandomNumber(150, 250);
-    const height = getRandomNumber(80, 150);
-    button.style.width = `${width}px`;
-    button.style.height = `${height}px`;
-    
-    // Animations
+    const width = getRandomNumber(150, 250); const height = getRandomNumber(80, 150);
+    button.style.width = `${width}px`; button.style.height = `${height}px`;
     button.style.transform = "scale(1.2) rotate(10deg)";
-    setTimeout(() => {
-      button.style.transform = "scale(1) rotate(0deg)";
-    }, 150);
-
+    setTimeout(() => { if(button) button.style.transform = "scale(1) rotate(0deg)"; }, 150);
     if (!userInteracted) userInteracted = true;
-
-    // Effects
     playSound(clickSound);
-
     createSmokeTrail();
     showAchievement(clicks);
-
-    if (clicks === 20) {
-      quoteDiv.textContent = "✨ 20-CLICK POWER UP! Particles Erupt! ✨";
-    }
-
-    //  Confetti animation at 50 clicks
-    if (clicks === 50 && typeof createConfetti === "function") {
-      createConfetti();
-    }
-
-    // Special effects at milestones
+    if (clicks === 20 && quoteDiv) quoteDiv.textContent = "✨ 20-CLICK POWER UP! Particles Erupt! ✨";
+    if (clicks === 50 && typeof createConfetti === "function") createConfetti();
     if (clicks % 50 === 0) {
       document.body.classList.add("page-shake");
       setTimeout(() => document.body.classList.remove("page-shake"), 500);
     }
-
-    // --- NEW CODE INSERTION: Random Mini Event Trigger (Issue #42) ---
-    // 15% chance to trigger one of the events
-    if (Math.random() < 0.15) { 
+    // === MERGED: Random Mini Event Trigger from main ===
+    if (Math.random() < 0.15) {
         const randomIndex = Math.floor(Math.random() * miniEvents.length);
         miniEvents[randomIndex]();
     }
-    // ---------------------------------------------------
-
-    // Teleport button
-    const { randomX, randomY } = getRandomLocation();
-    buttonTeleport(randomX, randomY);
-
+    // === END MERGE ===
+    const { left, top } = getRandomLocation(); // Destructure correctly
+    buttonTeleport(left, top);
+    checkMusicUnlock();
     updateActivityTime();
   });
 }
 
 // === Action Prompt System (Rarity + Cooldown) ===
-
-// Cooldown period in milliseconds (e.g., 10 minutes)
-const CATEGORY_COOLDOWN = 10 * 60 * 1000; 
-
-// Load cooldowns from localStorage to make them persistent
-let categoryCooldowns = JSON.parse(localStorage.getItem('categoryCooldowns')) || {};
-
+const CATEGORY_COOLDOWN = 10 * 60 * 1000;
+let categoryCooldowns = {}; // Reset on load
 function getNewAction() {
     const now = Date.now();
-
-    // 1️ Filter actions whose categories are NOT in cooldown
     const available = actions.filter(a => {
         const lastShown = categoryCooldowns[a.category];
         return !lastShown || now - lastShown > CATEGORY_COOLDOWN;
     });
-
-    // 2️ random show when cooldown 
     const pool = available.length > 0 ? available : actions;
-
-    // 3️ Weighted random selection (rarity logic)
     const totalWeight = pool.reduce((sum, a) => sum + (1 / a.rarity), 0);
-    let rand = Math.random() * totalWeight;
+    let randVal = Math.random() * totalWeight; // Renamed variable
     let selected = pool[0];
-
     for (const a of pool) {
-        rand -= (1 / a.rarity);
-        if (rand <= 0) {
-            selected = a;
-            break;
-        }
+        randVal -= (1 / a.rarity);
+        if (randVal <= 0) { selected = a; break; }
     }
-
-    // 4 Display the prompt
-    quoteDiv.textContent = selected.text;
-
-    // 5️ Update cooldown for that category
+    if (quoteDiv) quoteDiv.textContent = selected.text;
     categoryCooldowns[selected.category] = now;
-    localStorage.setItem('categoryCooldowns', JSON.stringify(categoryCooldowns));
 }
 
-
-
-// === Count failed clicks when clicking anywhere but the button ===
+// === Count failed clicks ===
 document.addEventListener("click", (e) => {
-  // Check if the click target is a button or inside a button
   const clickedButton = e.target.closest('button');
-  const clickedInput = e.target.closest('input');
+  const clickedInput = e.target.closest('input, select, textarea'); // Broaden check
   const clickedLabel = e.target.closest('label');
-  
-  // Only count as failed click if NOT clicking on any interactive element
-  if (!clickedButton && !clickedInput && !clickedLabel) {
+  const clickedControl = e.target.closest('.control-buttons button, #theme-selector, #sound-panel'); // Ignore UI controls
+
+  if (!clickedButton && !clickedInput && !clickedLabel && !clickedControl) {
     failedClicks++;
-    
     const messageArray = impossibleMode ? impossibleFailMessages : failedClickMessages;
     const randomFail = messageArray[Math.floor(Math.random() * messageArray.length)];
     updateCounter(`— ${randomFail}`);
-
-    // Play fail sound occasionally
     if (failedClicks % (impossibleMode ? 5 : 10) === 0 && userInteracted) {
-      if (failSound) {
-        failSound.volume = masterVolume;
-        failSound.currentTime = 0;
-        failSound.play().catch(() => {});
-      }
+      playSound(failSound); // Use playSound utility
     }
+    checkMusicUnlock();
   }
 });
 
@@ -876,44 +665,37 @@ if (button) {
   button.addEventListener("mouseover", () => {
     if (isButtonMoving) return;
     const now = Date.now();
-    // Throttle dodge more aggressively in impossible mode
     const throttleTime = impossibleMode ? 50 : 150;
     if (now - lastDodgeTime < throttleTime) return;
     lastDodgeTime = now;
-
-    // create some smoke visuals
     createSmokeTrail();
-
     const dodgeChance = impossibleMode ? 1 : 0.9;
     if (Math.random() < dodgeChance) {
       isButtonMoving = true;
-
       const rotation = impossibleMode ? getRandomNumber(-15, 15) : 5;
       button.style.transform = `rotate(${rotation}deg)`;
       setTimeout(() => {
-        button.style.transform = "rotate(0deg) scale(1)";
+        if (button) button.style.transform = "rotate(0deg) scale(1)";
         isButtonMoving = false;
       }, 200);
     }
   });
 }
 
-// === Impossible mode special mousemove dodge (larger radius reaction) ===
+// === Impossible mode special mousemove dodge ===
 document.addEventListener("mousemove", (e) => {
-  if (!button || !impossibleMode) return;
+  if (!button || !impossibleMode || isButtonMoving) return; // Add check for isButtonMoving
   const rect = button.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top + rect.height / 2;
-  const dx = e.clientX - cx;
-  const dy = e.clientY - cy;
+  const cx = rect.left + rect.width / 2; const cy = rect.top + rect.height / 2;
+  const dx = e.clientX - cx; const dy = e.clientY - cy;
   const dist = Math.sqrt(dx * dx + dy * dy);
   const dangerZone = 200;
   if (dist < dangerZone) {
     const now = Date.now();
-    if (now - lastDodgeTime < 100) return;
+    if (now - lastDodgeTime < 100) return; // Throttle
     lastDodgeTime = now;
-    const { randomX, randomY } = getRandomLocation();
-    buttonTeleport(randomX, randomY);
+    const { left, top } = getRandomLocation(); // Destructure correctly
+    buttonTeleport(left, top);
     if (Math.random() > 0.7) {
       button.style.width = `${getRandomNumber(120, 200)}px`;
       button.style.height = `${getRandomNumber(60, 150)}px`;
@@ -921,179 +703,49 @@ document.addEventListener("mousemove", (e) => {
   }
 });
 
-document.addEventListener("contextmenu", () => {
-  failedClicks += clicks; // Add all earned clicks to failed count
+// === Context Menu Reset ===
+document.addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+  failedClicks += clicks;
   clicks = 0;
   updateCounter("💥 SIKE YOU THOUGHT! 💥");
-  if (failSound) {
-    failSound.currentTime = 0;
-    failSound.play().catch(() => {});
-  }
+  playSound(failSound); // Use playSound utility
 });
-
-// === Background Color Changer ===
-function changeBackgroundColor() {
-  const color1 = getRandomColor();
-  const color2 = getRandomColor();
-  document.body.style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
-}
-setInterval(changeBackgroundColor, 5000);
 
 // === Timer ===
 function formatTime(sec) {
-  const mins = Math.floor(sec / 60);
-  const secs = sec % 60;
-  return `${mins.toString().padStart(2, "0")}:${secs
-    .toString()
-    .padStart(2, "0")}`;
+  const mins = Math.floor(sec / 60); const secs = sec % 60;
+  return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }
-
 function updateTimer() {
   seconds++;
   if (timerDiv) {
     timerDiv.textContent = `Time spent doing nothing: ${formatTime(seconds)}`;
-    if (seconds % 5 === 0) {
-      timerDiv.classList.add("fade");
-      setTimeout(() => timerDiv.classList.remove("fade"), 400);
-    }
+    timerDiv.classList.toggle("fade", seconds % 5 === 0); // Use toggle
   }
 }
 
 // === Theme System ===
 const themes = {
-  dark: {
-    name: 'Dark Purple',
-    icon: '🌙',
-    bgStart: '#667eea',
-    bgEnd: '#764ba2',
-    textColor: '#fff',
-    cardBg: 'rgba(255, 255, 255, 0.15)',
-    accentColor: '#ff6b6b',
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    buttonStart: '#ff6b6b',
-    buttonEnd: '#ff9a76'
-  },
-  light: {
-    name: 'Light Rose',
-    icon: '☀️',
-    bgStart: '#fdf2ec',
-    bgEnd: '#ffd8d8',
-    textColor: '#1f1f1f',
-    cardBg: 'rgba(255, 255, 255, 0.95)',
-    accentColor: '#ff5a5a',
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    buttonStart: '#ff867c',
-    buttonEnd: '#ff5a5a'
-  },
-  neon: {
-    name: 'Neon Cyberpunk',
-    icon: '⚡',
-    bgStart: '#0a0e27',
-    bgEnd: '#1a1a2e',
-    textColor: '#00ff88',
-    cardBg: 'rgba(0, 255, 136, 0.1)',
-    accentColor: '#ff006e',
-    borderColor: 'rgba(0, 255, 136, 0.3)',
-    buttonStart: '#ff006e',
-    buttonEnd: '#00d9ff'
-  },
-  retro: {
-    name: 'Retro Sunset',
-    icon: '🕹️',
-    bgStart: '#ff6b9d',
-    bgEnd: '#c94b4b',
-    textColor: '#fff5e1',
-    cardBg: 'rgba(255, 245, 225, 0.2)',
-    accentColor: '#ffc93c',
-    borderColor: 'rgba(255, 245, 225, 0.4)',
-    buttonStart: '#ffc93c',
-    buttonEnd: '#ff6b9d'
-  },
-  pastel: {
-    name: 'Pastel Dreams',
-    icon: '🦄',
-    bgStart: '#ffcce7',
-    bgEnd: '#d5f5e3',
-    textColor: '#5d5d5d',
-    cardBg: 'rgba(255, 255, 255, 0.8)',
-    accentColor: '#ff8fa3',
-    borderColor: 'rgba(93, 93, 93, 0.2)',
-    buttonStart: '#ffb3c6',
-    buttonEnd: '#ff8fa3'
-  },
-  solarized: {
-    name: 'Solarized Dark',
-    icon: '🌅',
-    bgStart: '#002b36',
-    bgEnd: '#073642',
-    textColor: '#839496',
-    cardBg: 'rgba(0, 43, 54, 0.8)',
-    accentColor: '#268bd2',
-    borderColor: 'rgba(131, 148, 150, 0.3)',
-    buttonStart: '#268bd2',
-    buttonEnd: '#2aa198'
-  },
-  ocean: {
-    name: 'Deep Ocean',
-    icon: '🌊',
-    bgStart: '#004e92',
-    bgEnd: '#000428',
-    textColor: '#e0f7fa',
-    cardBg: 'rgba(224, 247, 250, 0.15)',
-    accentColor: '#00bcd4',
-    borderColor: 'rgba(224, 247, 250, 0.3)',
-    buttonStart: '#00bcd4',
-    buttonEnd: '#00acc1'
-  },
-  forest: {
-    name: 'Forest Grove',
-    icon: '🌲',
-    bgStart: '#134e4a',
-    bgEnd: '#064e3b',
-    textColor: '#d1fae5',
-    cardBg: 'rgba(209, 250, 229, 0.15)',
-    accentColor: '#34d399',
-    borderColor: 'rgba(209, 250, 229, 0.3)',
-    buttonStart: '#34d399',
-    buttonEnd: '#10b981'
-  },
-  sunset: {
-    name: 'Warm Sunset',
-    icon: '🌇',
-    bgStart: '#ff7e5f',
-    bgEnd: '#feb47b',
-    textColor: '#3d1f00',
-    cardBg: 'rgba(255, 255, 255, 0.3)',
-    accentColor: '#ff6b35',
-    borderColor: 'rgba(61, 31, 0, 0.2)',
-    buttonStart: '#ff6b35',
-    buttonEnd: '#f7931e'
-  },
-  midnight: {
-    name: 'Midnight Blue',
-    icon: '🌃',
-    bgStart: '#2c3e50',
-    bgEnd: '#000000',
-    textColor: '#ecf0f1',
-    cardBg: 'rgba(236, 240, 241, 0.1)',
-    accentColor: '#e74c3c',
-    borderColor: 'rgba(236, 240, 241, 0.3)',
-    buttonStart: '#e74c3c',
-    buttonEnd: '#c0392b'
-  }
+  dark: { name: 'Dark Purple', icon: '🌙', bgStart: '#667eea', bgEnd: '#764ba2', textColor: '#fff', cardBg: 'rgba(255, 255, 255, 0.15)', accentColor: '#ff6b6b', borderColor: 'rgba(255, 255, 255, 0.3)', buttonStart: '#ff6b6b', buttonEnd: '#ff9a76' },
+  light: { name: 'Light Rose', icon: '☀️', bgStart: '#fdf2ec', bgEnd: '#ffd8d8', textColor: '#1f1f1f', cardBg: 'rgba(255, 255, 255, 0.95)', accentColor: '#ff5a5a', borderColor: 'rgba(0, 0, 0, 0.1)', buttonStart: '#ff867c', buttonEnd: '#ff5a5a' },
+  neon: { name: 'Neon Cyberpunk', icon: '⚡', bgStart: '#0a0e27', bgEnd: '#1a1a2e', textColor: '#00ff88', cardBg: 'rgba(0, 255, 136, 0.1)', accentColor: '#ff006e', borderColor: 'rgba(0, 255, 136, 0.3)', buttonStart: '#ff006e', buttonEnd: '#00d9ff' },
+  retro: { name: 'Retro Sunset', icon: '🕹️', bgStart: '#ff6b9d', bgEnd: '#c94b4b', textColor: '#fff5e1', cardBg: 'rgba(255, 245, 225, 0.2)', accentColor: '#ffc93c', borderColor: 'rgba(255, 245, 225, 0.4)', buttonStart: '#ffc93c', buttonEnd: '#ff6b9d' },
+  pastel: { name: 'Pastel Dreams', icon: '🦄', bgStart: '#ffcce7', bgEnd: '#d5f5e3', textColor: '#5d5d5d', cardBg: 'rgba(255, 255, 255, 0.8)', accentColor: '#ff8fa3', borderColor: 'rgba(93, 93, 93, 0.2)', buttonStart: '#ffb3c6', buttonEnd: '#ff8fa3' },
+  solarized: { name: 'Solarized Dark', icon: '🌅', bgStart: '#002b36', bgEnd: '#073642', textColor: '#839496', cardBg: 'rgba(0, 43, 54, 0.8)', accentColor: '#268bd2', borderColor: 'rgba(131, 148, 150, 0.3)', buttonStart: '#268bd2', buttonEnd: '#2aa198' },
+  ocean: { name: 'Deep Ocean', icon: '🌊', bgStart: '#004e92', bgEnd: '#000428', textColor: '#e0f7fa', cardBg: 'rgba(224, 247, 250, 0.15)', accentColor: '#00bcd4', borderColor: 'rgba(224, 247, 250, 0.3)', buttonStart: '#00bcd4', buttonEnd: '#00acc1' },
+  forest: { name: 'Forest Grove', icon: '🌲', bgStart: '#134e4a', bgEnd: '#064e3b', textColor: '#d1fae5', cardBg: 'rgba(209, 250, 229, 0.15)', accentColor: '#34d399', borderColor: 'rgba(209, 250, 229, 0.3)', buttonStart: '#34d399', buttonEnd: '#10b981' },
+  sunset: { name: 'Warm Sunset', icon: '🌇', bgStart: '#ff7e5f', bgEnd: '#feb47b', textColor: '#3d1f00', cardBg: 'rgba(255, 255, 255, 0.3)', accentColor: '#ff6b35', borderColor: 'rgba(61, 31, 0, 0.2)', buttonStart: '#ff6b35', buttonEnd: '#f7931e' },
+  midnight: { name: 'Midnight Blue', icon: '🌃', bgStart: '#2c3e50', bgEnd: '#000000', textColor: '#ecf0f1', cardBg: 'rgba(236, 240, 241, 0.1)', accentColor: '#e74c3c', borderColor: 'rgba(236, 240, 241, 0.3)', buttonStart: '#e74c3c', buttonEnd: '#c0392b' }
 };
-
 let currentTheme = localStorage.getItem('currentTheme') || 'dark';
 const themeKeys = Object.keys(themes);
 
-// Theme Selector Elements
 const themeSelector = document.getElementById('theme-selector');
 const closeThemeSelector = document.getElementById('close-theme-selector');
 const themeTabs = document.querySelectorAll('.theme-tab');
 const themeTabContents = document.querySelectorAll('.theme-tab-content');
 const themesGrid = document.getElementById('themes-grid');
-
-// Custom Theme Elements
 const customBgStart = document.getElementById('custom-bg-start');
 const customBgStartText = document.getElementById('custom-bg-start-text');
 const customBgEnd = document.getElementById('custom-bg-end');
@@ -1110,662 +762,568 @@ const customFontFamily = document.getElementById('custom-font-family');
 const previewCustomTheme = document.getElementById('preview-custom-theme');
 const saveCustomTheme = document.getElementById('save-custom-theme');
 const resetCustomTheme = document.getElementById('reset-custom-theme');
-const randomizeCustomTheme = document.getElementById("random-color-theme");
+const randomizeCustomTheme = document.getElementById("random-color-theme"); // Added from main
 
-// Apply theme to the page
 function applyTheme(themeName) {
-  const theme = themes[themeName];
-  if (!theme) return;
-
+  const theme = themes[themeName]; if (!theme) return;
   document.body.dataset.theme = themeName;
-  
-  // Apply CSS variables
-  document.documentElement.style.setProperty('--bg-start', theme.bgStart);
-  document.documentElement.style.setProperty('--bg-end', theme.bgEnd);
-  document.documentElement.style.setProperty('--text-color', theme.textColor);
-  document.documentElement.style.setProperty('--card-bg', theme.cardBg);
-  document.documentElement.style.setProperty('--accent-color', theme.accentColor);
-  document.documentElement.style.setProperty('--border-color', theme.borderColor);
-  document.documentElement.style.setProperty('--button-gradient-start', theme.buttonStart);
-  document.documentElement.style.setProperty('--button-gradient-end', theme.buttonEnd);
-  
-  // Apply font family if custom theme has it
-  if (theme.fontFamily) {
-    document.body.style.fontFamily = theme.fontFamily;
-  } else {
-    document.body.style.fontFamily = "'Poppins', sans-serif";
-  }
-  
-  currentTheme = themeName;
-  localStorage.setItem('currentTheme', themeName);
-  
-  updateThemeCards();
+  const rootStyle = document.documentElement.style;
+  rootStyle.setProperty('--bg-start', theme.bgStart); rootStyle.setProperty('--bg-end', theme.bgEnd);
+  rootStyle.setProperty('--text-color', theme.textColor); rootStyle.setProperty('--card-bg', theme.cardBg);
+  rootStyle.setProperty('--accent-color', theme.accentColor); rootStyle.setProperty('--border-color', theme.borderColor);
+  rootStyle.setProperty('--button-gradient-start', theme.buttonStart); rootStyle.setProperty('--button-gradient-end', theme.buttonEnd);
+  document.body.style.fontFamily = theme.fontFamily || "'Poppins', sans-serif";
+  currentTheme = themeName; localStorage.setItem('currentTheme', themeName);
+  if (themesGrid) updateThemeCards();
 }
-
-// Generate theme cards
 function generateThemeCards() {
-  if (!themesGrid) return;
-  
-  themesGrid.innerHTML = '';
-  
+  if (!themesGrid) return; themesGrid.innerHTML = '';
   Object.keys(themes).forEach(themeKey => {
-    const theme = themes[themeKey];
-    const card = document.createElement('div');
-    card.className = 'theme-card';
-    if (themeKey === currentTheme) {
-      card.classList.add('active');
-    }
-    
-    // Set background gradient for preview
+    const theme = themes[themeKey]; const card = document.createElement('div');
+    card.className = 'theme-card'; if (themeKey === currentTheme) card.classList.add('active');
     card.style.background = `linear-gradient(135deg, ${theme.bgStart}, ${theme.bgEnd})`;
     card.style.color = theme.textColor;
-    
-    card.innerHTML = `
-      <h3>${theme.icon} ${theme.name}</h3>
-      <div class="theme-preview">
-        <div class="theme-color-dot" style="background: ${theme.bgStart}"></div>
-        <div class="theme-color-dot" style="background: ${theme.bgEnd}"></div>
-        <div class="theme-color-dot" style="background: ${theme.buttonStart}"></div>
-        <div class="theme-color-dot" style="background: ${theme.accentColor}"></div>
-      </div>
-    `;
-    
-    card.addEventListener('click', () => {
-      applyTheme(themeKey);
-      if (quoteDiv) {
-        quoteDiv.textContent = `✨ ${theme.name} theme activated!`;
-      }
-    });
-    
+    card.innerHTML = `<h3>${theme.icon} ${theme.name}</h3><div class="theme-preview">
+        <div class="theme-color-dot" style="background: ${theme.bgStart}"></div><div class="theme-color-dot" style="background: ${theme.bgEnd}"></div>
+        <div class="theme-color-dot" style="background: ${theme.buttonStart}"></div><div class="theme-color-dot" style="background: ${theme.accentColor}"></div></div>`;
+    card.addEventListener('click', () => { applyTheme(themeKey); if (quoteDiv) quoteDiv.textContent = `✨ ${theme.name} theme activated!`; });
     themesGrid.appendChild(card);
   });
 }
-
-// Update active theme card
 function updateThemeCards() {
+  if (!themesGrid) return;
   const cards = themesGrid.querySelectorAll('.theme-card');
+  const themeKeysArray = Object.keys(themes); // Use different name
   cards.forEach((card, index) => {
-    if (themeKeys[index] === currentTheme) {
-      card.classList.add('active');
-    } else {
-      card.classList.remove('active');
-    }
+    const themeKey = themeKeysArray[index];
+    card.classList.toggle('active', themeKey === currentTheme);
   });
 }
-
+// === MERGED: Added getRandomColor function from main ===
 function getRandomColor() {
   const letters = "0123456789abcdef";
   let color = "#";
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
+  for (let i = 0; i < 6; i++) color += letters[Math.floor(Math.random() * 16)];
   return color;
 }
-
 function assignRandomColorsToCustomTheme() {
-  for (let i = 0; i < 6; i++) {
-    const randomColor = getRandomColor();
-    switch (i) {
-      case 0:
-        customBgStart.value = randomColor;
-        customBgStartText.value = randomColor;
-        break;
-      case 1:
-        customBgEnd.value = randomColor;
-        customBgEndText.value = randomColor;
-        break;
-      case 2:
-        customTextColor.value = randomColor;
-        customTextColorText.value = randomColor;
-        break;
-      case 3:
-        customAccentColor.value = randomColor;
-        customAccentColorText.value = randomColor;
-        break;
-      case 4:
-        customButtonStart.value = randomColor;
-        customButtonStartText.value = randomColor;
-        break;
-      case 5:
-        customButtonEnd.value = randomColor;
-        customButtonEndText.value = randomColor;
-        break;
-    }
-  }
+    const inputs = [
+        [customBgStart, customBgStartText], [customBgEnd, customBgEndText],
+        [customTextColor, customTextColorText], [customAccentColor, customAccentColorText],
+        [customButtonStart, customButtonStartText], [customButtonEnd, customButtonEndText]
+    ];
+    inputs.forEach(([colorInput, textInput]) => {
+        if (colorInput && textInput) {
+            const randomColor = getRandomColor();
+            colorInput.value = randomColor;
+            textInput.value = randomColor;
+        }
+    });
 }
-
-// Randomize custom theme colors
-if (randomizeCustomTheme) {
+if (randomizeCustomTheme) { // Added from main
   randomizeCustomTheme.addEventListener("click", () => {
     assignRandomColorsToCustomTheme();
-    if (quoteDiv) {
-      quoteDiv.textContent = "🎲 Custom theme colors randomized!";
-    }
+    if (quoteDiv) quoteDiv.textContent = "🎲 Custom theme colors randomized!";
   });
 }
-
-// Theme toggle button - cycles through themes
-if (themeToggle) {
+// === END MERGE ===
+if (themeToggle) { // Theme cycle button
   themeToggle.addEventListener("click", () => {
     const currentIndex = themeKeys.indexOf(currentTheme);
     const nextIndex = (currentIndex + 1) % themeKeys.length;
-    const nextTheme = themeKeys[nextIndex];
-    
-    applyTheme(nextTheme);
-    
-    if (quoteDiv) {
-      quoteDiv.textContent = `${themes[nextTheme].icon} Switched to ${themes[nextTheme].name}!`;
-    }
+    applyTheme(themeKeys[nextIndex]);
+    if (quoteDiv) quoteDiv.textContent = `${themes[themeKeys[nextIndex]].icon} Switched to ${themes[themeKeys[nextIndex]].name}!`;
   });
+  // Theme selector open triggers
+  themeToggle.addEventListener('dblclick', (e) => { e.preventDefault(); if (themeSelector) { themeSelector.classList.add('show'); generateThemeCards(); } });
+  themeToggle.addEventListener('contextmenu', (e) => { e.preventDefault(); if (themeSelector) { themeSelector.classList.add('show'); generateThemeCards(); } });
 }
-
-// Open theme selector (double click on theme toggle or right click)
-if (themeToggle) {
-  themeToggle.addEventListener('dblclick', (e) => {
-    e.preventDefault();
-    themeSelector.classList.add('show');
-    generateThemeCards();
-  });
-  
-  themeToggle.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-    themeSelector.classList.add('show');
-    generateThemeCards();
-  });
-}
-
-// Close theme selector
-if (closeThemeSelector) {
-  closeThemeSelector.addEventListener('click', () => {
-    themeSelector.classList.remove('show');
-  });
-}
-
-// Close when clicking outside
-if (themeSelector) {
-  themeSelector.addEventListener('click', (e) => {
-    if (e.target === themeSelector) {
-      themeSelector.classList.remove('show');
-    }
-  });
-}
-
-// Theme tabs switching
-themeTabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    const targetTab = tab.dataset.tab;
-    
-    // Update active tab
-    themeTabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    
-    // Update active content
-    themeTabContents.forEach(content => {
-      if (content.id === `${targetTab}-tab`) {
-        content.classList.add('active');
-      } else {
-        content.classList.remove('active');
-      }
+if (closeThemeSelector) closeThemeSelector.addEventListener('click', () => themeSelector?.classList.remove('show'));
+if (themeSelector) themeSelector.addEventListener('click', (e) => { if (e.target === themeSelector) themeSelector.classList.remove('show'); });
+if (themeTabs && themeTabContents) { // Theme tabs
+  themeTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const targetTab = tab.dataset.tab;
+      themeTabs.forEach(t => t.classList.remove('active')); tab.classList.add('active');
+      themeTabContents.forEach(content => content.classList.toggle('active', content.id === `${targetTab}-tab`));
     });
   });
-});
-
-// Custom Theme Creator - Sync color pickers with text inputs
-function syncColorInputs(colorInput, textInput) {
-  colorInput.addEventListener('input', () => {
-    textInput.value = colorInput.value;
-  });
-  
-  textInput.addEventListener('input', () => {
-    if (/^#[0-9A-F]{6}$/i.test(textInput.value)) {
-      colorInput.value = textInput.value;
-    }
-  });
 }
-
-syncColorInputs(customBgStart, customBgStartText);
-syncColorInputs(customBgEnd, customBgEndText);
-syncColorInputs(customTextColor, customTextColorText);
-syncColorInputs(customAccentColor, customAccentColorText);
-syncColorInputs(customButtonStart, customButtonStartText);
-syncColorInputs(customButtonEnd, customButtonEndText);
-
-// Preview custom theme
-if (previewCustomTheme) {
+function syncColorInputs(colorInput, textInput) { // Custom theme sync
+  if (!colorInput || !textInput) return;
+  colorInput.addEventListener('input', () => { textInput.value = colorInput.value; });
+  textInput.addEventListener('input', () => { if (/^#[0-9A-F]{6}$/i.test(textInput.value)) colorInput.value = textInput.value; });
+}
+syncColorInputs(customBgStart, customBgStartText); syncColorInputs(customBgEnd, customBgEndText);
+syncColorInputs(customTextColor, customTextColorText); syncColorInputs(customAccentColor, customAccentColorText);
+syncColorInputs(customButtonStart, customButtonStartText); syncColorInputs(customButtonEnd, customButtonEndText);
+if (previewCustomTheme) { // Custom theme preview
   previewCustomTheme.addEventListener('click', () => {
     const customTheme = {
-      name: 'Custom',
-      icon: '🎨',
-      bgStart: customBgStart.value,
-      bgEnd: customBgEnd.value,
-      textColor: customTextColor.value,
-      cardBg: `${hexToRgba(customTextColor.value, 0.15)}`,
-      accentColor: customAccentColor.value,
-      borderColor: `${hexToRgba(customTextColor.value, 0.3)}`,
-      buttonStart: customButtonStart.value,
-      buttonEnd: customButtonEnd.value,
-      fontFamily: customFontFamily.value
+      bgStart: customBgStart.value, bgEnd: customBgEnd.value, textColor: customTextColor.value,
+      cardBg: hexToRgba(customTextColor.value, 0.15), accentColor: customAccentColor.value,
+      borderColor: hexToRgba(customTextColor.value, 0.3), buttonStart: customButtonStart.value,
+      buttonEnd: customButtonEnd.value, fontFamily: customFontFamily.value
     };
-    
-    // Temporarily apply custom theme
-    document.documentElement.style.setProperty('--bg-start', customTheme.bgStart);
-    document.documentElement.style.setProperty('--bg-end', customTheme.bgEnd);
-    document.documentElement.style.setProperty('--text-color', customTheme.textColor);
-    document.documentElement.style.setProperty('--card-bg', customTheme.cardBg);
-    document.documentElement.style.setProperty('--accent-color', customTheme.accentColor);
-    document.documentElement.style.setProperty('--border-color', customTheme.borderColor);
-    document.documentElement.style.setProperty('--button-gradient-start', customTheme.buttonStart);
-    document.documentElement.style.setProperty('--button-gradient-end', customTheme.buttonEnd);
+    const rootStyle = document.documentElement.style;
+    rootStyle.setProperty('--bg-start', customTheme.bgStart); rootStyle.setProperty('--bg-end', customTheme.bgEnd);
+    rootStyle.setProperty('--text-color', customTheme.textColor); rootStyle.setProperty('--card-bg', customTheme.cardBg);
+    rootStyle.setProperty('--accent-color', customTheme.accentColor); rootStyle.setProperty('--border-color', customTheme.borderColor);
+    rootStyle.setProperty('--button-gradient-start', customTheme.buttonStart); rootStyle.setProperty('--button-gradient-end', customTheme.buttonEnd);
     document.body.style.fontFamily = customTheme.fontFamily;
-    
-    if (quoteDiv) {
-      quoteDiv.textContent = '👁️ Previewing your custom theme!';
-    }
+    if (quoteDiv) quoteDiv.textContent = '👁️ Previewing your custom theme!';
   });
 }
-
-// Save custom theme
-if (saveCustomTheme) {
+if (saveCustomTheme) { // Custom theme save
   saveCustomTheme.addEventListener('click', () => {
     const customTheme = {
-      name: 'My Custom Theme',
-      icon: '🎨',
-      bgStart: customBgStart.value,
-      bgEnd: customBgEnd.value,
-      textColor: customTextColor.value,
-      cardBg: `${hexToRgba(customTextColor.value, 0.15)}`,
-      accentColor: customAccentColor.value,
-      borderColor: `${hexToRgba(customTextColor.value, 0.3)}`,
-      buttonStart: customButtonStart.value,
-      buttonEnd: customButtonEnd.value,
-      fontFamily: customFontFamily.value
+      name: 'My Custom Theme', icon: '🎨', bgStart: customBgStart.value, bgEnd: customBgEnd.value,
+      textColor: customTextColor.value, cardBg: hexToRgba(customTextColor.value, 0.15),
+      accentColor: customAccentColor.value, borderColor: hexToRgba(customTextColor.value, 0.3),
+      buttonStart: customButtonStart.value, buttonEnd: customButtonEnd.value, fontFamily: customFontFamily.value
     };
-    
-    // Add to themes
-    themes.custom = customTheme;
-    if (!themeKeys.includes('custom')) {
-      themeKeys.push('custom');
-    }
-    
-    // Save to localStorage
+    themes.custom = customTheme; if (!themeKeys.includes('custom')) themeKeys.push('custom');
     localStorage.setItem('customTheme', JSON.stringify(customTheme));
-    
-    // Apply theme
-    applyTheme('custom');
-    
-    // Regenerate theme cards
-    generateThemeCards();
-    
-    if (quoteDiv) {
-      quoteDiv.textContent = '💾 Custom theme saved successfully!';
-    }
-    
-    // Close selector
-    setTimeout(() => {
-      themeSelector.classList.remove('show');
-    }, 1500);
+    applyTheme('custom'); generateThemeCards();
+    if (quoteDiv) quoteDiv.textContent = '💾 Custom theme saved successfully!';
+    setTimeout(() => themeSelector?.classList.remove('show'), 1500);
   });
 }
-
-// Reset custom theme
-if (resetCustomTheme) {
+if (resetCustomTheme) { // Custom theme reset
   resetCustomTheme.addEventListener('click', () => {
-    customBgStart.value = customBgStartText.value = '#667eea';
-    customBgEnd.value = customBgEndText.value = '#764ba2';
-    customTextColor.value = customTextColorText.value = '#ffffff';
-    customAccentColor.value = customAccentColorText.value = '#ff6b6b';
-    customButtonStart.value = customButtonStartText.value = '#ff6b6b';
-    customButtonEnd.value = customButtonEndText.value = '#ff9a76';
-    customFontFamily.value = "'Poppins', sans-serif";
-    
-    if (quoteDiv) {
-      quoteDiv.textContent = '🔄 Custom theme reset to defaults!';
-    }
+    if(customBgStart && customBgStartText) customBgStart.value = customBgStartText.value = '#667eea';
+    if(customBgEnd && customBgEndText) customBgEnd.value = customBgEndText.value = '#764ba2';
+    if(customTextColor && customTextColorText) customTextColor.value = customTextColorText.value = '#ffffff';
+    if(customAccentColor && customAccentColorText) customAccentColor.value = customAccentColorText.value = '#ff6b6b';
+    if(customButtonStart && customButtonStartText) customButtonStart.value = customButtonStartText.value = '#ff6b6b';
+    if(customButtonEnd && customButtonEndText) customButtonEnd.value = customButtonEndText.value = '#ff9a76';
+    if(customFontFamily) customFontFamily.value = "'Poppins', sans-serif";
+    if (quoteDiv) quoteDiv.textContent = '🔄 Custom theme reset to defaults!';
   });
 }
-
-// Helper function to convert hex to rgba
-function hexToRgba(hex, alpha) {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
+function hexToRgba(hex, alpha) { // Helper
+  if (!hex || hex.length < 7) hex = '#ffffff';
+  const r = parseInt(hex.slice(1, 3), 16); const g = parseInt(hex.slice(3, 5), 16); const b = parseInt(hex.slice(5, 7), 16);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
-
-// Load custom theme from localStorage if exists
-function loadCustomTheme() {
+function loadCustomTheme() { // Load saved custom theme
   const savedCustomTheme = localStorage.getItem('customTheme');
   if (savedCustomTheme) {
     try {
-      const customTheme = JSON.parse(savedCustomTheme);
-      themes.custom = customTheme;
-      if (!themeKeys.includes('custom')) {
-        themeKeys.push('custom');
-      }
-      // Update custom theme form if saved theme exists
-      if (customFontFamily && customTheme.fontFamily) {
-        customFontFamily.value = customTheme.fontFamily;
-      }
-    } catch (e) {
-      console.error('Failed to load custom theme:', e);
-    }
+      const customTheme = JSON.parse(savedCustomTheme); themes.custom = customTheme;
+      if (!themeKeys.includes('custom')) themeKeys.push('custom');
+      if (customFontFamily && customTheme.fontFamily) customFontFamily.value = customTheme.fontFamily;
+    } catch (e) { console.error('Failed to load custom theme:', e); }
   }
 }
-
-// Initialize themes
-loadCustomTheme();
-applyTheme(currentTheme);
+loadCustomTheme(); applyTheme(currentTheme); // Initialize themes
 
 // === Impossible Mode Toggle ===
 if (impossibleToggle) {
   impossibleToggle.addEventListener("change", () => {
     impossibleMode = impossibleToggle.checked;
-    if (impossibleMode) {
-      if (button) button.classList.add("impossible-mode");
-      updateCounter("— 🔥 IMPOSSIBLE MODE ACTIVATED! Good luck clicking now! 🔥");
-    } else {
-      if (button) button.classList.remove("impossible-mode");
-      updateCounter("— Normal mode restored. (Boring!)");
-    }
+    button?.classList.toggle("impossible-mode", impossibleMode);
+    updateCounter(impossibleMode ? "— 🔥 IMPOSSIBLE MODE ACTIVATED! 🔥" : "— Normal mode restored.");
   });
 }
 
 // === Are You Still Clicking Popup ===
-
-// Function to update the last activity time
 function updateActivityTime() {
   lastActivityTime = Date.now();
-
-  // Reset popup timer if it exists
-  if (popupTimer) {
-    clearTimeout(popupTimer);
-  }
-
-  // Set new popup timer
+  if (popupTimer) clearTimeout(popupTimer);
   popupTimer = setTimeout(showPopup, getRandomInactivityTime());
 }
-
-// Function to get a random inactivity time between 15-30 seconds
-function getRandomInactivityTime() {
-  return Math.floor(Math.random() * (60000 - 30000 + 1)) + 30000; // 30-60 seconds
-}
-
-// Function to show the popup
+function getRandomInactivityTime() { return Math.floor(Math.random() * 30001) + 30000; } // 30-60 sec
 function showPopup() {
-  if (!popupContainer) return;
-  if (popupActive) return;
-
-  popupActive = true;
-  popupContainer.classList.add("show");
-
-  // Auto-close popup after 15 seconds
-  popupAutoCloseTimer = setTimeout(() => {
-    hidePopup();
-  }, 15000);
+  if (!popupContainer || popupActive) return;
+  popupActive = true; popupContainer.classList.add("show");
+  popupAutoCloseTimer = setTimeout(hidePopup, 15000); // Auto-close
 }
-
-// Function to hide the popup
 function hidePopup() {
   if (!popupContainer) return;
-  popupContainer.classList.remove("show");
-  popupActive = false;
-
-  if (popupAutoCloseTimer) {
-    clearTimeout(popupAutoCloseTimer);
-  }
-
-  // Reset the activity timer
-  updateActivityTime();
+  popupContainer.classList.remove("show"); popupActive = false;
+  if (popupAutoCloseTimer) clearTimeout(popupAutoCloseTimer);
+  updateActivityTime(); // Reset timer after interaction
 }
-
-// Function to randomize button position within the popup (keeps button inside container)
+// === MERGED: Use correct function signature from main for randomizeButtonPosition ===
 function randomizeButtonPosition(clickCount, buttonEl, containerWidth, containerHeight) {
-  if(clickCount>=1000) return;
-  const buttonWidth = buttonEl.offsetWidth;
-  const buttonHeight = buttonEl.offsetHeight;
-
-  const maxX = Math.max(0, containerWidth - buttonWidth);
-  const maxY = Math.max(0, containerHeight - buttonHeight);
-
-  const randomX = Math.random() * maxX;
-  const randomY = Math.random() * maxY;
-
-  buttonEl.style.position = "absolute";
-  buttonEl.style.left = `${randomX}px`;
-  buttonEl.style.top = `${randomY}px`;
-  buttonEl.style.transform = "none";
+  if(clickCount>=1000 || !buttonEl) return; // Kept logic from main
+  const buttonWidth = buttonEl.offsetWidth; const buttonHeight = buttonEl.offsetHeight;
+  const maxX = Math.max(0, containerWidth - buttonWidth); const maxY = Math.max(0, containerHeight - buttonHeight);
+  const randomX = Math.random() * maxX; const randomY = Math.random() * maxY;
+  buttonEl.style.position = "absolute"; buttonEl.style.left = `${randomX}px`;
+  buttonEl.style.top = `${randomY}px`; buttonEl.style.transform = "none";
 }
-
-// Event listeners for popup buttons (if they exist)
+// === END MERGE ===
 if (popupYesButton) {
   popupYesButton.addEventListener("mouseover", () => {
     const container = popupYesButton.closest(".popup-buttons");
-    if (container) {
-      randomizeButtonPosition(
-        popupYesButton,
-        container.offsetWidth,
-        container.offsetHeight
-      );
-    }
+    if (container) randomizeButtonPosition(clicks, popupYesButton, container.offsetWidth, container.offsetHeight); // Pass clicks
   });
-
-  popupYesButton.addEventListener("click", () => {
-    hidePopup();
-    playSound(clickSound);
-  });
+  popupYesButton.addEventListener("click", () => { hidePopup(); playSound(clickSound); });
 }
-
 if (popupNoButton) {
   popupNoButton.addEventListener("mouseover", () => {
     const container = popupNoButton.closest(".popup-buttons");
-    if (container) {
-      randomizeButtonPosition(
-        popupNoButton,
-        container.offsetWidth,
-        container.offsetHeight
-      );
+    if (container) randomizeButtonPosition(clicks, popupNoButton, container.offsetWidth, container.offsetHeight); // Pass clicks
+  });
+  popupNoButton.addEventListener("click", () => { hidePopup(); playSound(clickSound); });
+}
+["click", "mousemove", "keydown"].forEach(eventType => document.addEventListener(eventType, updateActivityTime));
+
+// === MERGED: Share Button Logic from main ===
+if (shareButton) {
+  shareButton.addEventListener('click', () => {
+    const shareMessage = `😲 I have clicked the button 'The Button That Does Nothing' ${clicks} times! My High Score is ${highScore}. Can you beat it?`;
+    const gameUrl = window.location.href; // Use current URL
+
+    // Use navigator.clipboard API for better compatibility and security
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareMessage + '\n' + gameUrl)
+            .then(() => {
+                const originalText = shareButton.textContent;
+                shareButton.textContent = 'Copied!';
+                setTimeout(() => { shareButton.textContent = originalText; }, 2000);
+            })
+            .catch(err => {
+                console.error('Failed to copy using navigator.clipboard: ', err);
+                // Fallback for older browsers or if permission denied
+                try {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = shareMessage + '\n' + gameUrl;
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    const originalText = shareButton.textContent;
+                    shareButton.textContent = 'Copied!';
+                    setTimeout(() => { shareButton.textContent = originalText; }, 2000);
+                } catch (fallbackErr) {
+                    console.error('Fallback copy failed: ', fallbackErr);
+                    alert('Could not copy score. Please copy manually.');
+                }
+            });
+    } else {
+        // Very old browser fallback
+        alert('Clipboard API not supported. Please copy the score manually.');
     }
   });
-
-  popupNoButton.addEventListener("click", () => {
-    hidePopup();
-    playSound(clickSound);
-  });
 }
-
-// Track all user interactions to reset the inactivity timer
-["click", "mousemove", "keydown"].forEach((eventType) => {
-  document.addEventListener(eventType, updateActivityTime);
-});
-
-// Initialize on load
-window.addEventListener("load", () => {
-  // Timer tick every second
-  setInterval(updateTimer, 1000);
-
-  if (quoteDiv) {
-    quoteDiv.textContent = "Click the button to begin your pointless journey! 🚀";
-  }
-
-  // start the inactivity timer
-  updateActivityTime();
-
-  // initial background
-  changeBackgroundColor();
-});
-
-// Load an initial action prompt when the page first loads
-document.addEventListener('DOMContentLoaded', getNewAction);
+// === END MERGE ===
 
 // === Sound Settings System ===
-function playBackgroundMusic(trackName) {
-  if (!musicEnabled || !trackName || !tracks[trackName]) {
-    bgMusic.pause();
-    return;
+function loadUnlockedTracks() {
+  const totalInteractions = clicks + failedClicks;
+  const tracksToUnlockCount = Math.max(1, Math.floor(totalInteractions / 100) + 1);
+  let calculatedList = allTrackKeys.slice(0, tracksToUnlockCount);
+  if (allTrackKeys.length > 0 && calculatedList.length > 0 && !calculatedList.includes(allTrackKeys[0])) {
+      calculatedList.unshift(allTrackKeys[0]);
   }
-  
-  bgMusic.src = tracks[trackName];
-  bgMusic.volume = masterVolume * 0.7;
-  bgMusic.play().catch(() => {});
+  if (calculatedList.length === 0 && allTrackKeys.length > 0) calculatedList = [allTrackKeys[0]];
+  unlockedTracks = [...new Set(calculatedList)];
+  console.log("Loaded unlocked tracks:", unlockedTracks);
 }
-
+function populateTrackSelector() {
+  if (!trackSelector) return;
+  const currentSelectedValue = trackSelector.value;
+  trackSelector.innerHTML = '';
+  unlockedTracks.forEach(trackKey => {
+    if (tracks[trackKey]) {
+      const option = document.createElement('option'); option.value = trackKey;
+      const trackName = trackKey.charAt(0).toUpperCase() + trackKey.slice(1); option.textContent = trackName;
+      trackSelector.appendChild(option);
+    }
+  });
+  if (unlockedTracks.includes(currentSelectedValue)) trackSelector.value = currentSelectedValue;
+  else if (unlockedTracks.includes(currentTrack)) trackSelector.value = currentTrack;
+  else if (unlockedTracks.length > 0) trackSelector.value = unlockedTracks[0];
+}
+function checkMusicUnlock() {
+  const totalInteractions = clicks + failedClicks;
+  const tracksToUnlockCount = Math.max(1, Math.floor(totalInteractions / 100) + 1);
+  const tracksThatShouldBeUnlocked = allTrackKeys.slice(0, tracksToUnlockCount);
+  let newTrackUnlocked = false; let lastUnlockedTrackKey = null;
+  tracksThatShouldBeUnlocked.forEach(trackKey => {
+    if (trackKey && !unlockedTracks.includes(trackKey)) {
+      console.log(`Unlocking track: ${trackKey}`); unlockedTracks.push(trackKey);
+      newTrackUnlocked = true; lastUnlockedTrackKey = trackKey;
+    }
+  });
+  if (newTrackUnlocked && lastUnlockedTrackKey) {
+    populateTrackSelector();
+    console.log(`Auto-playing newly unlocked track: ${lastUnlockedTrackKey}`);
+    currentTrack = lastUnlockedTrackKey; if (trackSelector) trackSelector.value = currentTrack;
+    updateSoundSettings(); playBackgroundMusic(currentTrack);
+    if (quoteDiv) {
+      const trackName = lastUnlockedTrackKey.charAt(0).toUpperCase() + lastUnlockedTrackKey.slice(1);
+      quoteDiv.textContent = `🎵 New Track Unlocked: ${trackName}!`;
+    }
+  }
+}
+function playBackgroundMusic(trackName) {
+  if (!userInteracted || !musicEnabled || !trackName || !tracks[trackName]) {
+    if(bgMusic) bgMusic.pause(); return;
+  }
+  if (bgMusic) {
+      const newSrc = tracks[trackName];
+      // Fixed check for current source
+      const currentRelativeSrc = bgMusic.currentSrc ? bgMusic.currentSrc.substring(bgMusic.currentSrc.lastIndexOf('/') + 1) : '';
+      const newRelativeSrc = newSrc.substring(newSrc.lastIndexOf('/') + 1);
+      if (currentRelativeSrc !== newRelativeSrc || bgMusic.paused) {
+           console.log(`Setting music source to: ${newSrc}`);
+           bgMusic.src = newSrc; bgMusic.volume = masterVolume * 0.7;
+           const playPromise = bgMusic.play();
+           if (playPromise) playPromise.catch(error => console.error(`Error playing music:`, error));
+      } else bgMusic.volume = masterVolume * 0.7; // Ensure volume if already playing
+  } else console.error("bgMusic element not found!");
+}
 function updateSoundSettings() {
-  localStorage.setItem('soundsEnabled', soundsEnabled);
-  localStorage.setItem('musicEnabled', musicEnabled);
+  localStorage.setItem('soundsEnabled', soundsEnabled); localStorage.setItem('musicEnabled', musicEnabled);
   localStorage.setItem('masterVolume', masterVolume);
-  localStorage.setItem('currentTrack', currentTrack);
-  
-  if (clickSound) clickSound.volume = masterVolume;
-  if (failSound) failSound.volume = masterVolume;
+  // Do NOT save currentTrack
+  if (clickSound) clickSound.volume = masterVolume; if (failSound) failSound.volume = masterVolume;
   if (bgMusic) bgMusic.volume = masterVolume * 0.7;
 }
-
-function updateMusicPlayback() {
-  playBackgroundMusic(currentTrack);
-}
-
+function updateMusicPlayback() { playBackgroundMusic(currentTrack); }
 function initSoundSettings() {
-  soundsToggle.checked = soundsEnabled;
-  musicToggle.checked = musicEnabled;
-  volumeSlider.value = masterVolume * 100;
-  trackSelector.value = currentTrack;
-  
+  if (soundsToggle) soundsToggle.checked = soundsEnabled; if (musicToggle) musicToggle.checked = musicEnabled;
+  if (volumeSlider) volumeSlider.value = masterVolume * 100;
+  loadUnlockedTracks(); populateTrackSelector();
+  currentTrack = unlockedTracks[unlockedTracks.length - 1] || '8bit';
+  console.log(`Initial track set to: ${currentTrack}`);
+  if (trackSelector) trackSelector.value = currentTrack;
   updateSoundSettings();
-  updateMusicPlayback();
 }
+if (soundToggle) soundToggle.addEventListener('click', () => soundPanel?.classList.add('show'));
+if (closeSoundPanel) closeSoundPanel.addEventListener('click', () => soundPanel?.classList.remove('show'));
+if (soundPanel) soundPanel.addEventListener('click', (e) => { if (e.target === soundPanel) soundPanel.classList.remove('show'); });
+if (soundsToggle) soundsToggle.addEventListener('change', () => { soundsEnabled = soundsToggle.checked; updateSoundSettings(); });
+if (musicToggle) musicToggle.addEventListener('change', () => { musicEnabled = musicToggle.checked; updateSoundSettings(); updateMusicPlayback(); });
+if (volumeSlider) volumeSlider.addEventListener('input', () => { masterVolume = volumeSlider.value / 100; updateSoundSettings(); });
+if (trackSelector) trackSelector.addEventListener('change', () => { currentTrack = trackSelector.value; updateSoundSettings(); updateMusicPlayback(); });
 
-// Sound panel toggle
-soundToggle.addEventListener('click', () => {
-  soundPanel.classList.add('show');
-});
-
-closeSoundPanel.addEventListener('click', () => {
-  soundPanel.classList.remove('show');
-});
-
-// Close sound panel when clicking outside
-soundPanel.addEventListener('click', (e) => {
-  if (e.target === soundPanel) {
-    soundPanel.classList.remove('show');
-  }
-});
-
-// Sound controls
-soundsToggle.addEventListener('change', () => {
-  soundsEnabled = soundsToggle.checked;
-  updateSoundSettings();
-});
-
-musicToggle.addEventListener('change', () => {
-  musicEnabled = musicToggle.checked;
-  updateSoundSettings();
-  updateMusicPlayback();
-});
-
-volumeSlider.addEventListener('input', () => {
-  masterVolume = volumeSlider.value / 100;
-  updateSoundSettings();
-});
-
-trackSelector.addEventListener('change', () => {
-  currentTrack = trackSelector.value;
-  updateSoundSettings();
-  updateMusicPlayback();
-});
-
-// === Magnetic Hover Effect (Normal Mode Only) ===
+// === Magnetic Hover Effect ===
 if (button) {
   button.addEventListener('mousemove', (e) => {
-    // Only apply magnetic effect in normal mode
     if (impossibleMode || isButtonMoving) return;
-    
     const rect = button.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    // Calculate distance from center
-    const deltaX = e.clientX - centerX;
-    const deltaY = e.clientY - centerY;
-    
-    // Subtle movement toward cursor (max 10px)
-    const moveX = deltaX * 0.15;
-    const moveY = deltaY * 0.15;
-    
-    // Set CSS custom properties (composes with existing transforms)
-    button.style.setProperty('--magnetic-x', `${moveX}px`);
-    button.style.setProperty('--magnetic-y', `${moveY}px`);
+    const centerX = rect.left + rect.width / 2; const centerY = rect.top + rect.height / 2;
+    const deltaX = e.clientX - centerX; const deltaY = e.clientY - centerY;
+    const moveX = deltaX * 0.15; const moveY = deltaY * 0.15;
+    button.style.setProperty('--magnetic-x', `${moveX}px`); button.style.setProperty('--magnetic-y', `${moveY}px`);
   });
-  
   button.addEventListener('mouseleave', () => {
-    // Reset magnetic properties when mouse leaves
     if (!impossibleMode && !isButtonMoving) {
-      button.style.setProperty('--magnetic-x', '0px');
-      button.style.setProperty('--magnetic-y', '0px');
+      button.style.setProperty('--magnetic-x', '0px'); button.style.setProperty('--magnetic-y', '0px');
     }
   });
 }
-
-// Reset magnetic properties when Impossible Mode is toggled
-if (impossibleToggle) {
+if (impossibleToggle) { // Reset magnetic on impossible toggle
   impossibleToggle.addEventListener('change', () => {
-    if (impossibleMode) {
-      // Clear magnetic hover when entering Impossible Mode
-      button.style.setProperty('--magnetic-x', '0px');
-      button.style.setProperty('--magnetic-y', '0px');
+    if (impossibleMode && button) {
+      button.style.setProperty('--magnetic-x', '0px'); button.style.setProperty('--magnetic-y', '0px');
     }
   });
 }
 
-// === Keyboard Navigation (Accessibility) ===
+// === Keyboard Navigation ===
 document.addEventListener('keydown', (e) => {
-  // Prevent if user is typing in an input field
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
-    return;
-  }
-  
-  // Space or Enter to click the button
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
   if (e.key === ' ' || e.key === 'Enter') {
     if (document.activeElement === button || !document.activeElement || document.activeElement === document.body) {
-      e.preventDefault();
-      button?.click();
+      e.preventDefault(); button?.click();
     }
   }
-  
-  // T key to toggle theme selector
-  if (e.key === 't' || e.key === 'T') {
-    e.preventDefault();
-    themeToggle?.click();
-  }
-  
-  // S key to toggle sound panel
-  if (e.key === 's' || e.key === 'S') {
-    e.preventDefault();
-    soundToggle?.click();
-  }
-  
-  // I key to toggle impossible mode
-  if (e.key === 'i' || e.key === 'I') {
-    e.preventDefault();
-    impossibleToggle?.click();
-  }
-  
-  // Escape to close modals
+  if ((e.key === 't' || e.key === 'T') && !e.metaKey && !e.ctrlKey) { e.preventDefault(); themeToggle?.click(); }
+  if ((e.key === 's' || e.key === 'S') && !e.metaKey && !e.ctrlKey) { e.preventDefault(); soundToggle?.click(); }
+  if ((e.key === 'i' || e.key === 'I') && !e.metaKey && !e.ctrlKey) { e.preventDefault(); impossibleToggle?.click(); }
   if (e.key === 'Escape') {
-    const themeSelector = document.getElementById('theme-selector');
-    if (themeSelector?.classList.contains('show')) {
-      themeSelector.classList.remove('show');
-    }
-    if (soundPanel?.classList.contains('show')) {
-      soundPanel.classList.remove('show');
-    }
-    if (popupContainer?.classList.contains('show')) {
-      popupContainer.classList.remove('show');
-    }
+    themeSelector?.classList.remove('show'); soundPanel?.classList.remove('show'); popupContainer?.classList.remove('show');
   }
 });
 
+// === Initialize on load (Main Entry Point) ===
+window.addEventListener('load', () => {
+  initializeCounter(); // Shows 0 clicks
+  initSoundSettings(); // Sets up sounds, loads ['8bit']
+  setInterval(updateTimer, 1000); // Starts timer
+
+  // === MERGED: Add high score display from main ===
+  if (highScoreDisplay) {
+    highScoreDisplay.textContent = highScore; // Display saved high score
+  }
+  // === END MERGE ===
+
+  if (quoteDiv && clicks === 0 && failedClicks === 0) {
+      quoteDiv.textContent = "Click the button to begin your pointless journey! 🚀";
+  }
+  // Note: getNewAction is called below via DOMContentLoaded
+
+  updateActivityTime(); // Start inactivity timer
+});
+
+// === MERGED: Kept DOMContentLoaded from main for initial action prompt ===
+document.addEventListener('DOMContentLoaded', () => {
+    if (clicks > 0 || failedClicks > 0) { // Should be false on fresh load now
+        getNewAction();
+    } else if (clicks === 0 && failedClicks === 0) {
+        // If it's truly a fresh start, maybe wait until first click?
+        // Or call getNewAction here if you always want one displayed.
+        // Let's keep the original logic: only show if returning user (which won't happen now)
+    }
+});
+// === END MERGE ===
 // Initialize on load
 window.addEventListener('load', () => {
   initializeCounter();
   initSoundSettings();
 });
+
+// --------- Nothing coins & store -------------
+
+let nothingCoins = 0;
+let clicks = 0; // Corrected variable name
+
+let upgrades = {
+  shinierNothing: {
+    cost: 5,
+    purchased: false,
+  },
+};
+
+// Upgrade active flag
+let shinierActive = false;
+
+// Function to update the currency display
+function updateCurrencyUI() {
+  const coinCountEl = document.getElementById("coin-count");
+  if (coinCountEl) {
+    coinCountEl.textContent = nothingCoins;
+  }
+}
+
+// Sparkle particle effect on clicks
+function createSparkles() {
+  const sparkleCount = 20;
+  for (let i = 0; i < sparkleCount; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.classList.add('sparkle');
+    sparkle.style.left = (button.offsetLeft + Math.random() * button.offsetWidth) + 'px';
+    sparkle.style.top = (button.offsetTop + Math.random() * button.offsetHeight) + 'px';
+    sparkle.style.backgroundColor = '#FFD700';
+    document.body.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 1000);
+  }
+}
+
+// Audio shimmer (optional)
+const shinySound = new Audio('audio/shimmer.mp3');
+
+// Handle button clicks with bonus coins when upgrade is active
+button.addEventListener("click", (e) => {
+  e.stopPropagation();
+  clicks++;
+
+  // Base coins per click
+  let earnedCoins = 1;
+
+  if (shinierActive && clicks % 10 === 0) {
+    earnedCoins = 2; // Bonus coins every 10th click
+
+    if (quoteDiv) {
+      quoteDiv.textContent = "🔥 Combo Bonus! You earned 2 Nothing Coins!";
+      setTimeout(() => getNewAction(), 2000);
+    }
+
+    // Button animation for bonus click
+    button.style.transform = "scale(1.3)";
+    button.style.backgroundColor = "#ffdb58";
+    setTimeout(() => {
+      button.style.transform = "scale(1)";
+      button.style.backgroundColor = "";
+    }, 300);
+
+    shinySound.play().catch(() => {});
+  }
+
+  nothingCoins += earnedCoins;
+  updateCurrencyUI();
+
+  // Sparkle effect if upgrade active
+  if (shinierActive) createSparkles();
+});
+
+// Handle upgrade purchase
+const buyButton = document.getElementById("buy-shinier");
+buyButton.addEventListener("click", () => {
+  if (nothingCoins >= upgrades.shinierNothing.cost && !upgrades.shinierNothing.purchased) {
+    nothingCoins -= upgrades.shinierNothing.cost;
+    upgrades.shinierNothing.purchased = true;
+    shinierActive = true;
+    updateCurrencyUI();
+
+    buyButton.disabled = true;
+    buyButton.textContent = "Purchased";
+
+    if (button) {
+      button.style.boxShadow = "0 0 30px 6px #FFD700";
+      button.style.transition = "box-shadow 0.4s ease-in-out";
+      button.classList.add('golden-pulse');
+    }
+
+    shinySound.play().catch(() => {});
+
+    const shopPanel = document.getElementById('shop');
+    if (shopPanel) {
+      shopPanel.style.display = 'none';
+    }
+  } else {
+    alert("Not enough Nothing Coins!");
+  }
+});
+
+// Initialize UI on page load
+updateCurrencyUI();
+
+// --------- User information - greeting --------------
+const nameInput = document.getElementById('username');
+const saveBtn = document.getElementById('saveName');
+const greeting = document.getElementById('greeting');
+
+// Check if name is already saved
+const storedName = localStorage.getItem('userName');
+
+if (storedName) {
+  greetUser(storedName);
+  hideInput();
+}
+
+// Save name when user clicks save
+saveBtn.addEventListener('click', () => {
+  const name = nameInput.value.trim();
+  if (name) {
+    localStorage.setItem('userName', name);
+    greetUser(name);
+    hideInput();
+  } else {
+    alert("Please enter your name first!");
+  }
+});
+
+function greetUser(name) {
+  const greetings = [
+    `Welcome back, ${name}!`,
+    `Hey ${name}, good to see you again!`,
+    `Hello ${name}! Ready to explore new universes?`,
+    `Glad you're here, ${name}!`,
+    `👋 ${name}, your button awaits!`
+  ];
+  greeting.textContent = greetings[Math.floor(Math.random() * greetings.length)];
+}
+
+function hideInput() {
+  nameInput.style.display = 'none';
+  saveBtn.style.display = 'none';
+}
+
