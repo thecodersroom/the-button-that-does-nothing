@@ -1432,42 +1432,235 @@ body.flipped {
         transform: translateY(105vh); 
     }
 }
-/* --- FIX FOR TOP-RIGHT CONTROLS --- */
-/* Add this entire block to the bottom of your style.css file */
 
-/* 1. This styles the main container */
+
+/* --- from feature/add-greeting-feature --- */
+.fake-crash {
+  animation: screenShake 0.05s infinite;
+  transition: filter 0.1s ease, transform 0.1s ease;
+}
+
+@keyframes screenShake {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(5px, -5px); }
+  50% { transform: translate(-5px, 5px); }
+  75% { transform: translate(5px, 5px); }
+  100% { transform: translate(-5px, -5px); }
+}
+
+/* Currency Display Panel */
+.currency-panel {
+  position: fixed;
+  top: 28px;
+  left: 20px;
+  background: linear-gradient(135deg, #f8b739, #f7dc6f);
+  color: #3d1f00;
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 1.2em;
+  border-radius: 50px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  z-index: 1000;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Shop Panel */
+.shop-panel {
+  position: fixed;
+  bottom: 30px;
+  right: 20px;
+  width: 240px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+  padding: 15px 20px;
+  font-family: 'Poppins', sans-serif;
+  color: #222;
+  z-index: 1000;
+}
+
+.shop-panel h3 {
+  margin: 0 0 12px 0;
+  color: #ff6b6b;
+  font-weight: 800;
+  text-align: center;
+  text-shadow: 1px 1px 3px rgba(255, 107, 107, 0.5);
+}
+
+.shop-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid #eee;
+}
+
+.shop-item:first-child {
+  border-top: none;
+}
+
+.shop-info {
+  max-width: 140px;
+}
+
+.item-name {
+  font-size: 1.1em;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #ff9068;
+}
+
+.item-cost {
+  font-size: 0.85em;
+  font-weight: 500;
+  color: #777;
+  margin: 0;
+}
+
+.shop-item button {
+  background: linear-gradient(135deg, #ff6b6b, #ff9a76);
+  border: none;
+  border-radius: 25px;
+  color: white;
+  font-weight: 700;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.shop-item button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff9a76, #ff6b6b);
+  box-shadow: 0 0 10px 2px #ff6b6b;
+}
+
+.shop-item button:disabled {
+  background: #ccc;
+  color: #777;
+  cursor: default;
+  box-shadow: none;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 30px 6px #FFD700; }
+  50% { box-shadow: 0 0 50px 12px #FFD700; }
+}
+
+.golden-pulse {
+  animation: pulseGlow 2s infinite;
+}
+
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  opacity: 0.8;
+  pointer-events: none;
+  animation: sparkleFade 1s forwards;
+}
+
+@keyframes sparkleFade {
+  from {opacity: 0.8; transform: scale(1);}
+  to {opacity: 0; transform: scale(0.1);}
+}
+
+/* Centering the greeting section */
+#user-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 15vh;
+  gap: 15px;
+  font-family: "Poppins", sans-serif;
+  background: radial-gradient(circle at center, #0474e4 30%, #111 100%);
+  color: #f5f5f5;
+  border-radius: 50px;
+}
+
+/* Input field styling */
+#username {
+  padding: 10px 16px;
+  width: 250px;
+  font-size: 1rem;
+  border: 2px solid #ffd700;
+  border-radius: 8px;
+  outline: none;
+  background-color: transparent;
+  color: #fff;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+#username::placeholder {
+  color: #aaaaaa;
+  opacity: 0.8;
+}
+
+#username:focus {
+  border-color: #ffcf40;
+  box-shadow: 0 0 15px #ffd700;
+}
+
+#saveName {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #ffcf40, #ffdc73);
+  color: #111;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+#saveName:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px #ffd700;
+}
+
+#greeting {
+  margin-top: 20px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+}
+
+/* --- from main --- */
+/* Top-Right Controls Fix */
 .top-right-controls {
   position: fixed;
   top: 20px;
   right: 20px;
   display: flex;
-  flex-direction: column; /* Stacks items vertically */
-  align-items: flex-end;   /* Aligns all items to the right */
-  gap: 10px;               /* Space between items */
-  z-index: 800; /* <-- FIX: Was 2000. Now it's below the button. */
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  z-index: 800;
 }
 
-/* 2. This resets ALL items inside the container */
 .top-right-controls > div,
 .top-right-controls > button {
-  position: relative !important; /* Force override */
+  position: relative !important;
   top: auto !important;
   right: auto !important;
   left: auto !important;
   bottom: auto !important;
   margin: 0;
-  width: auto; /* Let them size themselves */
+  width: auto;
 }
 
-/* 3. Style the "Time spent..." timer */
+/* Time spent timer */
 #timer.timer {
-  color: var(--text-color); /* Use theme text color */
-  background-color: var(--card-bg); /* Use theme card background */
+  color: var(--text-color);
+  background-color: var(--card-bg);
   padding: 8px 12px;
   border-radius: 8px;
   font-size: 0.9em;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   text-align: right;
-  white-space: nowrap; /* Prevents text from wrapping */
+  white-space: nowrap;
 }
 

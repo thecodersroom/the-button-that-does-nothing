@@ -1174,4 +1174,156 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 // === END MERGE ===
+// Initialize on load
+window.addEventListener('load', () => {
+  initializeCounter();
+  initSoundSettings();
+});
+
+// --------- Nothing coins & store -------------
+
+let nothingCoins = 0;
+let clicks = 0; // Corrected variable name
+
+let upgrades = {
+  shinierNothing: {
+    cost: 5,
+    purchased: false,
+  },
+};
+
+// Upgrade active flag
+let shinierActive = false;
+
+// Function to update the currency display
+function updateCurrencyUI() {
+  const coinCountEl = document.getElementById("coin-count");
+  if (coinCountEl) {
+    coinCountEl.textContent = nothingCoins;
+  }
+}
+
+// Sparkle particle effect on clicks
+function createSparkles() {
+  const sparkleCount = 20;
+  for (let i = 0; i < sparkleCount; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.classList.add('sparkle');
+    sparkle.style.left = (button.offsetLeft + Math.random() * button.offsetWidth) + 'px';
+    sparkle.style.top = (button.offsetTop + Math.random() * button.offsetHeight) + 'px';
+    sparkle.style.backgroundColor = '#FFD700';
+    document.body.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 1000);
+  }
+}
+
+// Audio shimmer (optional)
+const shinySound = new Audio('audio/shimmer.mp3');
+
+// Handle button clicks with bonus coins when upgrade is active
+button.addEventListener("click", (e) => {
+  e.stopPropagation();
+  clicks++;
+
+  // Base coins per click
+  let earnedCoins = 1;
+
+  if (shinierActive && clicks % 10 === 0) {
+    earnedCoins = 2; // Bonus coins every 10th click
+
+    if (quoteDiv) {
+      quoteDiv.textContent = "🔥 Combo Bonus! You earned 2 Nothing Coins!";
+      setTimeout(() => getNewAction(), 2000);
+    }
+
+    // Button animation for bonus click
+    button.style.transform = "scale(1.3)";
+    button.style.backgroundColor = "#ffdb58";
+    setTimeout(() => {
+      button.style.transform = "scale(1)";
+      button.style.backgroundColor = "";
+    }, 300);
+
+    shinySound.play().catch(() => {});
+  }
+
+  nothingCoins += earnedCoins;
+  updateCurrencyUI();
+
+  // Sparkle effect if upgrade active
+  if (shinierActive) createSparkles();
+});
+
+// Handle upgrade purchase
+const buyButton = document.getElementById("buy-shinier");
+buyButton.addEventListener("click", () => {
+  if (nothingCoins >= upgrades.shinierNothing.cost && !upgrades.shinierNothing.purchased) {
+    nothingCoins -= upgrades.shinierNothing.cost;
+    upgrades.shinierNothing.purchased = true;
+    shinierActive = true;
+    updateCurrencyUI();
+
+    buyButton.disabled = true;
+    buyButton.textContent = "Purchased";
+
+    if (button) {
+      button.style.boxShadow = "0 0 30px 6px #FFD700";
+      button.style.transition = "box-shadow 0.4s ease-in-out";
+      button.classList.add('golden-pulse');
+    }
+
+    shinySound.play().catch(() => {});
+
+    const shopPanel = document.getElementById('shop');
+    if (shopPanel) {
+      shopPanel.style.display = 'none';
+    }
+  } else {
+    alert("Not enough Nothing Coins!");
+  }
+});
+
+// Initialize UI on page load
+updateCurrencyUI();
+
+// --------- User information - greeting --------------
+const nameInput = document.getElementById('username');
+const saveBtn = document.getElementById('saveName');
+const greeting = document.getElementById('greeting');
+
+// Check if name is already saved
+const storedName = localStorage.getItem('userName');
+
+if (storedName) {
+  greetUser(storedName);
+  hideInput();
+}
+
+// Save name when user clicks save
+saveBtn.addEventListener('click', () => {
+  const name = nameInput.value.trim();
+  if (name) {
+    localStorage.setItem('userName', name);
+    greetUser(name);
+    hideInput();
+  } else {
+    alert("Please enter your name first!");
+  }
+});
+
+function greetUser(name) {
+  const greetings = [
+    `Welcome back, ${name}!`,
+    `Hey ${name}, good to see you again!`,
+    `Hello ${name}! Ready to explore new universes?`,
+    `Glad you're here, ${name}!`,
+    `👋 ${name}, your button awaits!`
+  ];
+  greeting.textContent = greetings[Math.floor(Math.random() * greetings.length)];
+}
+
+function hideInput() {
+  nameInput.style.display = 'none';
+  saveBtn.style.display = 'none';
+}
 
