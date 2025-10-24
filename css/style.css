@@ -298,6 +298,61 @@ body::after {
   --button-gradient-end: #c0392b;
 }
 
+/* Dark Mode - Darker glassmorphic containers */
+body.dark-mode {
+  --card-bg: rgba(0, 0, 0, 0.4);
+  --card-bg-solid: rgba(0, 0, 0, 0.6);
+  --border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .app-container {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+body.dark-mode .clock,
+body.dark-mode #timer.timer,
+body.dark-mode #dark-mode-toggle {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .currency-panel {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border-color: rgba(255, 215, 0, 0.3);
+}
+
+body.dark-mode .shop-panel,
+body.dark-mode #user-section {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .toggle-label {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .stat-card,
+body.dark-mode .quote,
+body.dark-mode .timer {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode #username {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .control-buttons button {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
 /* === GLOBAL RESET & BASE STYLES === */
 *, *::before, *::after {
   margin: 0;
@@ -1768,6 +1823,24 @@ body.flipped {
   bottom: auto !important;
   margin: 0;
   width: auto;
+}
+
+/* Dark Mode Toggle Button */
+#dark-mode-toggle {
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-size: 1.3em;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+#dark-mode-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
 /* Time spent timer - reduced backdrop filter to prevent conflicts */

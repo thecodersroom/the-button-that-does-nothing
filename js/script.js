@@ -875,6 +875,33 @@ if (themeToggle) { // Theme cycle button
   themeToggle.addEventListener('dblclick', (e) => { e.preventDefault(); if (themeSelector) { themeSelector.classList.add('show'); generateThemeCards(); } });
   themeToggle.addEventListener('contextmenu', (e) => { e.preventDefault(); if (themeSelector) { themeSelector.classList.add('show'); generateThemeCards(); } });
 }
+
+// Dark Mode Toggle
+const darkModeToggle = document.getElementById("dark-mode-toggle");
+let darkMode = localStorage.getItem('darkMode') === 'true';
+
+function toggleDarkMode() {
+  darkMode = !darkMode;
+  localStorage.setItem('darkMode', darkMode);
+
+  if (darkMode) {
+    document.body.classList.add('dark-mode');
+    if (darkModeToggle) darkModeToggle.textContent = '☀️';
+  } else {
+    document.body.classList.remove('dark-mode');
+    if (darkModeToggle) darkModeToggle.textContent = '🌙';
+  }
+}
+
+// Initialize dark mode on load
+if (darkMode) {
+  document.body.classList.add('dark-mode');
+  if (darkModeToggle) darkModeToggle.textContent = '☀️';
+}
+
+if (darkModeToggle) {
+  darkModeToggle.addEventListener('click', toggleDarkMode);
+}
 if (closeThemeSelector) closeThemeSelector.addEventListener('click', () => themeSelector?.classList.remove('show'));
 if (themeSelector) themeSelector.addEventListener('click', (e) => { if (e.target === themeSelector) themeSelector.classList.remove('show'); });
 if (themeTabs && themeTabContents) { // Theme tabs
