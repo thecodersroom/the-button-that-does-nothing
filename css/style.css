@@ -101,6 +101,85 @@
   --info: #3b82f6;
 }
 
+/* === COOL ANIMATED BACKGROUND === */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, var(--bg-start) 0%, var(--bg-end) 100%);
+  z-index: -2;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 100px 100px, 150px 150px, 200px 200px, 250px 250px;
+  animation: floatBackground 20s infinite linear;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+@keyframes floatBackground {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(-2%, 2%) rotate(1deg);
+  }
+  50% {
+    transform: translate(-1%, -1%) rotate(0deg);
+  }
+  75% {
+    transform: translate(2%, 1%) rotate(-1deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+/* Floating particles */
+.floating-particle {
+  position: fixed;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  animation: float-particle 15s infinite linear;
+}
+
+.floating-particle:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
 /* === THEME VARIATIONS === */
 [data-theme="light"] {
   --bg-start: #fdf2ec;
@@ -239,30 +318,13 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
   color: var(--text-color);
   overflow-x: hidden;
-  transition: background 0.5s ease;
   padding: var(--space-lg);
+  background: transparent !important;
 }
 
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* === MAIN CONTAINER === */
+/* Remove the old gradient animation since we have the new background */
 .app-container {
   position: relative;
   width: 100%;
@@ -275,6 +337,7 @@ body {
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-2xl);
   transition: all var(--transition-base);
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
@@ -1406,7 +1469,7 @@ body.flipped {
     position: absolute; /* So JS can move it freely */
     z-index: 1;
 
-    /* Optional “jitter” effect */
+    /* Optional "jitter" effect */
     animation: cloneJitter 0.5s infinite alternate;
 }
 
@@ -1431,6 +1494,16 @@ body.flipped {
     100% {
         transform: translateY(105vh); 
     }
+}
+/* Simple Button Pulse Animation - Add this to your CSS */
+.button-pulse {
+  animation: button-pulse 0.3s ease-out;
+}
+
+@keyframes button-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
 
