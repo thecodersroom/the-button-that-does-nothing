@@ -4,6 +4,31 @@
   padding: 0;
   box-sizing: border-box;
 }
+/* --- Add this to your style.css --- */
+
+.notification-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #28a745; /* A nice green */
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  z-index: 1001;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s ease-in-out;
+}
+
+.notification-popup.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 @keyframes cloneJitter {
     0% { transform: translate(0, 0) rotate(0deg); }
     25% { transform: translate(2px, -2px) rotate(-2deg); }
@@ -60,13 +85,13 @@
   --bg-start: #1a1a2e;
   --bg-end: #16213e;
   --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.85);
-  --card-bg: rgba(255, 255, 255, 0.12);
-  --card-bg-solid: rgba(255, 255, 255, 0.18);
-  --accent-color: #ffd93d;
-  --border-color: rgba(255, 255, 255, 0.25);
-  --button-gradient-start: #6bcf7f;
-  --button-gradient-end: #4ec9db;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --card-bg: rgba(255, 255, 255, 0.1);
+  --card-bg-solid: rgba(255, 255, 255, 0.15);
+  --accent-color: #ff6b6b;
+  --border-color: rgba(255, 255, 255, 0.2);
+  --button-gradient-start: #ff6b6b;
+  --button-gradient-end: #ff9a76;
   --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* Utility Colors */
@@ -74,6 +99,85 @@
   --warning: #f59e0b;
   --error: #ef4444;
   --info: #3b82f6;
+}
+
+/* === COOL ANIMATED BACKGROUND === */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, var(--bg-start) 0%, var(--bg-end) 100%);
+  z-index: -2;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 100px 100px, 150px 150px, 200px 200px, 250px 250px;
+  animation: floatBackground 20s infinite linear;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+@keyframes floatBackground {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(-2%, 2%) rotate(1deg);
+  }
+  50% {
+    transform: translate(-1%, -1%) rotate(0deg);
+  }
+  75% {
+    transform: translate(2%, 1%) rotate(-1deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+/* Floating particles */
+.floating-particle {
+  position: fixed;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  animation: float-particle 15s infinite linear;
+}
+
+.floating-particle:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(100px) rotate(360deg);
+    opacity: 0;
+  }
 }
 
 /* === THEME VARIATIONS === */
@@ -214,42 +318,26 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
   color: var(--text-color);
   overflow-x: hidden;
-  transition: background 0.5s ease;
   padding: var(--space-lg);
+  background: transparent !important;
 }
 
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* === MAIN CONTAINER === */
+/* Remove the old gradient animation since we have the new background */
 .app-container {
   position: relative;
   width: 100%;
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: var(--space-2xl) var(--space-xl);
+  padding: var(--space-3xl) var(--space-2xl);
   background: var(--card-bg-solid);
   backdrop-filter: blur(20px) saturate(180%);
   border-radius: var(--radius-xl);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-2xl);
   transition: all var(--transition-base);
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
@@ -260,10 +348,11 @@ body {
 
 /* === TYPOGRAPHY === */
 h1 {
-  font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
+  font-size: clamp(var(--text-3xl), 5vw, var(--text-6xl));
   font-weight: 700;
-  margin: 0 0 var(--space-lg) 0;
-  background: linear-gradient(135deg, #ffffff, var(--accent-color));
+  margin: 0 0 var(--space-xl) 0;
+  margin-top: var(--space-3xl);
+  background: linear-gradient(135deg, var(--text-color), var(--accent-color));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -372,8 +461,8 @@ h1::after {
 
 /* === THE BUTTON (STAR OF THE SHOW) === */
 .button-container {
-  margin: var(--space-2xl) 0;
-  min-height: 160px;
+  margin: var(--space-4xl) 0;
+  min-height: 200px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -381,7 +470,7 @@ h1::after {
 }
 
 #useless-button {
-  position: relative;
+  position: relative; /* Must be relative or absolute for z-index */
   padding: var(--space-xl) var(--space-4xl);
   font-size: clamp(var(--text-xl), 3vw, var(--text-3xl));
   font-weight: 700;
@@ -390,8 +479,14 @@ h1::after {
   border: none;
   border-radius: var(--radius-lg);
   cursor: pointer;
+  
+  /* --- MERGED STYLES --- */
+  
+  /* Kept z-index fix from your branch */
+  z-index: 900; 
+
+  /* Kept new styles from main branch */
   transition: all var(--transition-base);
-  z-index: 10;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   
@@ -400,36 +495,38 @@ h1::after {
   --magnetic-y: 0px;
   
   /* 3D Depth Effect */
-  box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.2),
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.1),
     0 10px 20px rgba(0, 0, 0, 0.15),
     0 20px 40px rgba(0, 0, 0, 0.1),
-    0 0 60px rgba(107, 207, 127, 0.4),
+    0 0 60px rgba(255, 107, 107, 0.3),
     inset 0 -2px 0 rgba(0, 0, 0, 0.2),
-    inset 0 2px 0 rgba(255, 255, 255, 0.3);
-
+    inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  
   /* Glow animation */
   animation: buttonBreath 3s ease-in-out infinite;
+  
+  /* --- END MERGE --- */
 }
 
 @keyframes buttonBreath {
   0%, 100% {
-    box-shadow:
-      0 4px 6px rgba(0, 0, 0, 0.2),
+    box-shadow: 
+      0 4px 6px rgba(0, 0, 0, 0.1),
       0 10px 20px rgba(0, 0, 0, 0.15),
       0 20px 40px rgba(0, 0, 0, 0.1),
-      0 0 40px rgba(107, 207, 127, 0.4),
+      0 0 40px rgba(255, 107, 107, 0.3),
       inset 0 -2px 0 rgba(0, 0, 0, 0.2),
-      inset 0 2px 0 rgba(255, 255, 255, 0.3);
+      inset 0 2px 0 rgba(255, 255, 255, 0.2);
   }
   50% {
-    box-shadow:
-      0 4px 6px rgba(0, 0, 0, 0.2),
+    box-shadow: 
+      0 4px 6px rgba(0, 0, 0, 0.1),
       0 10px 20px rgba(0, 0, 0, 0.15),
       0 20px 40px rgba(0, 0, 0, 0.1),
-      0 0 80px rgba(78, 201, 219, 0.6),
+      0 0 80px rgba(255, 107, 107, 0.5),
       inset 0 -2px 0 rgba(0, 0, 0, 0.2),
-      inset 0 2px 0 rgba(255, 255, 255, 0.3);
+      inset 0 2px 0 rgba(255, 255, 255, 0.2);
   }
 }
 
@@ -445,13 +542,13 @@ h1::after {
 
 #useless-button:hover {
   transform: translate(var(--magnetic-x), calc(var(--magnetic-y) - 8px)) scale(1.05);
-  box-shadow:
+  box-shadow: 
     0 8px 12px rgba(0, 0, 0, 0.15),
     0 20px 40px rgba(0, 0, 0, 0.2),
     0 30px 60px rgba(0, 0, 0, 0.15),
-    0 0 100px rgba(78, 201, 219, 0.7),
+    0 0 100px rgba(255, 107, 107, 0.6),
     inset 0 -2px 0 rgba(0, 0, 0, 0.2),
-    inset 0 2px 0 rgba(255, 255, 255, 0.4);
+    inset 0 2px 0 rgba(255, 255, 255, 0.3);
 }
 
 #useless-button:hover::before {
@@ -460,46 +557,46 @@ h1::after {
 
 #useless-button:active {
   transform: translate(var(--magnetic-x), calc(var(--magnetic-y) - 2px)) scale(0.98);
-  box-shadow:
+  box-shadow: 
     0 2px 4px rgba(0, 0, 0, 0.1),
     0 5px 10px rgba(0, 0, 0, 0.15),
-    0 0 40px rgba(107, 207, 127, 0.5),
+    0 0 40px rgba(255, 107, 107, 0.4),
     inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 #share-button {
-  background: linear-gradient(135deg, var(--accent-color), #ffb93d);
-  color: #2d2d2d;
+  /* Basic Styling */
+  background-color: #007bff; /* A nice blue color */
+  color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 10px 16px; /* 10px top/bottom, 16px left/right */
+  
+  /* Appearance */
   font-size: 14px;
-  font-weight: 700;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: var(--shadow-md);
-  margin-top: var(--space-md);
-}
-
-.high-score-display {
-  font-size: 1.2rem;
   font-weight: 600;
-  color: var(--text-color);
-  margin-top: var(--space-lg);
-  margin-bottom: 0;
-  text-align: center;
+  border-radius: 8px; /* Rounded corners */
+  cursor: pointer;
+  
+  /* Smooth Hover Effect */
+  transition: background-color 0.2s ease;
+}
+/* For the "My High Score: 7" line */
+.high-score-display {
+  font-size: 1.1rem;    
+  font-weight: 600;  
+  color: #4a4a4a;    
+  margin-top: 15px;    
+  margin-bottom: 15px; 
 }
 
+/* To make the score number (e.g., "7") stand out */
 #high-score {
-  font-weight: 800;
-  color: var(--accent-color);
-  font-size: 1.4rem;
-  margin-left: 5px;
-  text-shadow: 0 2px 8px rgba(255, 217, 61, 0.4);
+  font-weight: 800;  
+  color: #0056b3;    
+  font-size: 1.2rem; 
+  margin-left: 5px;  
 }
-
 #share-button:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  background-color: #0056b3; 
 }
 /* Ripple effect */
 #useless-button::after {
@@ -539,15 +636,12 @@ h1::after {
 
 /* === STATS DISPLAY (CARD-BASED) === */
 #counter {
-  text-align: center;
-  margin: var(--space-lg) 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-lg);
+  margin: var(--space-xl) 0;
   font-size: var(--text-lg);
   font-weight: 600;
-  padding: var(--space-md);
-  background: var(--card-bg);
-  backdrop-filter: blur(10px);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
 }
 
 .stat-card {
@@ -588,7 +682,7 @@ h1::after {
 
 /* === QUOTE & TIMER === */
 .quote, .timer {
-  margin: var(--space-md) 0;
+  margin: var(--space-lg) 0;
   padding: var(--space-lg);
   background: var(--card-bg);
   backdrop-filter: blur(10px);
@@ -599,20 +693,19 @@ h1::after {
 }
 
 .quote {
-  font-size: var(--text-base);
+  font-size: var(--text-lg);
   font-style: italic;
-  min-height: 50px;
+  min-height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   animation: fadeIn 0.5s ease;
-  line-height: 1.5;
 }
 
 .timer {
   font-size: var(--text-base);
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--text-secondary);
 }
 
 @keyframes fadeIn {
@@ -1376,7 +1469,7 @@ body.flipped {
     position: absolute; /* So JS can move it freely */
     z-index: 1;
 
-    /* Optional “jitter” effect */
+    /* Optional "jitter" effect */
     animation: cloneJitter 0.5s infinite alternate;
 }
 
@@ -1402,7 +1495,19 @@ body.flipped {
         transform: translateY(105vh); 
     }
 }
+/* Simple Button Pulse Animation - Add this to your CSS */
+.button-pulse {
+  animation: button-pulse 0.3s ease-out;
+}
 
+@keyframes button-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+
+/* --- from feature/add-greeting-feature --- */
 .fake-crash {
   animation: screenShake 0.05s infinite;
   transition: filter 0.1s ease, transform 0.1s ease;
@@ -1415,3 +1520,220 @@ body.flipped {
   75% { transform: translate(5px, 5px); }
   100% { transform: translate(-5px, -5px); }
 }
+
+/* Currency Display Panel */
+.currency-panel {
+  position: fixed;
+  top: 28px;
+  left: 20px;
+  background: linear-gradient(135deg, #f8b739, #f7dc6f);
+  color: #3d1f00;
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 1.2em;
+  border-radius: 50px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  z-index: 1000;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Shop Panel */
+.shop-panel {
+  position: fixed;
+  bottom: 30px;
+  right: 20px;
+  width: 240px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+  padding: 15px 20px;
+  font-family: 'Poppins', sans-serif;
+  color: #222;
+  z-index: 1000;
+}
+
+.shop-panel h3 {
+  margin: 0 0 12px 0;
+  color: #ff6b6b;
+  font-weight: 800;
+  text-align: center;
+  text-shadow: 1px 1px 3px rgba(255, 107, 107, 0.5);
+}
+
+.shop-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid #eee;
+}
+
+.shop-item:first-child {
+  border-top: none;
+}
+
+.shop-info {
+  max-width: 140px;
+}
+
+.item-name {
+  font-size: 1.1em;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #ff9068;
+}
+
+.item-cost {
+  font-size: 0.85em;
+  font-weight: 500;
+  color: #777;
+  margin: 0;
+}
+
+.shop-item button {
+  background: linear-gradient(135deg, #ff6b6b, #ff9a76);
+  border: none;
+  border-radius: 25px;
+  color: white;
+  font-weight: 700;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.shop-item button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff9a76, #ff6b6b);
+  box-shadow: 0 0 10px 2px #ff6b6b;
+}
+
+.shop-item button:disabled {
+  background: #ccc;
+  color: #777;
+  cursor: default;
+  box-shadow: none;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 30px 6px #FFD700; }
+  50% { box-shadow: 0 0 50px 12px #FFD700; }
+}
+
+.golden-pulse {
+  animation: pulseGlow 2s infinite;
+}
+
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  opacity: 0.8;
+  pointer-events: none;
+  animation: sparkleFade 1s forwards;
+}
+
+@keyframes sparkleFade {
+  from {opacity: 0.8; transform: scale(1);}
+  to {opacity: 0; transform: scale(0.1);}
+}
+
+/* Centering the greeting section */
+#user-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 15vh;
+  gap: 15px;
+  font-family: "Poppins", sans-serif;
+  background: radial-gradient(circle at center, #0474e4 30%, #111 100%);
+  color: #f5f5f5;
+  border-radius: 50px;
+}
+
+/* Input field styling */
+#username {
+  padding: 10px 16px;
+  width: 250px;
+  font-size: 1rem;
+  border: 2px solid #ffd700;
+  border-radius: 8px;
+  outline: none;
+  background-color: transparent;
+  color: #fff;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+#username::placeholder {
+  color: #aaaaaa;
+  opacity: 0.8;
+}
+
+#username:focus {
+  border-color: #ffcf40;
+  box-shadow: 0 0 15px #ffd700;
+}
+
+#saveName {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #ffcf40, #ffdc73);
+  color: #111;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+#saveName:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px #ffd700;
+}
+
+#greeting {
+  margin-top: 20px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+}
+
+/* --- from main --- */
+/* Top-Right Controls Fix */
+.top-right-controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  z-index: 800;
+}
+
+.top-right-controls > div,
+.top-right-controls > button {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  left: auto !important;
+  bottom: auto !important;
+  margin: 0;
+  width: auto;
+}
+
+/* Time spent timer */
+#timer.timer {
+  color: var(--text-color);
+  background-color: var(--card-bg);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.9em;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-align: right;
+  white-space: nowrap;
+}
+
