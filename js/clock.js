@@ -54,7 +54,7 @@ function simulateFakeCrash() {
   // Trigger after 500 clicks
   if (button) {
     button.addEventListener("click", () => {
-      if (clicks === 2) simulateFakeCrash();
+      if (clicks === 500) simulateFakeCrash();
     });
   }
   
