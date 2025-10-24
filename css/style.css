@@ -4,6 +4,31 @@
   padding: 0;
   box-sizing: border-box;
 }
+/* --- Add this to your style.css --- */
+
+.notification-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #28a745; /* A nice green */
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  z-index: 1001;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s ease-in-out;
+}
+
+.notification-popup.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 @keyframes cloneJitter {
     0% { transform: translate(0, 0) rotate(0deg); }
     25% { transform: translate(2px, -2px) rotate(-2deg); }
@@ -382,7 +407,7 @@ h1::after {
 }
 
 #useless-button {
-  position: relative;
+  position: relative; /* Must be relative or absolute for z-index */
   padding: var(--space-xl) var(--space-4xl);
   font-size: clamp(var(--text-xl), 3vw, var(--text-3xl));
   font-weight: 700;
@@ -391,8 +416,14 @@ h1::after {
   border: none;
   border-radius: var(--radius-lg);
   cursor: pointer;
+  
+  /* --- MERGED STYLES --- */
+  
+  /* Kept z-index fix from your branch */
+  z-index: 900; 
+
+  /* Kept new styles from main branch */
   transition: all var(--transition-base);
-  z-index: 10;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   
@@ -411,6 +442,8 @@ h1::after {
   
   /* Glow animation */
   animation: buttonBreath 3s ease-in-out infinite;
+  
+  /* --- END MERGE --- */
 }
 
 @keyframes buttonBreath {
@@ -485,17 +518,17 @@ h1::after {
 }
 /* For the "My High Score: 7" line */
 .high-score-display {
-  font-size: 1.1rem;   
+  font-size: 1.1rem;    
   font-weight: 600;  
-  color: #4a4a4a;   
-  margin-top: 15px;   
+  color: #4a4a4a;    
+  margin-top: 15px;    
   margin-bottom: 15px; 
 }
 
 /* To make the score number (e.g., "7") stand out */
 #high-score {
   font-weight: 800;  
-  color: #0056b3;   
+  color: #0056b3;    
   font-size: 1.2rem; 
   margin-left: 5px;  
 }
@@ -1400,6 +1433,8 @@ body.flipped {
     }
 }
 
+
+/* --- from feature/add-greeting-feature --- */
 .fake-crash {
   animation: screenShake 0.05s infinite;
   transition: filter 0.1s ease, transform 0.1s ease;
@@ -1412,6 +1447,7 @@ body.flipped {
   75% { transform: translate(5px, 5px); }
   100% { transform: translate(-5px, -5px); }
 }
+
 /* Currency Display Panel */
 .currency-panel {
   position: fixed;
@@ -1515,6 +1551,7 @@ body.flipped {
 .golden-pulse {
   animation: pulseGlow 2s infinite;
 }
+
 .sparkle {
   position: absolute;
   width: 6px;
@@ -1591,6 +1628,39 @@ body.flipped {
   text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
 }
 
+/* --- from main --- */
+/* Top-Right Controls Fix */
+.top-right-controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  z-index: 800;
+}
 
+.top-right-controls > div,
+.top-right-controls > button {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  left: auto !important;
+  bottom: auto !important;
+  margin: 0;
+  width: auto;
+}
 
+/* Time spent timer */
+#timer.timer {
+  color: var(--text-color);
+  background-color: var(--card-bg);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.9em;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-align: right;
+  white-space: nowrap;
+}
 
