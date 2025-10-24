@@ -4,15 +4,13 @@
   padding: 0;
   box-sizing: border-box;
 }
-
 /* --- Add this to your style.css --- */
 
 .notification-popup {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: #28a745;
-  /* A nice green */
+  background-color: #28a745; /* A nice green */
   color: white;
   padding: 15px 25px;
   border-radius: 8px;
@@ -32,25 +30,11 @@
 }
 
 @keyframes cloneJitter {
-  0% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-
-  25% {
-    transform: translate(2px, -2px) rotate(-2deg);
-  }
-
-  50% {
-    transform: translate(-2px, 2px) rotate(2deg);
-  }
-
-  75% {
-    transform: translate(1px, -1px) rotate(-1deg);
-  }
-
-  100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
+    0% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(2px, -2px) rotate(-2deg); }
+    50% { transform: translate(-2px, 2px) rotate(2deg); }
+    75% { transform: translate(1px, -1px) rotate(-1deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
 }
 
 :root {
@@ -136,7 +120,7 @@ body::after {
   left: -50%;
   width: 200%;
   height: 200%;
-  background:
+  background: 
     radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
     radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
@@ -151,19 +135,15 @@ body::after {
   0% {
     transform: translate(0, 0) rotate(0deg);
   }
-
   25% {
     transform: translate(-2%, 2%) rotate(1deg);
   }
-
   50% {
     transform: translate(-1%, -1%) rotate(0deg);
   }
-
   75% {
     transform: translate(2%, 1%) rotate(-1deg);
   }
-
   100% {
     transform: translate(0, 0) rotate(0deg);
   }
@@ -188,15 +168,12 @@ body::after {
     transform: translateY(0px) translateX(0px) rotate(0deg);
     opacity: 0;
   }
-
   10% {
     opacity: 1;
   }
-
   90% {
     opacity: 1;
   }
-
   100% {
     transform: translateY(-100vh) translateX(100px) rotate(360deg);
     opacity: 0;
@@ -377,9 +354,7 @@ body.dark-mode .control-buttons button {
 }
 
 /* === GLOBAL RESET & BASE STYLES === */
-*,
-*::before,
-*::after {
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -511,13 +486,13 @@ h1::after {
   box-shadow: var(--shadow-md);
 }
 
-.toggle-label input[type="checkbox"]:checked+.toggle-slider {
+.toggle-label input[type="checkbox"]:checked + .toggle-slider {
   background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
   border-color: var(--accent-color);
   box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
 }
 
-.toggle-label input[type="checkbox"]:checked+.toggle-slider::before {
+.toggle-label input[type="checkbox"]:checked + .toggle-slider::before {
   transform: translateX(26px);
 }
 
@@ -528,22 +503,15 @@ h1::after {
   transition: all var(--transition-base);
 }
 
-.toggle-label input[type="checkbox"]:checked~.toggle-text {
+.toggle-label input[type="checkbox"]:checked ~ .toggle-text {
   color: var(--accent-color);
   text-shadow: 0 0 10px currentColor;
   animation: pulseText 1.5s ease infinite;
 }
 
 @keyframes pulseText {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.8;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
 }
 
 /* === THE BUTTON (STAR OF THE SHOW) === */
@@ -558,10 +526,11 @@ h1::after {
 
 #useless-button {
   position: relative;
-  padding: var(--space-xl) var(--space-4xl);
+  padding: var(--space-lg) var(--space-xl);
   min-width: 200px;
+  max-width: 90%;
   min-height: 80px;
-  font-size: clamp(var(--text-xl), 3vw, var(--text-3xl));
+  font-size: clamp(var(--text-base), 2.5vw, var(--text-2xl));
   font-weight: 700;
   color: white;
   background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
@@ -574,13 +543,16 @@ h1::after {
   text-transform: uppercase;
   white-space: normal;
   word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
   text-align: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   --magnetic-x: 0px;
   --magnetic-y: 0px;
-  box-shadow:
+  box-shadow: 
     0 4px 6px rgba(0, 0, 0, 0.1),
     0 10px 20px rgba(0, 0, 0, 0.15),
     0 20px 40px rgba(0, 0, 0, 0.1),
@@ -591,10 +563,8 @@ h1::after {
 }
 
 @keyframes buttonBreath {
-
-  0%,
-  100% {
-    box-shadow:
+  0%, 100% {
+    box-shadow: 
       0 4px 6px rgba(0, 0, 0, 0.1),
       0 10px 20px rgba(0, 0, 0, 0.15),
       0 20px 40px rgba(0, 0, 0, 0.1),
@@ -602,9 +572,8 @@ h1::after {
       inset 0 -2px 0 rgba(0, 0, 0, 0.2),
       inset 0 2px 0 rgba(255, 255, 255, 0.2);
   }
-
   50% {
-    box-shadow:
+    box-shadow: 
       0 4px 6px rgba(0, 0, 0, 0.1),
       0 10px 20px rgba(0, 0, 0, 0.15),
       0 20px 40px rgba(0, 0, 0, 0.1),
@@ -626,7 +595,7 @@ h1::after {
 
 #useless-button:hover {
   transform: translate(var(--magnetic-x), calc(var(--magnetic-y) - 8px)) scale(1.05);
-  box-shadow:
+  box-shadow: 
     0 8px 12px rgba(0, 0, 0, 0.15),
     0 20px 40px rgba(0, 0, 0, 0.2),
     0 30px 60px rgba(0, 0, 0, 0.15),
@@ -641,13 +610,12 @@ h1::after {
 
 #useless-button:active {
   transform: translate(var(--magnetic-x), calc(var(--magnetic-y) - 2px)) scale(0.98);
-  box-shadow:
+  box-shadow: 
     0 2px 4px rgba(0, 0, 0, 0.1),
     0 5px 10px rgba(0, 0, 0, 0.15),
     0 0 40px rgba(255, 107, 107, 0.4),
     inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-
 #share-button {
   background: linear-gradient(135deg, var(--info), #2563eb);
   color: white;
@@ -660,7 +628,6 @@ h1::after {
   transition: all var(--transition-base);
   box-shadow: var(--shadow-sm);
 }
-
 /* For the "My High Score: 7" line */
 .high-score-display {
   font-size: var(--text-lg);
@@ -678,12 +645,10 @@ h1::after {
   font-size: var(--text-xl);
   margin-left: var(--space-xs);
 }
-
 #share-button:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
-
 /* Ripple effect */
 #useless-button::after {
   content: '';
@@ -716,15 +681,8 @@ h1::after {
 }
 
 @keyframes impossibleShift {
-
-  0%,
-  100% {
-    filter: hue-rotate(0deg) brightness(1.1);
-  }
-
-  50% {
-    filter: hue-rotate(180deg) brightness(1.2);
-  }
+  0%, 100% { filter: hue-rotate(0deg) brightness(1.1); }
+  50% { filter: hue-rotate(180deg) brightness(1.2); }
 }
 
 /* === STATS DISPLAY (CARD-BASED) === */
