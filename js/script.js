@@ -14,6 +14,7 @@ const clickSound = document.getElementById("click-sound");
 const failSound = document.getElementById("fail-sound");
 const impossibleToggle = document.getElementById("impossible-toggle");
 const themeToggle = document.getElementById("theme-toggle");
+const darkLightToggle = document.getElementById("dark-light-toggle");
 
 const canvas = document.getElementById("particle-canvas");
 const ctx = canvas ? canvas.getContext("2d") : null;
@@ -1565,13 +1566,8 @@ if (shareButton) {
 }
 
 
-
-
-
-function randomizeButtonPosition(buttonEl, containerWidth, containerHeight) {
 // Function to randomize button position within the popup (keeps button inside container)
-function randomizeButtonPosition(clickCount, buttonEl, containerWidth, containerHeight) {
-  if(clickCount>=1000) return;
+function randomizeButtonPosition(buttonEl, containerWidth, containerHeight) {
   const buttonWidth = buttonEl.offsetWidth;
   const buttonHeight = buttonEl.offsetHeight;
 
@@ -1631,10 +1627,10 @@ if (popupNoButton) {
 
 
 window.addEventListener("load", () => {
-  
+
   setInterval(updateTimer, 1000);
 
-  
+
   if (highScoreDisplay) {
     highScoreDisplay.textContent = highScore;
   }
@@ -1644,11 +1640,18 @@ window.addEventListener("load", () => {
     quoteDiv.textContent = "Click the button to begin your pointless journey! 🚀";
   }
 
-  
+
   updateActivityTime();
 
-
   changeBackgroundColor();
+
+  // Initialize counter and sound settings
+  initializeCounter();
+  initSoundSettings();
+
+  // Setup dark/light toggle
+  setupDarkLightToggle();
+  applyDarkLightMode();
 });
 
 
@@ -1823,11 +1826,65 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Initialize on load
-window.addEventListener('load', () => {
-  initializeCounter();
-  initSoundSettings();
-});
+// === Dark/Light Mode Toggle ===
+let isDarkMode = localStorage.getItem('isDarkMode') !== 'false'; // Default to dark mode
+
+function applyDarkLightMode() {
+  if (isDarkMode) {
+    // Dark mode
+    document.documentElement.style.setProperty('--bg-start', '#1a1a2e');
+    document.documentElement.style.setProperty('--bg-end', '#16213e');
+    document.documentElement.style.setProperty('--text-color', '#ffffff');
+    document.documentElement.style.setProperty('--text-secondary', 'rgba(255, 255, 255, 0.85)');
+    document.documentElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.12)');
+    document.documentElement.style.setProperty('--card-bg-solid', 'rgba(255, 255, 255, 0.18)');
+    document.documentElement.style.setProperty('--accent-color', '#ffd93d');
+    document.documentElement.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.25)');
+    document.documentElement.style.setProperty('--button-gradient-start', '#6bcf7f');
+    document.documentElement.style.setProperty('--button-gradient-end', '#4ec9db');
+
+    if (darkLightToggle) darkLightToggle.textContent = '🌙';
+    if (darkLightToggle) darkLightToggle.title = 'Switch to Light Mode';
+  } else {
+    // Light mode
+    document.documentElement.style.setProperty('--bg-start', '#fdf2ec');
+    document.documentElement.style.setProperty('--bg-end', '#ffd8d8');
+    document.documentElement.style.setProperty('--text-color', '#1f1f1f');
+    document.documentElement.style.setProperty('--text-secondary', 'rgba(31, 31, 31, 0.6)');
+    document.documentElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.8)');
+    document.documentElement.style.setProperty('--card-bg-solid', 'rgba(255, 255, 255, 0.95)');
+    document.documentElement.style.setProperty('--accent-color', '#ff5a5a');
+    document.documentElement.style.setProperty('--border-color', 'rgba(0, 0, 0, 0.1)');
+    document.documentElement.style.setProperty('--button-gradient-start', '#ff867c');
+    document.documentElement.style.setProperty('--button-gradient-end', '#ff5a5a');
+
+    if (darkLightToggle) darkLightToggle.textContent = '☀️';
+    if (darkLightToggle) darkLightToggle.title = 'Switch to Dark Mode';
+  }
+
+  localStorage.setItem('isDarkMode', isDarkMode);
+}
+
+// Dark/Light toggle button - Setup after DOM loads
+function setupDarkLightToggle() {
+  const toggleBtn = document.getElementById('dark-light-toggle');
+  if (toggleBtn) {
+    console.log('Dark/Light toggle button found!');
+    toggleBtn.addEventListener('click', (e) => {
+      console.log('Dark/Light toggle clicked!');
+      e.stopPropagation();
+      isDarkMode = !isDarkMode;
+      applyDarkLightMode();
+
+      if (quoteDiv) {
+        quoteDiv.textContent = isDarkMode ? '🌙 Dark mode activated!' : '☀️ Light mode activated!';
+      }
+    });
+  } else {
+    console.error('Dark/Light toggle button NOT found!');
+  }
+}
+
 
 
 
