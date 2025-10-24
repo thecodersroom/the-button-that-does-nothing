@@ -34,6 +34,13 @@ const highScoreDisplay = document.getElementById('high-score');
 const shareButton = document.getElementById('share-button');
 // === END MERGE ===
 
+// === TIME ATTACK DOM ELEMENTS ===
+const timeAttackButton = document.getElementById('time-attack-button');
+const timeAttackTimerDisplay = document.getElementById('time-attack-timer');
+const timeAttackHighScoreDisplay = document.getElementById('time-attack-high-score');
+const timeAttackProgressBar = document.getElementById('time-attack-progress-bar');
+const timeAttackProgressInner = document.getElementById('time-attack-progress-inner');
+
 // State
 // --- MERGED: Keep game reset from fix/game-bugs, add high score from main ---
 let clicks = 0;
@@ -54,6 +61,13 @@ let popupAutoCloseTimer = null;
 let lastDodgeTime = 0;
 let seconds = 0;
 let isCelebrationAnimationComplete = false; // Kept from fix/game-bugs
+
+// === TIME ATTACK STATE ===
+let timeAttackHighScore = Number(localStorage.getItem('timeAttackHighScore')) || 0;
+let isTimeAttackActive = false;
+let timeAttackScore = 0;
+let timeAttackCountdown = 60;
+let timeAttackInterval = null;
 
 // Sound Settings
 let soundsEnabled = localStorage.getItem('soundsEnabled') !== 'false';
@@ -230,6 +244,7 @@ function getRandomLocation() {
 }
 
 function buttonTeleport(posX, posY) {
+  if (isTimeAttackActive) return; // --- MODIFIED FOR TIME ATTACK ---
   if (!button) return;
   button.style.position = "absolute";
   button.style.left = `${posX}px`;
@@ -576,6 +591,17 @@ window.addEventListener("click", () => {
 if (button) {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
+
+    // --- START TIME ATTACK LOGIC ---
+    if (isTimeAttackActive) {
+      timeAttackScore++;
+      addRippleEffect(e); // Give some feedback
+      // You could play a sound here too if you want
+      // playSound(clickSound);
+      return; // IMPORTANT: Stop normal click logic
+    }
+    // --- END TIME ATTACK LOGIC ---
+
     clicks++;
 
     // === MERGED: High Score Logic from main ===
@@ -618,7 +644,8 @@ if (button) {
       setTimeout(() => document.body.classList.remove("page-shake"), 500);
     }
     // === MERGED: Random Mini Event Trigger from main ===
-    if (Math.random() < 0.15) {
+    // --- MODIFIED FOR TIME ATTACK ---
+    if (!isTimeAttackActive && Math.random() < 0.15) {
         const randomIndex = Math.floor(Math.random() * miniEvents.length);
         miniEvents[randomIndex]();
     }
@@ -636,16 +663,16 @@ let categoryCooldowns = {}; // Reset on load
 function getNewAction() {
     const now = Date.now();
 
-    // 1ï¸ Filter actions whose categories are NOT in cooldown
+    // 1ï¸  Filter actions whose categories are NOT in cooldown
     const available = actions.filter(a => {
         const lastShown = categoryCooldowns[a.category];
         return !lastShown || now - lastShown > CATEGORY_COOLDOWN;
     });
 
-    // 2ï¸ random show when cooldown 
+    // 2ï¸  random show when cooldown 
     const pool = available.length > 0 ? available : actions;
 
-    // 3ï¸ Weighted random selection (rarity logic)
+    // 3ï¸  Weighted random selection (rarity logic)
     const totalWeight = pool.reduce((sum, a) => sum + (1 / a.rarity), 0);
     let randVal = Math.random() * totalWeight; // Renamed variable
     let selected = pool[0];
@@ -657,7 +684,7 @@ function getNewAction() {
     // 4 Display the prompt
     quoteDiv.textContent = selected.text;
 
-    // 5ï¸ Update cooldown for that category
+    // 5ï¸  Update cooldown for that category
     categoryCooldowns[selected.category] = now;
 }
 
@@ -683,7 +710,8 @@ document.addEventListener("click", (e) => {
 // === Button Dodge / Mouseover ===
 if (button) {
   button.addEventListener("mouseover", () => {
-    if (isButtonMoving) return;
+    // --- MODIFIED FOR TIME ATTACK ---
+    if (isTimeAttackActive || isButtonMoving) return;
     const now = Date.now();
     const throttleTime = impossibleMode ? 50 : 150;
     if (now - lastDodgeTime < throttleTime) return;
@@ -704,7 +732,8 @@ if (button) {
 
 // === Impossible mode special mousemove dodge ===
 document.addEventListener("mousemove", (e) => {
-  if (!button || !impossibleMode || isButtonMoving) return; // Add check for isButtonMoving
+  // --- MODIFIED FOR TIME ATTACK ---
+  if (!button || !impossibleMode || isButtonMoving || isTimeAttackActive) return; // Add check for isButtonMoving
   const rect = button.getBoundingClientRect();
   const cx = rect.left + rect.width / 2; const cy = rect.top + rect.height / 2;
   const dx = e.clientX - cx; const dy = e.clientY - cy;
@@ -977,7 +1006,8 @@ function updateActivityTime() {
 }
 function getRandomInactivityTime() { return Math.floor(Math.random() * 30001) + 30000; } // 30-60 sec
 function showPopup() {
-  if (!popupContainer || popupActive) return;
+  // --- MODIFIED FOR TIME ATTACK ---
+  if (!popupContainer || popupActive || isTimeAttackActive) return;
   popupActive = true; popupContainer.classList.add("show");
   popupAutoCloseTimer = setTimeout(hidePopup, 15000); // Auto-close
 }
@@ -1151,6 +1181,93 @@ if (musicToggle) musicToggle.addEventListener('change', () => { musicEnabled = m
 if (volumeSlider) volumeSlider.addEventListener('input', () => { masterVolume = volumeSlider.value / 100; updateSoundSettings(); });
 if (trackSelector) trackSelector.addEventListener('change', () => { currentTrack = trackSelector.value; updateSoundSettings(); updateMusicPlayback(); });
 
+// === TIME ATTACK MODE ===
+function startTimeAttack() {
+  isTimeAttackActive = true;
+  timeAttackScore = 0;
+  timeAttackCountdown = 60; // 60 second timer
+  
+  if(timeAttackButton) timeAttackButton.disabled = true;
+  if(impossibleToggle) impossibleToggle.disabled = true; // Disable impossible mode during
+  if(timeAttackTimerDisplay) {
+    timeAttackTimerDisplay.textContent = `Time Left: ${timeAttackCountdown}s`;
+    timeAttackTimerDisplay.style.display = 'block';
+  }
+  if(timerDiv) timerDiv.style.display = 'none'; // Hide normal timer
+  if (timeAttackProgressBar && timeAttackProgressInner) {
+    timeAttackProgressBar.style.display = 'block';
+    timeAttackProgressInner.style.width = '100%';
+  }
+
+  // Center the button and stop it from moving
+  if (button) {
+    buttonDisableTeleport(); // Use your existing function to stop transitions
+    button.style.position = 'absolute';
+    button.style.left = '50%';
+    button.style.top = '50%';
+    button.style.transform = 'translate(-50%, -50%)';
+    button.style.width = '200px'; // Give it a fixed size
+    button.style.height = '100px';
+  }
+
+  timeAttackInterval = setInterval(() => {
+    timeAttackCountdown--;
+    if(timeAttackTimerDisplay) timeAttackTimerDisplay.textContent = `Time Left: ${timeAttackCountdown}s`;
+
+    if (timeAttackProgressInner) {
+      const percentLeft = (timeAttackCountdown / 60) * 100;
+      timeAttackProgressInner.style.width = `${percentLeft}%`;
+    }
+
+    if (timeAttackCountdown <= 0) {
+      endTimeAttack();
+    }
+  }, 1000);
+}
+
+function endTimeAttack() {
+  clearInterval(timeAttackInterval);
+  isTimeAttackActive = false;
+
+  if (timeAttackProgressBar) {
+    timeAttackProgressBar.style.display = 'none';
+  }
+
+  // Show a simple alert. You can make a custom popup later.
+  alert(`Time's up! You clicked ${timeAttackScore} times!`);
+
+  if (timeAttackScore > timeAttackHighScore) {
+    timeAttackHighScore = timeAttackScore;
+    localStorage.setItem('timeAttackHighScore', timeAttackHighScore);
+    if(timeAttackHighScoreDisplay) timeAttackHighScoreDisplay.textContent = timeAttackHighScore;
+    if(quoteDiv) quoteDiv.textContent = `🏆 New Time Attack High Score: ${timeAttackHighScore}!`;
+  }
+  
+  if(timeAttackButton) timeAttackButton.disabled = false;
+  if(impossibleToggle) impossibleToggle.disabled = false;
+  if(timeAttackTimerDisplay) timeAttackTimerDisplay.style.display = 'none';
+  if(timerDiv) timerDiv.style.display = 'block';
+
+  // Restore button to its original state
+  if (button) {
+     button.style.position = 'relative';
+     button.style.left = '';
+     button.style.top = '';
+     button.style.transform = '';
+     // The next normal click will teleport it anyway
+  }
+}
+
+// Add the listener for the button
+if (timeAttackButton) {
+  timeAttackButton.addEventListener('click', () => {
+    if (!isTimeAttackActive) {
+      startTimeAttack();
+    }
+  });
+}
+// ========================
+
 // === Magnetic Hover Effect ===
 if (button) {
   button.addEventListener('mousemove', (e) => {
@@ -1200,6 +1317,10 @@ window.addEventListener('load', () => {
   // === MERGED: Add high score display from main ===
   if (highScoreDisplay) {
     highScoreDisplay.textContent = highScore; // Display saved high score
+  }
+  // === ADDED FOR TIME ATTACK ===
+  if (timeAttackHighScoreDisplay) {
+    timeAttackHighScoreDisplay.textContent = timeAttackHighScore;
   }
   // === END MERGE ===
 

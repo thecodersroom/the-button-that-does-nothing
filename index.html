@@ -28,6 +28,9 @@
         >
       </div>
     </div>
+    <div id="time-attack-progress-bar" style="display: none;">
+    <div id="time-attack-progress-inner"></div>
+  </div>
     <div class="app-container">
       <h1>The Button That Does Nothing</h1>
 
@@ -47,10 +50,14 @@
 <div class="high-score-display">
   My High Score: <span id="high-score">0</span>
 </div>
+<div class="high-score-display">
+  Time Attack High Score: <span id="time-attack-high-score">0</span>
+</div>
 <button id="share-button">Share My Score</button>
       <div class="control-buttons">
         <button id="theme-toggle">🎨</button>
         <button id="sound-toggle">🎵</button>
+        <button id="time-attack-button">⏱️ Time Attack</button>
       </div>
       <div id="counter">Clicks: 0 | Failed clicks: 0</div>
       <div id="achievement-popup">
@@ -59,6 +66,7 @@
       </div>
       <div id="quote" class="quote">"Loading some wisdom..."</div>
       <div id="timer" class="timer">Time spent doing nothing: 00:00</div>
+      <div id="time-attack-timer" class="timer" style="display: none;">Time Left: 60s</div>
 
       <div id="counter"></div>
 
