@@ -788,7 +788,8 @@ h1::after {
   }
 }
 
-.control-buttons button {
+.control-buttons button,
+.top-right-controls button {
   width: 56px;
   height: 56px;
   border: none;
@@ -806,18 +807,21 @@ h1::after {
   position: relative;
 }
 
-.control-buttons button:hover {
+.control-buttons button:hover,
+.top-right-controls button:hover {
   transform: scale(1.1);
   box-shadow: var(--shadow-xl);
   border-color: var(--accent-color);
 }
 
-.control-buttons button:active {
+.control-buttons button:active,
+.top-right-controls button:active {
   transform: scale(0.95);
 }
 
 /* Tooltip */
-.control-buttons button::before {
+.control-buttons button::before,
+.top-right-controls button:before{
   content: attr(title);
   position: absolute;
   right: calc(100% + var(--space-md));
@@ -832,8 +836,15 @@ h1::after {
   transition: opacity var(--transition-base);
 }
 
-.control-buttons button:hover::before {
+.control-buttons button:hover::before,
+.top-right-controls button:hover::before {
   opacity: 1;
+}
+
+/* make theme and sound in same line */
+.theme-sound {
+  display: flex;
+  gap: 10px;
 }
 
 @media (max-width: 768px) {
