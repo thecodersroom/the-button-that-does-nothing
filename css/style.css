@@ -1041,6 +1041,98 @@ h1::after {
   transform: translateY(0);
 }
 
+/* === TIME ATTACK RESULT MODAL === */
+.time-attack-result {
+  max-width: 450px;
+  text-align: center;
+}
+
+.result-icon {
+  font-size: 80px;
+  margin-bottom: var(--space-lg);
+  animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 20px var(--accent-color));
+  }
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 40px var(--accent-color));
+  }
+}
+
+.result-stats {
+  margin: var(--space-2xl) 0;
+  padding: var(--space-xl);
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border-color);
+}
+
+.result-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.result-label {
+  font-size: var(--text-lg);
+  color: var(--text-color);
+  opacity: 0.9;
+}
+
+.result-value {
+  font-size: 64px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-color), var(--button-gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin: var(--space-sm) 0;
+  animation: countUp 0.5s ease-out;
+}
+
+@keyframes countUp {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.new-record {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  margin: var(--space-lg) 0;
+  animation: celebrateRecord 1s infinite;
+}
+
+@keyframes celebrateRecord {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+#time-attack-close-btn {
+  background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
+  color: white;
+  padding: var(--space-md) var(--space-3xl);
+  font-size: var(--text-xl);
+  min-width: 150px;
+}
+
 /* === THEME SELECTOR MODAL === */
 #theme-selector {
   position: fixed;
@@ -1821,7 +1913,7 @@ body.flipped {
 
 .shop-item button:disabled {
   background: rgba(255, 255, 255, 0.1);
-  color: var(--text-secondary);
+  color: var (--text-secondary);
   cursor: not-allowed;
   box-shadow: none;
 }
