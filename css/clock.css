@@ -5,19 +5,21 @@
     box-shadow: none;
   }
 
-/* 5. Force-style the actual clock text from clock.css */
+/* 5. Force-style the actual clock text from clock.css - reduced backdrop filter */
 .clock {
     position: relative !important; /* Override clock.css */
     color: var(--text-color);
-    background-color: var(--card-bg);
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 1.2em;
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 1.1em;
     font-weight: 600;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     text-align: right;
     /* Remove any positioning from clock.css */
-    transform: none !important; 
+    transform: none !important;
     left: auto !important;
     top: auto !important;
   }
