@@ -29,9 +29,17 @@ const volumeSlider = document.getElementById("volume-slider");
 const trackSelector = document.getElementById("track-selector");
 const closeSoundPanel = document.getElementById("close-sound-panel");
 
+// === FIX: High Score aur Share Button Elements ko Yahaan Add Karein ===
+const highScoreDisplay = document.getElementById('high-score');
+const shareButton = document.getElementById('share-button');
+
 // State
+// ... jahaan 'let clicks = 0;' aur 'let failedClicks = 0;' likha hai
 let clicks = 0;
 let failedClicks = 0;
+
+// YEH CODE YAHIN ADD KAREIN (Yeh aapne sahi kiya tha)
+let highScore = Number(localStorage.getItem('nothingHighScore')) || 0;
 let userInteracted = false;
 let impossibleMode = false;
 let isButtonMoving = false;
@@ -735,6 +743,18 @@ if (button) {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
     clicks++;
+
+    // === FIX: High Score Logic ko Yahaan Merge Karein ===
+    if (clicks > highScore) {
+      highScore = clicks; // high score (number) ko update karein
+      if (highScoreDisplay) { //  element hai ya nahi
+        highScoreDisplay.textContent = highScore; // Page par (number) dikhaayein
+      }
+      // Save karte waqt localStorage use string mein badal dega
+      localStorage.setItem('nothingHighScore', highScore);
+    }
+    // === END FIX ===
+
     checkCombo();
     getNewAction(); // This will now update the quoteDiv
     
@@ -1470,22 +1490,22 @@ if (impossibleToggle) {
   });
 }
 
-// === Are You Still Clicking Popup ===
 
-// Function to update the last activity time
+
+
 function updateActivityTime() {
   lastActivityTime = Date.now();
 
-  // Reset popup timer if it exists
+  
   if (popupTimer) {
     clearTimeout(popupTimer);
   }
 
-  // Set new popup timer
+  
   popupTimer = setTimeout(showPopup, getRandomInactivityTime());
 }
 
-// Function to get a random inactivity time between 15-30 seconds
+
 function getRandomInactivityTime() {
   return Math.floor(Math.random() * (60000 - 30000 + 1)) + 30000; // 30-60 seconds
 }
@@ -1518,6 +1538,37 @@ function hidePopup() {
   updateActivityTime();
 }
 
+
+
+if (shareButton) { 
+  shareButton.addEventListener('click', () => {
+    
+    const shareMessage = `😲 I have clicked the button 'The Button That Does Nothing'  ${clicks} times! and now my High Score is  ${highScore} . can you beat it?`;
+    
+   
+    const gameUrl = 'https://ashasaini-033.github.io/the-button-that-does-nothing/'; 
+
+    
+    navigator.clipboard.writeText(shareMessage + '\n' + gameUrl)
+      .then(() => {
+       
+        shareButton.textContent = 'Copied to Clipboard!';
+        setTimeout(() => {
+          shareButton.textContent = 'Share My Score';
+        }, 2000); 
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+        alert('Score copy nahi ho paaya!');
+      });
+  });
+}
+
+
+
+
+
+function randomizeButtonPosition(buttonEl, containerWidth, containerHeight) {
 // Function to randomize button position within the popup (keeps button inside container)
 function randomizeButtonPosition(clickCount, buttonEl, containerWidth, containerHeight) {
   if(clickCount>=1000) return;
@@ -1578,21 +1629,28 @@ if (popupNoButton) {
   document.addEventListener(eventType, updateActivityTime);
 });
 
-// Initialize on load
+
 window.addEventListener("load", () => {
-  // Timer tick every second
+  
   setInterval(updateTimer, 1000);
+
+  
+  if (highScoreDisplay) {
+    highScoreDisplay.textContent = highScore;
+  }
+  // === END FIX ===
 
   if (quoteDiv) {
     quoteDiv.textContent = "Click the button to begin your pointless journey! 🚀";
   }
 
-  // start the inactivity timer
+  
   updateActivityTime();
 
-  // initial background
+
   changeBackgroundColor();
 });
+
 
 // Load an initial action prompt when the page first loads
 document.addEventListener('DOMContentLoaded', getNewAction);
@@ -1672,6 +1730,7 @@ trackSelector.addEventListener('change', () => {
   updateSoundSettings();
   updateMusicPlayback();
 });
+
 
 // === Magnetic Hover Effect (Normal Mode Only) ===
 if (button) {
@@ -1768,6 +1827,7 @@ document.addEventListener('keydown', (e) => {
 window.addEventListener('load', () => {
   initializeCounter();
   initSoundSettings();
+<<<<<<< HEAD
 });
 
 
@@ -1923,5 +1983,6 @@ function hideInput() {
   nameInput.style.display = 'none';
   saveBtn.style.display = 'none';
 }
+
 
 
