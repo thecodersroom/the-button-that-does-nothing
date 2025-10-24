@@ -4,6 +4,31 @@
   padding: 0;
   box-sizing: border-box;
 }
+/* --- Add this to your style.css --- */
+
+.notification-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #28a745; /* A nice green */
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  z-index: 1001;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s ease-in-out;
+}
+
+.notification-popup.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 @keyframes cloneJitter {
     0% { transform: translate(0, 0) rotate(0deg); }
     25% { transform: translate(2px, -2px) rotate(-2deg); }
@@ -74,6 +99,85 @@
   --warning: #f59e0b;
   --error: #ef4444;
   --info: #3b82f6;
+}
+
+/* === COOL ANIMATED BACKGROUND === */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, var(--bg-start) 0%, var(--bg-end) 100%);
+  z-index: -2;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 100px 100px, 150px 150px, 200px 200px, 250px 250px;
+  animation: floatBackground 20s infinite linear;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+@keyframes floatBackground {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(-2%, 2%) rotate(1deg);
+  }
+  50% {
+    transform: translate(-1%, -1%) rotate(0deg);
+  }
+  75% {
+    transform: translate(2%, 1%) rotate(-1deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+/* Floating particles */
+.floating-particle {
+  position: fixed;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  animation: float-particle 15s infinite linear;
+}
+
+.floating-particle:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(100px) rotate(360deg);
+    opacity: 0;
+  }
 }
 
 /* === THEME VARIATIONS === */
@@ -194,6 +298,61 @@
   --button-gradient-end: #c0392b;
 }
 
+/* Dark Mode - Darker glassmorphic containers */
+body.dark-mode {
+  --card-bg: rgba(0, 0, 0, 0.4);
+  --card-bg-solid: rgba(0, 0, 0, 0.6);
+  --border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .app-container {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+body.dark-mode .clock,
+body.dark-mode #timer.timer,
+body.dark-mode #dark-mode-toggle {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .currency-panel {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border-color: rgba(255, 215, 0, 0.3);
+}
+
+body.dark-mode .shop-panel,
+body.dark-mode #user-section {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .toggle-label {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .stat-card,
+body.dark-mode .quote,
+body.dark-mode .timer {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode #username {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .control-buttons button {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
 /* === GLOBAL RESET & BASE STYLES === */
 *, *::before, *::after {
   margin: 0;
@@ -214,42 +373,26 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
   color: var(--text-color);
   overflow-x: hidden;
-  transition: background 0.5s ease;
   padding: var(--space-lg);
+  background: transparent !important;
 }
 
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* === MAIN CONTAINER === */
+/* Remove the old gradient animation since we have the new background */
 .app-container {
   position: relative;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: var(--space-3xl) var(--space-2xl);
+  padding: var(--space-2xl) var(--space-xl);
   background: var(--card-bg-solid);
   backdrop-filter: blur(20px) saturate(180%);
   border-radius: var(--radius-xl);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-2xl);
   transition: all var(--transition-base);
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
@@ -373,8 +516,8 @@ h1::after {
 
 /* === THE BUTTON (STAR OF THE SHOW) === */
 .button-container {
-  margin: var(--space-4xl) 0;
-  min-height: 200px;
+  margin: var(--space-xl) 0 var(--space-2xl) 0;
+  min-height: 160px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -382,7 +525,7 @@ h1::after {
 }
 
 #useless-button {
-  position: relative;
+  position: relative; /* Must be relative or absolute for z-index */
   padding: var(--space-xl) var(--space-4xl);
   font-size: clamp(var(--text-xl), 3vw, var(--text-3xl));
   font-weight: 700;
@@ -391,8 +534,14 @@ h1::after {
   border: none;
   border-radius: var(--radius-lg);
   cursor: pointer;
+  
+  /* --- MERGED STYLES --- */
+  
+  /* Kept z-index fix from your branch */
+  z-index: 900; 
+
+  /* Kept new styles from main branch */
   transition: all var(--transition-base);
-  z-index: 10;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   
@@ -411,6 +560,8 @@ h1::after {
   
   /* Glow animation */
   animation: buttonBreath 3s ease-in-out infinite;
+  
+  /* --- END MERGE --- */
 }
 
 @keyframes buttonBreath {
@@ -468,39 +619,37 @@ h1::after {
     inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 #share-button {
-  /* Basic Styling */
-  background-color: #007bff; /* A nice blue color */
+  background: linear-gradient(135deg, var(--info), #2563eb);
   color: white;
   border: none;
-  padding: 10px 16px; /* 10px top/bottom, 16px left/right */
-  
-  /* Appearance */
-  font-size: 14px;
+  padding: var(--space-sm) var(--space-lg);
+  font-size: var(--text-sm);
   font-weight: 600;
-  border-radius: 8px; /* Rounded corners */
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  
-  /* Smooth Hover Effect */
-  transition: background-color 0.2s ease;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
 }
 /* For the "My High Score: 7" line */
 .high-score-display {
-  font-size: 1.1rem;   
-  font-weight: 600;  
-  color: #4a4a4a;   
-  margin-top: 15px;   
-  margin-bottom: 15px; 
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text-color);
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-md);
+  text-align: center;
 }
 
 /* To make the score number (e.g., "7") stand out */
 #high-score {
-  font-weight: 800;  
-  color: #0056b3;   
-  font-size: 1.2rem; 
-  margin-left: 5px;  
+  font-weight: 700;
+  color: var(--accent-color);
+  font-size: var(--text-xl);
+  margin-left: var(--space-xs);
 }
 #share-button:hover {
-  background-color: #0056b3; 
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 /* Ripple effect */
 #useless-button::after {
@@ -620,8 +769,8 @@ h1::after {
 /* === FLOATING CONTROL PANEL === */
 .control-buttons {
   position: fixed;
-  bottom: var(--space-xl);
   right: var(--space-xl);
+  bottom: var(--space-xl);
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
@@ -1373,7 +1522,7 @@ body.flipped {
     position: absolute; /* So JS can move it freely */
     z-index: 1;
 
-    /* Optional “jitter” effect */
+    /* Optional "jitter" effect */
     animation: cloneJitter 0.5s infinite alternate;
 }
 
@@ -1388,6 +1537,30 @@ body.flipped {
     animation-name: fall; /* Link the elements to the keyframe */
 }
 
+#time-attack-progress-bar {
+  /* --- Floating --- */
+  position: fixed; /* Floats on the screen */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  z-index: 9998; /* Keeps it on top, but below popups */
+
+  /* --- Style --- */
+  background-color: rgba(0, 0, 0, 0.3); /* A semi-transparent background */
+  border-bottom: 2px solid var(--accent-color, #ff6b6b);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+#time-attack-progress-inner {
+  height: 100%;
+  width: 100%; /* Starts full */
+
+  /* --- Style --- */
+  background: linear-gradient(90deg, var(--button-gradient-start, #ff6b6b), var(--button-gradient-end, #ff9a76));
+  transition: width 0.5s ease-out; /* Smoothly animates the time draining */
+}
+
 /* Define the falling animation */
 @keyframes fall {
     /* Explicitly start the element at its initial top position (0 transform) */
@@ -1399,7 +1572,51 @@ body.flipped {
         transform: translateY(105vh); 
     }
 }
+/* --- Dev Comments --- */
 
+/* This is the container, hidden by default */
+#dev-comments-container {
+  display: none; /* Hidden! */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none; /* So they don't block clicks on the button! */
+}
+
+/* This class will be added by JS to show them */
+#dev-comments-container.show {
+  display: block;
+}
+
+/* This styles each individual comment */
+.dev-comment {
+  position: absolute;
+  color: #28a745; /* A nice "comment green" */
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 5px 8px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  opacity: 0.7;
+}
+/* Simple Button Pulse Animation - Add this to your CSS */
+.button-pulse {
+  animation: button-pulse 0.3s ease-out;
+}
+
+@keyframes button-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+
+/* --- from feature/add-greeting-feature --- */
 .fake-crash {
   animation: screenShake 0.05s infinite;
   transition: filter 0.1s ease, transform 0.1s ease;
@@ -1412,3 +1629,255 @@ body.flipped {
   75% { transform: translate(5px, 5px); }
   100% { transform: translate(-5px, -5px); }
 }
+
+/* Currency Display Panel */
+.currency-panel {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: rgba(255, 215, 0, 0.2);
+  backdrop-filter: blur(8px);
+  color: var(--text-color);
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 1.1em;
+  border-radius: 50px;
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  z-index: 1000;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shop-and-user{
+  display: flex;
+  justify-content: center;
+  gap: var(--space-xl);
+  flex-wrap: wrap;
+  margin-top: var(--space-xl);
+}
+/* Shop Panel */
+.shop-panel {
+  width: 280px;
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  padding: var(--space-lg);
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-color);
+}
+
+.shop-panel h3 {
+  margin: 0 0 var(--space-md) 0;
+  color: var(--accent-color);
+  font-weight: 700;
+  text-align: center;
+  font-size: var(--text-xl);
+}
+
+.shop-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid #eee;
+}
+
+.shop-item:first-child {
+  border-top: none;
+}
+
+.shop-info {
+  max-width: 140px;
+}
+
+.item-name {
+  font-size: var(--text-base);
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--text-color);
+}
+
+.item-cost {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.shop-item button {
+  background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
+  border: none;
+  border-radius: var(--radius-full);
+  color: white;
+  font-weight: 600;
+  padding: var(--space-sm) var(--space-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.shop-item button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.shop-item button:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 30px 6px #FFD700; }
+  50% { box-shadow: 0 0 50px 12px #FFD700; }
+}
+
+.golden-pulse {
+  animation: pulseGlow 2s infinite;
+}
+
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  opacity: 0.8;
+  pointer-events: none;
+  animation: sparkleFade 1s forwards;
+}
+
+@keyframes sparkleFade {
+  from {opacity: 0.8; transform: scale(1);}
+  to {opacity: 0; transform: scale(0.1);}
+}
+
+/* Centering the greeting section */
+#user-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-md);
+  font-family: "Poppins", sans-serif;
+  width: 280px;
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-color);
+  padding: var(--space-xl) var(--space-lg);
+  color: var(--text-color);
+}
+
+/* Input field styling */
+#username {
+  padding: 10px 16px;
+  width: 100%;
+  font-size: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+#username::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+#username:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
+}
+
+#saveName {
+  padding: var(--space-sm) var(--space-xl);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+#saveName:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+#greeting {
+  margin-top: var(--space-md);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text-color);
+  text-align: center;
+}
+
+/* --- from main --- */
+/* Top-Right Controls Fix */
+.top-right-controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  z-index: 800;
+}
+
+.top-right-controls > div,
+.top-right-controls > button {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  left: auto !important;
+  bottom: auto !important;
+  margin: 0;
+  width: auto;
+}
+
+/* Dark Mode Toggle Button */
+#dark-mode-toggle {
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-size: 1.3em;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+#dark-mode-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* Time spent timer - reduced backdrop filter to prevent conflicts */
+#timer.timer {
+  color: var(--text-color);
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  white-space: nowrap;
+}
+
