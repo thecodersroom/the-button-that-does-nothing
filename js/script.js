@@ -406,7 +406,91 @@ function buttonDisableTeleport() {
   button.style.top = "";
 }
 
-// === Rand Utility ===
+const buttons = document.getElementById('blast-button');
+let clickss = 0;
+
+
+function createSparkles() {
+  const sparkleCount = 20;
+  for (let i = 0; i < sparkleCount; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.classList.add('sparkle');
+    sparkle.style.left = (button.offsetLeft + Math.random() * button.offsetWidth) + 'px';
+    sparkle.style.top = (button.offsetTop + Math.random() * button.offsetHeight) + 'px';
+    sparkle.style.backgroundColor = '#FFD700';
+    document.body.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 1000);
+  }
+}
+
+function blastButtonParticles(button) {
+  const particleCount = 30;
+  const btnRect = button.getBoundingClientRect();
+
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement("div");
+    particle.classList.add("particle");
+
+    particle.style.left = btnRect.left + btnRect.width / 2 + "px";
+    particle.style.top = btnRect.top + btnRect.height / 2 + "px";
+
+    
+    const angle = Math.random() * 2 * Math.PI;
+    const speed = Math.random() * 8 + 4;
+
+    let x = 0, y = 0;
+    const animation = setInterval(() => {
+      x += Math.cos(angle) * speed;
+      y += Math.sin(angle) * speed;
+      particle.style.transform = `translate(${x}px, ${y}px)`;
+      particle.style.opacity = 1 - Math.sqrt(x*x + y*y) / 100;
+
+      if (Math.sqrt(x*x + y*y) > 100) {
+        clearInterval(animation);
+        particle.remove();
+      }
+    }, 16);
+
+    document.body.appendChild(particle);
+  }
+
+  button.style.visibility = "hidden";
+  setTimeout(() => {
+    button.style.visibility = "visible";
+  }, 1000);
+}
+
+
+button.addEventListener("click", () => {
+  clicks++;
+
+ 
+  createSparkles();
+
+s
+  if (clicks % 20 === 0) {
+    blastButtonParticles(button);
+  }
+});
+
+// === Main Burst Particles Method === 
+function burstButtonParticles() {
+  isCelebrationAnimationComplete = false;
+
+  const rect = button.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  explode(centerX, centerY);
+
+  if (isCelebrationAnimationComplete === true) {
+    const randomLoc = getRandomLocation();
+    targetX = randomLoc.left;
+    targetY = randomLoc.top;
+    buttonTeleport(targetX, targetY);
+  }
+}
+ 
+// === Rand Utility === 
 function rand(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -633,8 +717,8 @@ if (button) {
       quoteDiv.textContent = "✨ 20-CLICK POWER UP! Particles Erupt! âœ¨";
     }
 
-    //  Confetti animation at 50 clicks
-    if (clicks === 50 && typeof createConfetti === "function") {
+    //  Confetti animation at 100 clicks
+    if (clicks === 100 && typeof createConfetti === "function") {
       createConfetti();
     }
 
@@ -1049,8 +1133,8 @@ function hidePopup() {
 
 
 
-// function randomizeButtonPosition(buttonEl, containerWidth, containerHeight) {
-// // Function to randomize button position within the popup (keeps button inside container)
+
+// Function to randomize button position within the popup (keeps button inside container)
 function randomizeButtonPosition(clickCount, buttonEl, containerWidth, containerHeight) {
   if(clickCount>=1000 || !buttonEl) return; // Kept logic from main
   const buttonWidth = buttonEl.offsetWidth; const buttonHeight = buttonEl.offsetHeight;
@@ -1385,8 +1469,15 @@ function getNewButtonText() {
     const randomIndex = Math.floor(Math.random() * buttonTexts.length);
     newText = buttonTexts[randomIndex];
   }
-  
+
   return newText;
+}
+
+// Trigger after 500 clicks
+if (button) {
+  button.addEventListener("click", () => {
+    if (clicks === 500) simulateFakeCrash();
+  });
 }
 
 initializeCounter();
