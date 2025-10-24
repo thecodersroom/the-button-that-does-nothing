@@ -4,6 +4,30 @@
   padding: 0;
   box-sizing: border-box;
 }
+/* --- Add this to your style.css --- */
+
+.notification-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #28a745; /* A nice green */
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  z-index: 1001;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s ease-in-out;
+}
+
+.notification-popup.show {
+  opacity: 1;
+  transform: translateX(0);
+}
 
 :root {
   --bg-start: #667eea;
@@ -267,7 +291,7 @@ h1 {
   cursor: pointer;
   transition: transform 0.2s ease, background 0.3s ease;
   position: relative;
-  z-index: 2;
+  z-index: 900; /* <-- FIX: Was 2. Now it's above the timer. */
   box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
   animation: pulseGlow 2s infinite;
 }
@@ -1230,4 +1254,42 @@ body[data-theme="light"] #sound-toggle {
   .custom-theme-actions button {
     width: 100%;
   }
+}
+/* --- FIX FOR TOP-RIGHT CONTROLS --- */
+/* Add this entire block to the bottom of your style.css file */
+
+/* 1. This styles the main container */
+.top-right-controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column; /* Stacks items vertically */
+  align-items: flex-end;   /* Aligns all items to the right */
+  gap: 10px;               /* Space between items */
+  z-index: 800; /* <-- FIX: Was 2000. Now it's below the button. */
+}
+
+/* 2. This resets ALL items inside the container */
+.top-right-controls > div,
+.top-right-controls > button {
+  position: relative !important; /* Force override */
+  top: auto !important;
+  right: auto !important;
+  left: auto !important;
+  bottom: auto !important;
+  margin: 0;
+  width: auto; /* Let them size themselves */
+}
+
+/* 3. Style the "Time spent..." timer */
+#timer.timer {
+  color: var(--text-color); /* Use theme text color */
+  background-color: var(--card-bg); /* Use theme card background */
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.9em;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-align: right;
+  white-space: nowrap; /* Prevents text from wrapping */
 }

@@ -30,8 +30,11 @@ const trackSelector = document.getElementById("track-selector");
 const closeSoundPanel = document.getElementById("close-sound-panel");
 
 // State
+// --- FIX: Clicks now start at 0 every time. localStorage is removed. ---
 let clicks = 0;
 let failedClicks = 0;
+// --- END FIX ---
+
 let userInteracted = false;
 let impossibleMode = false;
 let isButtonMoving = false;
@@ -49,15 +52,25 @@ let seconds = 0;
 let soundsEnabled = localStorage.getItem('soundsEnabled') !== 'false';
 let musicEnabled = localStorage.getItem('musicEnabled') !== 'false';
 let masterVolume = parseFloat(localStorage.getItem('masterVolume')) || 1.0;
-let currentTrack = localStorage.getItem('currentTrack') || '8bit';
 
+// --- FIX: currentTrack starts at '8bit'. localStorage is removed. ---
+let currentTrack = '8bit';
+// --- END FIX ---
+
+// MODIFIED: Re-ordered the tracks so '8bit' is the default (index 0)
 const tracks = {
-  'lofi': 'audio/lo-fi.mp3',
-  '8bit': 'audio/8-bit.mp3',
-  'boss': 'audio/boss.mp3',
-  'suspense': 'audio/suspense.mp3',
-  'horror': 'audio/horror.mp3'
+  '8bit': 'audio/8-bit.mp3',   // Default (0 clicks)
+  'lofi': 'audio/lo-fi.mp3', // Unlocks at 100
+  'boss': 'audio/boss.mp3',   // Unlocks at 200
+  'suspense': 'audio/suspense.mp3', // Unlocks at 300
+  'horror': 'audio/horror.mp3'  // Unlocks at 400
 };
+
+// Defined allTrackKeys globally
+const allTrackKeys = Object.keys(tracks);
+
+// Will be populated by loadUnlockedTracks()
+let unlockedTracks = []; 
 
 // Canvas setup
 if (canvas) {
@@ -145,8 +158,6 @@ const actions = [
 { text: "Draw or doodle something that represents how you feel right now.", category: "Growth", rarity: 1 },
 { text: "Write down one quality about yourself that you admire.", category: "Growth", rarity: 1 },
 { text: "Take a mindful pause and truly notice one beautiful thing in your surroundings.", category: "Growth", rarity: 1 },
-
-
 ];
 
 const messages = [
@@ -260,7 +271,8 @@ function getRandomLocation() {
   const randomXAbs = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
   const randomYAbs = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
 
-  const parentNodeRect = button.parentNode.getBoundingClientRect();
+  // Check if button.parentNode exists before getting its bounding rect
+  const parentNodeRect = button?.parentNode?.getBoundingClientRect() || { left: 0, top: 0 };
   const left = randomXAbs - parentNodeRect.left;
   const top = randomYAbs - parentNodeRect.top;
 
@@ -269,6 +281,7 @@ function getRandomLocation() {
 
 function buttonTeleport(posX, posY) {
   // posX/posY are expected to be left/top relative to parent (as returned by getRandomLocation)
+  if (!button) return;
   button.style.position = "absolute";
   button.style.left = `${posX}px`;
   button.style.top = `${posY}px`;
@@ -279,21 +292,22 @@ function buttonTeleport(posX, posY) {
 function initializeCounter() {
   if (!counterDiv) return;
   
+  // Calculate initial accuracy based on saved clicks AND failed clicks
+  const totalInitial = clicks + failedClicks; // Will be 0 on load
+  const initialAccuracy = totalInitial > 0 ? Math.round((clicks / totalInitial) * 100) : 100;
+
   counterDiv.innerHTML = `
     <div class="stat-card">
       <span class="stat-icon">👆</span>
-      <div class="stat-value" id="clicks-value">0</div>
-      <div class="stat-label">Total Clicks</div>
+      <div class="stat-value" id="clicks-value">${clicks}</div> <div class="stat-label">Total Clicks</div>
     </div>
     <div class="stat-card">
       <span class="stat-icon">❌</span>
-      <div class="stat-value" id="failed-value">0</div>
-      <div class="stat-label">Failed Clicks</div>
+      <div class="stat-value" id="failed-value">${failedClicks}</div> <div class="stat-label">Failed Clicks</div>
     </div>
     <div class="stat-card">
       <span class="stat-icon">🎯</span>
-      <div class="stat-value" id="accuracy-value">100%</div>
-      <div class="stat-label">Accuracy</div>
+      <div class="stat-value" id="accuracy-value">${initialAccuracy}%</div> <div class="stat-label">Accuracy</div>
     </div>
   `;
 }
@@ -302,6 +316,7 @@ function animateNumber(element, newValue) {
   if (!element) return;
   const current = parseInt(element.textContent) || 0;
   const diff = newValue - current;
+  if (diff === 0) return; // No animation needed
   const duration = 300;
   const steps = 15;
   const increment = diff / steps;
@@ -344,6 +359,7 @@ function updateCounter(extraText = "") {
 
 // Add ripple effect to button
 function addRippleEffect(event) {
+  if (!button) return;
   button.classList.add('ripple');
   setTimeout(() => {
     button.classList.remove('ripple');
@@ -451,6 +467,7 @@ function createSmokeTrail() {
 
 // === Disable Teleport Method === 
 function buttonDisableTeleport() { 
+  if (!button) return;
   button.style.transition = "none";
   button.style.position = "relative";
   button.style.left = "";
@@ -458,20 +475,15 @@ function buttonDisableTeleport() {
 }
 
 // === Main Burst Particles Method === 
+let isCelebrationAnimationComplete = false; // Define at a higher scope
 function burstButtonParticles() {
+  if (!button) return;
   isCelebrationAnimationComplete = false;
 
   const rect = button.getBoundingClientRect();
   const centerX = rect.left + rect.width / 2;
   const centerY = rect.top + rect.height / 2;
   explode(centerX, centerY);
-
-  if (isCelebrationAnimationComplete === true) {
-    const randomLoc = getRandomLocation();
-    targetX = randomLoc.left;
-    targetY = randomLoc.top;
-    buttonTeleport(targetX, targetY);
-  }
 }
  
 // === Rand Utility === 
@@ -487,24 +499,26 @@ function explode(x, y) {
       return;
   }
 
-  const particles = 1200;
+  const particles = 1200; // This is a very high number
   const explosion = document.createElement('div');
   explosion.classList.add('explosion');
 
   document.body.appendChild(explosion);
 
   explosion.style.position = 'absolute';
-  explosion.style.left = `${x - explosion.offsetWidth / 2}px`;
-  explosion.style.top = `${y - explosion.offsetHeight / 2}px`;
+  // Center explosion on x/y
+  explosion.style.left = `${x}px`;
+  explosion.style.top = `${y}px`;
+  explosion.style.transform = 'translate(-50%, -50%)'; // Center it
 
   for (let i = 0; i < particles; i++) {
-
       const distanceX = rand(80, 500);
       const distanceY = rand(80, 500);
       const angleFactor = rand(particles - 10, particles + 10);
       
-      const particleX = (explosion.offsetWidth / 2) + distanceX * Math.cos(2 * Math.PI * i / angleFactor);
-      const particleY = (explosion.offsetHeight / 2) + distanceY * Math.sin(2 * Math.PI * i / angleFactor);
+      // Calculate from 0,0 (relative to explosion div)
+      const particleX = distanceX * Math.cos(2 * Math.PI * i / angleFactor);
+      const particleY = distanceY * Math.sin(2 * Math.PI * i / angleFactor);
       
       // === Color Generation in RGB === 
       const r = rand(50, 255);
@@ -526,11 +540,11 @@ function explode(x, y) {
           elm.addEventListener('animationend', function cleanup() {
               explosion.remove();
               elm.removeEventListener('animationend', cleanup); 
+              isCelebrationAnimationComplete  = true; // Set flag *after* animation
           }, { once: true });
       }
       
       explosion.appendChild(elm);
-      isCelebrationAnimationComplete  = true;
   }
 }
 
@@ -545,8 +559,8 @@ function showAchievement(clickCount) {
     const icon = popup.querySelector(".achievement-icon");
     const text = popup.querySelector(".achievement-text");
 
-    icon.textContent = achievement.icon;
-    text.textContent = achievement.text;
+    if (icon) icon.textContent = achievement.icon;
+    if (text) text.textContent = achievement.text;
     popup.classList.add("show");
 
     setTimeout(() => popup.classList.remove("show"), 3000);
@@ -567,7 +581,7 @@ function checkCombo() {
         quoteDiv.textContent = comboMessage;
         quoteDiv.style.color = "#FFD700";
         setTimeout(() => {
-          quoteDiv.style.color = "#fff";
+          if (quoteDiv) quoteDiv.style.color = ""; // Reset to default
         }, 1000);
       }
     }
@@ -610,6 +624,9 @@ if (button) {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
     clicks++;
+    // --- FIX: Remove saving clicks to localStorage ---
+    // localStorage.setItem('clicks', clicks); 
+    // --- END FIX ---
     checkCombo();
     getNewAction(); // This will now update the quoteDiv
     
@@ -647,7 +664,7 @@ if (button) {
     showAchievement(clicks);
 
     if (clicks === 20) {
-      quoteDiv.textContent = "✨ 20-CLICK POWER UP! Particles Erupt! ✨";
+      if (quoteDiv) quoteDiv.textContent = "✨ 20-CLICK POWER UP! Particles Erupt! ✨";
     }
 
     //  Confetti animation at 50 clicks
@@ -665,6 +682,7 @@ if (button) {
     const { randomX, randomY } = getRandomLocation();
     buttonTeleport(randomX, randomY);
 
+    checkMusicUnlock(); // Check for music unlock
     updateActivityTime();
   });
 }
@@ -674,8 +692,9 @@ if (button) {
 // Cooldown period in milliseconds (e.g., 10 minutes)
 const CATEGORY_COOLDOWN = 10 * 60 * 1000; 
 
-// Load cooldowns from localStorage to make them persistent
-let categoryCooldowns = JSON.parse(localStorage.getItem('categoryCooldowns')) || {};
+// --- FIX: Cooldowns reset every load ---
+let categoryCooldowns = {};
+// --- END FIX ---
 
 function getNewAction() {
     const now = Date.now();
@@ -703,11 +722,15 @@ function getNewAction() {
     }
 
     // 4 Display the prompt
-    quoteDiv.textContent = selected.text;
+    if (quoteDiv) { // Add check for quoteDiv
+      quoteDiv.textContent = selected.text;
+    }
 
     // 5️ Update cooldown for that category
     categoryCooldowns[selected.category] = now;
-    localStorage.setItem('categoryCooldowns', JSON.stringify(categoryCooldowns));
+    // --- FIX: Remove saving cooldowns to localStorage ---
+    // localStorage.setItem('categoryCooldowns', JSON.stringify(categoryCooldowns));
+    // --- END FIX ---
 }
 
 
@@ -722,6 +745,9 @@ document.addEventListener("click", (e) => {
   // Only count as failed click if NOT clicking on any interactive element
   if (!clickedButton && !clickedInput && !clickedLabel) {
     failedClicks++;
+    // --- FIX: Remove saving failed clicks to localStorage ---
+    // localStorage.setItem('failedClicks', failedClicks);
+    // --- END FIX ---
     
     const messageArray = impossibleMode ? impossibleFailMessages : failedClickMessages;
     const randomFail = messageArray[Math.floor(Math.random() * messageArray.length)];
@@ -735,6 +761,8 @@ document.addEventListener("click", (e) => {
         failSound.play().catch(() => {});
       }
     }
+
+    checkMusicUnlock(); // Check for music unlock on failed clicks too
   }
 });
 
@@ -788,9 +816,14 @@ document.addEventListener("mousemove", (e) => {
   }
 });
 
-document.addEventListener("contextmenu", () => {
+document.addEventListener("contextmenu", (e) => {
+  e.preventDefault(); // Prevent context menu
   failedClicks += clicks; // Add all earned clicks to failed count
   clicks = 0;
+  // --- FIX: Remove saving to localStorage ---
+  // localStorage.setItem('clicks', clicks); 
+  // localStorage.setItem('failedClicks', failedClicks);
+  // --- END FIX ---
   updateCounter("💥 SIKE YOU THOUGHT! 💥");
   if (failSound) {
     failSound.currentTime = 0;
@@ -804,7 +837,8 @@ function changeBackgroundColor() {
   const color2 = getRandomColor();
   document.body.style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
 }
-setInterval(changeBackgroundColor, 5000);
+// Note: This is overridden by the theme system, but kept for potential future use
+// setInterval(changeBackgroundColor, 5000); 
 
 // === Timer ===
 function formatTime(sec) {
@@ -1003,9 +1037,11 @@ function applyTheme(themeName) {
   }
   
   currentTheme = themeName;
-  localStorage.setItem('currentTheme', themeName);
+  localStorage.setItem('currentTheme', themeName); // Still save theme
   
-  updateThemeCards();
+  if (themesGrid) { // Check if themesGrid exists
+    updateThemeCards();
+  }
 }
 
 // Generate theme cards
@@ -1049,9 +1085,12 @@ function generateThemeCards() {
 
 // Update active theme card
 function updateThemeCards() {
+  if (!themesGrid) return; // Add check
   const cards = themesGrid.querySelectorAll('.theme-card');
+  const themeKeys = Object.keys(themes); // Get keys inside function
   cards.forEach((card, index) => {
-    if (themeKeys[index] === currentTheme) {
+    const themeKey = themeKeys[index]; 
+    if (themeKey === currentTheme) {
       card.classList.add('active');
     } else {
       card.classList.remove('active');
@@ -1078,21 +1117,25 @@ if (themeToggle) {
 if (themeToggle) {
   themeToggle.addEventListener('dblclick', (e) => {
     e.preventDefault();
-    themeSelector.classList.add('show');
-    generateThemeCards();
+    if (themeSelector) {
+      themeSelector.classList.add('show');
+      generateThemeCards();
+    }
   });
   
   themeToggle.addEventListener('contextmenu', (e) => {
     e.preventDefault();
-    themeSelector.classList.add('show');
-    generateThemeCards();
+    if (themeSelector) {
+      themeSelector.classList.add('show');
+      generateThemeCards();
+    }
   });
 }
 
 // Close theme selector
 if (closeThemeSelector) {
   closeThemeSelector.addEventListener('click', () => {
-    themeSelector.classList.remove('show');
+    if (themeSelector) themeSelector.classList.remove('show');
   });
 }
 
@@ -1106,27 +1149,31 @@ if (themeSelector) {
 }
 
 // Theme tabs switching
-themeTabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    const targetTab = tab.dataset.tab;
-    
-    // Update active tab
-    themeTabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    
-    // Update active content
-    themeTabContents.forEach(content => {
-      if (content.id === `${targetTab}-tab`) {
-        content.classList.add('active');
-      } else {
-        content.classList.remove('active');
-      }
+if (themeTabs && themeTabContents) {
+  themeTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const targetTab = tab.dataset.tab;
+      
+      // Update active tab
+      themeTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      // Update active content
+      themeTabContents.forEach(content => {
+        if (content.id === `${targetTab}-tab`) {
+          content.classList.add('active');
+        } else {
+          content.classList.remove('active');
+        }
+      });
     });
   });
-});
+}
 
 // Custom Theme Creator - Sync color pickers with text inputs
 function syncColorInputs(colorInput, textInput) {
+  if (!colorInput || !textInput) return; // Add check
+  
   colorInput.addEventListener('input', () => {
     textInput.value = colorInput.value;
   });
@@ -1217,7 +1264,7 @@ if (saveCustomTheme) {
     
     // Close selector
     setTimeout(() => {
-      themeSelector.classList.remove('show');
+      if (themeSelector) themeSelector.classList.remove('show');
     }, 1500);
   });
 }
@@ -1225,13 +1272,13 @@ if (saveCustomTheme) {
 // Reset custom theme
 if (resetCustomTheme) {
   resetCustomTheme.addEventListener('click', () => {
-    customBgStart.value = customBgStartText.value = '#667eea';
-    customBgEnd.value = customBgEndText.value = '#764ba2';
-    customTextColor.value = customTextColorText.value = '#ffffff';
-    customAccentColor.value = customAccentColorText.value = '#ff6b6b';
-    customButtonStart.value = customButtonStartText.value = '#ff6b6b';
-    customButtonEnd.value = customButtonEndText.value = '#ff9a76';
-    customFontFamily.value = "'Poppins', sans-serif";
+    if(customBgStart) customBgStart.value = customBgStartText.value = '#667eea';
+    if(customBgEnd) customBgEnd.value = customBgEndText.value = '#764ba2';
+    if(customTextColor) customTextColor.value = customTextColorText.value = '#ffffff';
+    if(customAccentColor) customAccentColor.value = customAccentColorText.value = '#ff6b6b';
+    if(customButtonStart) customButtonStart.value = customButtonStartText.value = '#ff6b6b';
+    if(customButtonEnd) customButtonEnd.value = customButtonEndText.value = '#ff9a76';
+    if(customFontFamily) customFontFamily.value = "'Poppins', sans-serif";
     
     if (quoteDiv) {
       quoteDiv.textContent = '🔄 Custom theme reset to defaults!';
@@ -1241,6 +1288,7 @@ if (resetCustomTheme) {
 
 // Helper function to convert hex to rgba
 function hexToRgba(hex, alpha) {
+  if (!hex || hex.length < 7) hex = '#ffffff'; // Fallback
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
@@ -1335,6 +1383,7 @@ function hidePopup() {
 
 // Function to randomize button position within the popup (keeps button inside container)
 function randomizeButtonPosition(buttonEl, containerWidth, containerHeight) {
+  if (!buttonEl) return;
   const buttonWidth = buttonEl.offsetWidth;
   const buttonHeight = buttonEl.offsetHeight;
 
@@ -1392,100 +1441,236 @@ if (popupNoButton) {
   document.addEventListener(eventType, updateActivityTime);
 });
 
-// Initialize on load
-window.addEventListener("load", () => {
-  // Timer tick every second
-  setInterval(updateTimer, 1000);
-
-  if (quoteDiv) {
-    quoteDiv.textContent = "Click the button to begin your pointless journey! 🚀";
-  }
-
-  // start the inactivity timer
-  updateActivityTime();
-
-  // initial background
-  changeBackgroundColor();
-});
-
-// Load an initial action prompt when the page first loads
-document.addEventListener('DOMContentLoaded', getNewAction);
-
 // === Sound Settings System ===
-function playBackgroundMusic(trackName) {
-  if (!musicEnabled || !trackName || !tracks[trackName]) {
-    bgMusic.pause();
-    return;
+
+// Load unlocked tracks based on TOTAL persistent interactions
+function loadUnlockedTracks() {
+  const totalInteractions = clicks + failedClicks; // Will be 0 on load
+  // Always unlock at least the first track
+  const tracksToUnlockCount = Math.max(1, Math.floor(totalInteractions / 100) + 1);
+  
+  // The calculated list is the source of truth.
+  let calculatedList = allTrackKeys.slice(0, tracksToUnlockCount);
+
+  // Ensure '8bit' is always present if available and something is unlocked
+  if (allTrackKeys.length > 0 && calculatedList.length > 0) {
+      if (!calculatedList.includes(allTrackKeys[0])) {
+         calculatedList.unshift(allTrackKeys[0]); // Add '8bit' to the front if it's missing
+      }
   }
   
-  bgMusic.src = tracks[trackName];
-  bgMusic.volume = masterVolume * 0.7;
-  bgMusic.play().catch(() => {});
+  // Final check: if empty, add the first track
+  if (calculatedList.length === 0 && allTrackKeys.length > 0) {
+     calculatedList = [allTrackKeys[0]];
+  }
+  
+  // Filter out any potential duplicates from unshifting
+  unlockedTracks = [...new Set(calculatedList)]; 
+  
+  // --- FIX: Do not save unlocked tracks to localStorage ---
+  // localStorage.setItem('unlockedTracks', JSON.stringify(unlockedTracks));
+  console.log("Loaded unlocked tracks:", unlockedTracks); // Debug log
 }
 
+// Dynamically populate the track selector dropdown
+function populateTrackSelector() {
+  if (!trackSelector) return;
+  const currentSelectedValue = trackSelector.value;
+  trackSelector.innerHTML = '';
+  unlockedTracks.forEach(trackKey => {
+    if (tracks[trackKey]) {
+      const option = document.createElement('option');
+      option.value = trackKey;
+      const trackName = trackKey.charAt(0).toUpperCase() + trackKey.slice(1);
+      option.textContent = trackName;
+      trackSelector.appendChild(option);
+    }
+  });
+  // Restore selection
+  if (unlockedTracks.includes(currentSelectedValue)) {
+      trackSelector.value = currentSelectedValue;
+  } else if (unlockedTracks.includes(currentTrack)) {
+      trackSelector.value = currentTrack;
+  } else if (unlockedTracks.length > 0) {
+      // Fallback to the first available track
+      trackSelector.value = unlockedTracks[0];
+  }
+}
+
+// Checks for unlocks and AUTO-PLAYS the newly unlocked track
+function checkMusicUnlock() {
+  const totalInteractions = clicks + failedClicks;
+  const tracksToUnlockCount = Math.max(1, Math.floor(totalInteractions / 100) + 1);
+  const tracksThatShouldBeUnlocked = allTrackKeys.slice(0, tracksToUnlockCount);
+
+  let newTrackUnlocked = false;
+  let lastUnlockedTrackKey = null;
+
+  tracksThatShouldBeUnlocked.forEach(trackKey => {
+    if (trackKey && !unlockedTracks.includes(trackKey)) {
+      console.log(`Unlocking track: ${trackKey}`); // Debug log
+      unlockedTracks.push(trackKey);
+      newTrackUnlocked = true;
+      lastUnlockedTrackKey = trackKey;
+    }
+  });
+
+  if (newTrackUnlocked && lastUnlockedTrackKey) {
+    // --- FIX: Do not save unlocked tracks to localStorage ---
+    // localStorage.setItem('unlockedTracks', JSON.stringify(unlockedTracks));
+    populateTrackSelector(); // Refresh dropdown
+
+    console.log(`Auto-playing newly unlocked track: ${lastUnlockedTrackKey}`); // Debug log
+    currentTrack = lastUnlockedTrackKey; // Set as current
+    if (trackSelector) trackSelector.value = currentTrack; // Update dropdown selection
+    updateSoundSettings(); // Save new currentTrack choice
+    playBackgroundMusic(currentTrack); // --- DIRECTLY PLAY THE NEW TRACK ---
+
+    if (quoteDiv) {
+      const trackName = lastUnlockedTrackKey.charAt(0).toUpperCase() + lastUnlockedTrackKey.slice(1);
+      quoteDiv.textContent = `🎵 New Track Unlocked: ${trackName}!`;
+    }
+  }
+}
+
+// Plays the specified background music track
+function playBackgroundMusic(trackName) {
+  // Guard clauses
+  if (!userInteracted) {
+      console.log("Music play prevented: User has not interacted yet."); // Debug log
+      return;
+  }
+   if (!musicEnabled) {
+      console.log("Music play prevented: Music is disabled."); // Debug log
+      if(bgMusic) bgMusic.pause(); // Ensure it's paused if disabled
+      return;
+  }
+  if (!trackName || !tracks[trackName]) {
+      console.error(`Music play failed: Invalid track name "${trackName}"`); // Debug log
+      if(bgMusic) bgMusic.pause();
+      return;
+  }
+
+  // Play logic
+  if (bgMusic) {
+      const newSrc = tracks[trackName];
+      
+      // --- THIS IS THE KEY FIX ---
+      // We check if the *end* of the full URL (currentSrc) matches the relative path (newSrc)
+      // If it doesn't match, or if the music is paused, we need to set the source and play.
+      if (!bgMusic.currentSrc || !bgMusic.currentSrc.endsWith(newSrc) || bgMusic.paused) {
+           console.log(`Setting music source to: ${newSrc}`); // Debug log
+           bgMusic.src = newSrc;
+           bgMusic.volume = masterVolume * 0.7; // Set volume before playing
+           const playPromise = bgMusic.play();
+           if (playPromise !== undefined) {
+               playPromise.then(_ => {
+                   console.log(`Music "${trackName}" started playing.`); // Debug log
+               }).catch(error => {
+                   console.error(`Error playing music "${trackName}":`, error);
+               });
+           }
+      } else {
+          // If src is the same and it's already playing, just ensure volume is correct
+          bgMusic.volume = masterVolume * 0.7;
+      }
+  } else {
+      console.error("bgMusic element not found!");
+  }
+}
+
+// Updates localStorage and applies volume settings
 function updateSoundSettings() {
+  // --- FIX: Only save settings that SHOULD persist ---
   localStorage.setItem('soundsEnabled', soundsEnabled);
   localStorage.setItem('musicEnabled', musicEnabled);
   localStorage.setItem('masterVolume', masterVolume);
-  localStorage.setItem('currentTrack', currentTrack);
-  
+  // localStorage.setItem('currentTrack', currentTrack); // Do NOT save the track
+  // --- END FIX ---
+
   if (clickSound) clickSound.volume = masterVolume;
   if (failSound) failSound.volume = masterVolume;
   if (bgMusic) bgMusic.volume = masterVolume * 0.7;
 }
 
+// Wrapper to play the currently set track
 function updateMusicPlayback() {
   playBackgroundMusic(currentTrack);
 }
 
+// Initializes sound settings on page load
 function initSoundSettings() {
-  soundsToggle.checked = soundsEnabled;
-  musicToggle.checked = musicEnabled;
-  volumeSlider.value = masterVolume * 100;
-  trackSelector.value = currentTrack;
+  if (soundsToggle) soundsToggle.checked = soundsEnabled;
+  if (musicToggle) musicToggle.checked = musicEnabled;
+  if (volumeSlider) volumeSlider.value = masterVolume * 100;
+
+  loadUnlockedTracks(); // Determine unlocked tracks first (will be ['8bit'])
+  populateTrackSelector(); // Populate dropdown
+
+  // --- FIX: Always default to the BEST (and only) unlocked track on load ---
+  currentTrack = unlockedTracks[unlockedTracks.length - 1] || '8bit'; 
+  // localStorage.setItem('currentTrack', currentTrack); // Do NOT save
+  console.log(`Initial track set to: ${currentTrack}`); // Debug log
   
-  updateSoundSettings();
-  updateMusicPlayback();
+  if (trackSelector) trackSelector.value = currentTrack; // Set dropdown selection
+
+  updateSoundSettings(); // Apply volume etc.
+
+  // Music will NOT auto-play here. It waits for the first user interaction.
 }
 
 // Sound panel toggle
-soundToggle.addEventListener('click', () => {
-  soundPanel.classList.add('show');
-});
+if (soundToggle) {
+  soundToggle.addEventListener('click', () => {
+    if (soundPanel) soundPanel.classList.add('show');
+  });
+}
 
-closeSoundPanel.addEventListener('click', () => {
-  soundPanel.classList.remove('show');
-});
+if (closeSoundPanel) {
+  closeSoundPanel.addEventListener('click', () => {
+    if (soundPanel) soundPanel.classList.remove('show');
+  });
+}
 
 // Close sound panel when clicking outside
-soundPanel.addEventListener('click', (e) => {
-  if (e.target === soundPanel) {
-    soundPanel.classList.remove('show');
-  }
-});
+if (soundPanel) {
+  soundPanel.addEventListener('click', (e) => {
+    if (e.target === soundPanel) {
+      soundPanel.classList.remove('show');
+    }
+  });
+}
 
 // Sound controls
-soundsToggle.addEventListener('change', () => {
-  soundsEnabled = soundsToggle.checked;
-  updateSoundSettings();
-});
+if (soundsToggle) {
+  soundsToggle.addEventListener('change', () => {
+    soundsEnabled = soundsToggle.checked;
+    updateSoundSettings();
+  });
+}
 
-musicToggle.addEventListener('change', () => {
-  musicEnabled = musicToggle.checked;
-  updateSoundSettings();
-  updateMusicPlayback();
-});
+if (musicToggle) {
+  musicToggle.addEventListener('change', () => {
+    musicEnabled = musicToggle.checked;
+    updateSoundSettings();
+    updateMusicPlayback();
+  });
+}
 
-volumeSlider.addEventListener('input', () => {
-  masterVolume = volumeSlider.value / 100;
-  updateSoundSettings();
-});
+if (volumeSlider) {
+  volumeSlider.addEventListener('input', () => {
+    masterVolume = volumeSlider.value / 100;
+    updateSoundSettings();
+  });
+}
 
-trackSelector.addEventListener('change', () => {
-  currentTrack = trackSelector.value;
-  updateSoundSettings();
-  updateMusicPlayback();
-});
+if (trackSelector) {
+  trackSelector.addEventListener('change', () => {
+    currentTrack = trackSelector.value;
+    updateSoundSettings(); // This no longer saves the track
+    updateMusicPlayback();
+  });
+}
 
 // === Magnetic Hover Effect (Normal Mode Only) ===
 if (button) {
@@ -1524,8 +1709,10 @@ if (impossibleToggle) {
   impossibleToggle.addEventListener('change', () => {
     if (impossibleMode) {
       // Clear magnetic hover when entering Impossible Mode
-      button.style.setProperty('--magnetic-x', '0px');
-      button.style.setProperty('--magnetic-y', '0px');
+      if (button) {
+        button.style.setProperty('--magnetic-x', '0px');
+        button.style.setProperty('--magnetic-y', '0px');
+      }
     }
   });
 }
@@ -1546,26 +1733,25 @@ document.addEventListener('keydown', (e) => {
   }
   
   // T key to toggle theme selector
-  if (e.key === 't' || e.key === 'T') {
+  if ((e.key === 't' || e.key === 'T') && !e.metaKey && !e.ctrlKey) {
     e.preventDefault();
     themeToggle?.click();
   }
   
   // S key to toggle sound panel
-  if (e.key === 's' || e.key === 'S') {
+  if ((e.key === 's' || e.key === 'S') && !e.metaKey && !e.ctrlKey) {
     e.preventDefault();
     soundToggle?.click();
   }
   
   // I key to toggle impossible mode
-  if (e.key === 'i' || e.key === 'I') {
+  if ((e.key === 'i' || e.key === 'I') && !e.metaKey && !e.ctrlKey) {
     e.preventDefault();
     impossibleToggle?.click();
   }
   
   // Escape to close modals
   if (e.key === 'Escape') {
-    const themeSelector = document.getElementById('theme-selector');
     if (themeSelector?.classList.contains('show')) {
       themeSelector.classList.remove('show');
     }
@@ -1578,8 +1764,18 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Initialize on load
+// === Initialize on load (Main Entry Point) ===
 window.addEventListener('load', () => {
-  initializeCounter();
-  initSoundSettings();
+  initializeCounter(); // Will show 0 clicks
+  initSoundSettings(); // Setup sounds, will load ['8bit']
+  setInterval(updateTimer, 1000); // Start timer
+  
+  if (quoteDiv && clicks === 0 && failedClicks === 0) {
+      quoteDiv.textContent = "Click the button to begin your pointless journey! 🚀";
+  } else {
+      getNewAction(); // Show an action if returning user (this won't run on fresh load)
+  }
+  
+  updateActivityTime(); // Start inactivity timer
 });
+
