@@ -629,6 +629,33 @@ function randomizeButtonPositionBasedOnMouse(clickCount, buttonEl, containerWidt
 }
 // === END MERGE ===
 
+function triggerBotChallenge() {
+  const challengeBox = document.createElement("div");
+  challengeBox.classList.add("challenge-box");
+  challengeBox.innerHTML = `
+    <h3>🤖 Human Check</h3>
+    <p>Prove you’re not a bot — what is <strong>3 + 4</strong>?</p>
+    <input type="number" id="challengeAnswer" placeholder="Enter your answer" />
+    <button id="submitChallenge">Submit</button>
+  `;
+  document.body.appendChild(challengeBox);
+
+  // Disable the main button temporarily
+  button.disabled = true;
+
+  document.getElementById("submitChallenge").addEventListener("click", () => {
+    const ans = document.getElementById("challengeAnswer").value.trim();
+    if (ans === "7") {
+      challengeBox.remove();
+      button.disabled = false;
+      alert("✅ You’re human! Continue clicking!");
+    } else {
+      alert("❌ Wrong answer! Try again.");
+    }
+  });
+}
+
+
 // === Combo System ===
 function checkCombo() {
   const now = Date.now();
