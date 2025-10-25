@@ -1587,3 +1587,37 @@ if (button) {
 
 initializeCounter();
 initSoundSettings();
+
+// ===== Reset Score Button (Rickroll) =====
+const resetScoreButton = document.getElementById('reset-score-button');
+if (resetScoreButton) {
+    resetScoreButton.addEventListener('click', function() {
+        // Open rickroll video in new tab
+        window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+        
+        // Add fake loading animation
+        const btn = this;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '⏳ Resetting...';
+        btn.disabled = true;
+        
+        setTimeout(() => {
+            btn.innerHTML = '😏 Nice Try!';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 1500);
+        }, 2000);
+        
+        // Optional: Play a sound effect
+        if (userInteracted && soundsEnabled) {
+            playSound(failSound);
+        }
+        
+        // Optional: Show a sarcastic message
+        if (quoteDiv) {
+            quoteDiv.textContent = "😂 Did you really think it would be that easy?";
+        }
+    });
+}
+
