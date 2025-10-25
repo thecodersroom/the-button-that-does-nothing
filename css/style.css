@@ -318,6 +318,14 @@ body.dark-mode #dark-mode-toggle {
   border-color: rgba(255, 255, 255, 0.15);
 }
 
+/* DARK MODE FIX: Apply dark mode to new buttons */
+body.dark-mode .theme-sound button {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+
 body.dark-mode .currency-panel {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
@@ -2163,12 +2171,41 @@ body.flipped {
   cursor: pointer;
   transition: all var(--transition-base);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: var(--text-color); /* Added for consistency */
 }
 
 #dark-mode-toggle:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
+
+/* FIX: Added styles for theme and sound buttons
+  to match the other glassmorphism controls.
+*/
+.theme-sound {
+  display: flex;
+  gap: 10px;
+}
+
+.theme-sound button {
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-size: 1.3em; /* Match dark mode toggle */
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: var(--text-color); /* Match dark mode toggle */
+  line-height: 1.3; /* Fix icon alignment */
+}
+
+.theme-sound button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
 
 /* Time spent timer - reduced backdrop filter to prevent conflicts */
 #timer.timer {
