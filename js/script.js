@@ -854,3 +854,33 @@ trackSelector.addEventListener('change', () => {
 window.addEventListener('load', () => {
   initSoundSettings();
 });
+
+
+// === Full-screen Showcase Mode ===
+
+// 1. Function jo full-screen ko ON ya OFF karega
+function toggleFullScreen() {
+  // Check 
+  if (!document.fullscreenElement) {
+    // if no then req full screen
+    document.documentElement.requestFullscreen()
+      .catch(err => {
+        //error if not alloweed 
+        console.error(`Error attempting to enable full-screen: ${err.message}`);
+      });
+  } else {
+    // if no then out from full screen
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  }
+}
+
+// 2. keyboard shortcut ke liye
+document.addEventListener('keydown', (event) => {
+  // check if user presssed f 
+  if (event.key === 'f' || event.key === 'F') {
+    //if user pressed f
+    toggleFullScreen();
+  }
+});
