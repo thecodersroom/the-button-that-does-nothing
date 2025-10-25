@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Button That Does Nothing</title>
+
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
       rel="stylesheet"
@@ -11,279 +12,251 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/clock.css" />
     <link rel="icon" type="image/x-icon" href="image/favicon.ico" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
 
+    <style>
+      /* Fade-in animation for popup */
+      #bot-detection-popup {
+        display: none;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        animation: fadeIn 0.4s ease-in-out;
+        z-index: 9999;
+      }
+
+      .popup-content {
+        background: #ffffff;
+        padding: 25px 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        animation: slideIn 0.4s ease-in-out;
+        max-width: 350px;
+        width: 90%;
+      }
+
+      #bot-detection-popup h2 {
+        font-size: 1.6rem;
+        color: #2d225a;
+        margin-bottom: 10px;
+      }
+
+      #bot-detection-popup input {
+        padding: 8px 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        width: 80%;
+        font-size: 1rem;
+        margin-top: 10px;
+      }
+
+      #bot-detection-popup button {
+        margin-top: 15px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      #bot-detection-popup button:hover {
+        transform: scale(1.05);
+        background: linear-gradient(90deg, #5b6ee1, #8853b3);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: scale(0.9);
+          opacity: 0.5;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+    </style>
   </head>
 
   <body>
- <div id="dev-comments-container">
-  <div class="dev-comment" style="top: 15%; left: 20%;">// TODO: Give meaning to life.</div>
-  <div class="dev-comment" style="top: 30%; left: 60%;">// Is anyone even clicking this?</div>
-  <div class="dev-comment" style="top: 50%; left: 10%;">// FIXME: Button does too much. Needs more nothing.</div>
-  <div class="dev-comment" style="top: 75%; left: 70%;">// Hope the boss doesn't see this.</div>
-  <div class="dev-comment" style="top: 85%; left: 30%;">// A single click... a single dream...</div>
-</div>
-    <!-- <div class="clock-container">
-      <div class="clock">
-        <span id="hrs">00</span>:<span id="min">00</span>:<span id="sec"
-          >00</span
-        >
-      </div> -->
+    <div id="dev-comments-container">
+      <div class="dev-comment" style="top: 15%; left: 20%">
+        // TODO: Give meaning to life.
+      </div>
+      <div class="dev-comment" style="top: 30%; left: 60%">
+        // Is anyone even clicking this?
+      </div>
+      <div class="dev-comment" style="top: 50%; left: 10%">
+        // FIXME: Button does too much. Needs more nothing.
+      </div>
+      <div class="dev-comment" style="top: 75%; left: 70%">
+        // Hope the boss doesn't see this.
+      </div>
+      <div class="dev-comment" style="top: 85%; left: 30%">
+        // A single click... a single dream...
+      </div>
     </div>
-    <div id="time-attack-progress-bar" style="display: none;">
-    <div id="time-attack-progress-inner"></div>
-  </div>
+
     <div class="app-container">
       <h1>The Button That Does Nothing</h1>
 
       <div class="toggle-container">
         <label class="toggle-label">
-          <input type="checkbox" id="impossible-toggle" aria-label="Toggle Impossible Mode" />
-          <span class="toggle-slider"></span> 
+          <input
+            type="checkbox"
+            id="impossible-toggle"
+            aria-label="Toggle Impossible Mode"
+          />
+          <span class="toggle-slider"></span>
           <span class="toggle-text">🔥 IMPOSSIBLE MODE</span>
         </label>
       </div>
 
       <div class="button-container">
-        <button id="useless-button" aria-label="The useless button">Click Me!</button>
+        <button id="useless-button" aria-label="The useless button">
+          Click Me!
+        </button>
       </div>
-      <!--Control buttons-->
-      
-<div class="high-score-display">
-  My High Score: <span id="high-score">0</span>
-</div>
-<div class="high-score-display">
-  Time Attack High Score: <span id="time-attack-high-score">0</span>
-</div>
-<button id="share-button">Share My Score</button>
-<!-- Start Popup Modal -Dev/Jetrock -->
-  <div id="share-modal" class="modal">
-    <div class="modal-content">
-      <h3>Share Your Score</h3>
-      <p id="share-text"></p>
 
-      <div class="social-icons">
-        <i class="fab fa-whatsapp" data-platform="whatsapp"></i>
-        <i class="fab fa-x-twitter" data-platform="twitter"></i>
-        <i class="fab fa-facebook" data-platform="facebook"></i>
-        <i class="fab fa-linkedin" data-platform="linkedin"></i>
+      <div class="high-score-display">
+        My High Score: <span id="high-score">0</span>
       </div>
-    </div>
-  </div>
-<!-- End Popup Modal -Dev/Jetrock  -->
+      <div class="high-score-display">
+        Time Attack High Score: <span id="time-attack-high-score">0</span>
+      </div>
+
+      <button id="share-button">Share My Score</button>
+
+      <div id="share-modal" class="modal">
+        <div class="modal-content">
+          <h3>Share Your Score</h3>
+          <p id="share-text"></p>
+          <div class="social-icons">
+            <i class="fab fa-whatsapp" data-platform="whatsapp"></i>
+            <i class="fab fa-x-twitter" data-platform="twitter"></i>
+            <i class="fab fa-facebook" data-platform="facebook"></i>
+            <i class="fab fa-linkedin" data-platform="linkedin"></i>
+          </div>
+        </div>
+      </div>
 
       <div class="control-buttons">
         <button id="time-attack-button">⏱️ Time Attack</button>
       </div>
+
       <div id="counter">Clicks: 0 | Failed clicks: 0</div>
       <div id="achievement-popup">
-        <span class="achievement-icon"> </span>
-        <span class="achievement-text"> </span>
+        <span class="achievement-icon"></span>
+        <span class="achievement-text"></span>
       </div>
-      <div id="quote" class="quote">"Loading some wisdom..."</div>
-<div id="time-attack-timer" class="timer" style="display: none;">Time Left: 60s</div>
 
+      <div id="quote" class="quote">"Loading some wisdom..."</div>
+      <div id="time-attack-timer" class="timer" style="display: none">
+        Time Left: 60s
+      </div>
     </div>
 
-     <div class="top-right-controls">
+    <div class="top-right-controls">
       <button id="dark-mode-toggle" title="Toggle Dark Mode">🌙</button>
       <div class="theme-sound">
         <button id="theme-toggle" title="Theme">🎨</button>
         <button id="sound-toggle" title="Sound Settings">🎵</button>
       </div>
-    
+
       <div class="clock-container">
         <div class="clock">
-          <span id="hrs">00</span>:<span id="min">00</span>:<span id="sec"
-            >00</span
-          >
+          <span id="hrs">00</span>:<span id="min">00</span>:<span id="sec">00</span>
         </div>
       </div>
 
-      <div id="timer" class="timer">⏱️ Time spent doing nothing: 00:00</div>
+      <div id="timer" class="timer">
+        ⏱️ Time spent doing nothing: 00:00
+      </div>
     </div>
 
-
-    <div id="achievement-popup">
-      <span class="achievement-icon"></span>
-      <span class="achievement-text"></span>
+    <!-- 🧩 BOT DETECTION POPUP -->
+    <div id="bot-detection-popup" style="display:none; justify-content:center; align-items:center; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); z-index:9999;">
+      <div class="popup-content" style="background: linear-gradient(135deg, rgba(30,30,30,0.85), rgba(60,60,60,0.85)); border-radius: 16px; padding: 30px 35px; box-shadow: 0 12px 30px rgba(0,0,0,0.7); max-width: 360px; width: 90%; text-align: center; color: #eee; font-family: 'Poppins', sans-serif;">
+        <h2 style="color: #ffffff; font-weight: 700; margin-bottom: 15px;">🤖 Bot Check!</h2>
+        <p style="color: #cccccc; font-size: 1.1rem; margin-bottom: 20px;">Prove you're human: What is 5 + 3?</p>
+        <input type="text" id="bot-answer" placeholder="Enter your answer" style="width: 80%; padding: 10px 12px; border-radius: 10px; border: none; background: rgba(255,255,255,0.15); color: #fff; font-size: 1rem; outline: none; box-shadow: 0 0 8px rgba(255,255,255,0.3); transition: box-shadow 0.3s ease;" />
+        <div class="popup-buttons" style="margin-top: 20px;">
+          <button id="submit-bot-answer" style="background: linear-gradient(90deg, #667eea, #764ba2); color: white; border: none; padding: 10px 22px; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: 600; box-shadow: 0 0 12px rgba(102,126,234,0.7); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+            Submit
+          </button>
+        </div>
+        <p id="bot-feedback" style="margin-top:10px; color: #eee; min-height: 1.2em;"></p>
+      </div>
     </div>
 
+    <!-- 🕹️ Audio and Extra UI Elements -->
     <audio id="click-sound" src="audio/click1.mp3"></audio>
     <audio id="fail-sound" src="audio/failedClick.mp3"></audio>
     <audio id="bg-music" loop></audio>
 
-    <div id="still-clicking-popup" class="popup-container">
-      <div class="popup-content">
-        <h2>Are you still clicking?</h2>
-        <div class="popup-buttons">
-          <button id="popup-yes">Yes</button>
-          <button id="popup-no">No</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Time Attack Result Modal -->
-    <div id="time-attack-result-popup" class="popup-container">
-      <div class="popup-content time-attack-result">
-        <div class="result-icon">⏰</div>
-        <h2>Time's Up!</h2>
-        <div class="result-stats">
-          <div class="result-stat-item">
-            <span class="result-label">You clicked</span>
-            <span class="result-value" id="time-attack-final-score">0</span>
-            <span class="result-label">times!</span>
-          </div>
-        </div>
-        <div id="time-attack-new-record" class="new-record" style="display: none;">
-          🏆 NEW HIGH SCORE! 🏆
-        </div>
-        <div class="popup-buttons">
-          <button id="time-attack-close-btn">OK</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="sound-panel" class="popup-container">
-      <div class="popup-content">
-        <h2>🎵 Sound Settings</h2>
-        <div class="sound-controls">
-          <label><input type="checkbox" id="sounds-toggle" checked> 🔊 Sounds</label>
-          <label><input type="checkbox" id="music-toggle" checked> 🎵 Music</label>
-          <label>🔉 Volume: <input type="range" id="volume-slider" min="0" max="100" value="50"></label>
-          <label>🎶 Track: 
-            <select id="track-selector">
-              <option value="8bit" selected>8-Bit Retro</option>
-              <option value="lofi">Lo-Fi Chill</option>
-              <option value="boss">Boss Battle</option>
-              <option value="suspense">Suspense</option>
-              <option value="horror">Horror</option>
-            </select>
-          </label>
-          <button id="close-sound-panel">Close</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="theme-selector">
-      <div class="theme-selector-content">
-        <div class="theme-selector-header">
-          <h2>🎨 Theme Selector</h2>
-          <button id="close-theme-selector">✕</button>
-        </div>
-        
-        <div class="theme-tabs">
-          <button class="theme-tab active" data-tab="predefined">Predefined Themes</button>
-          <button class="theme-tab" data-tab="custom">Custom Theme</button>
-        </div>
-        
-        <div class="theme-tab-content active" id="predefined-tab">
-          <div class="themes-grid" id="themes-grid">
-            </div>
-        </div>
-        
-        <div class="theme-tab-content" id="custom-tab">
-          <div class="custom-theme-creator">
-            <h3>✨ Create Your Custom Theme</h3>
-            <div class="color-picker-group">
-              <div class="color-picker-item">
-                <label>Background Start Color</label>
-                <div class="color-input-wrapper">
-                  <input type="color" id="custom-bg-start" value="#667eea">
-                  <input type="text" id="custom-bg-start-text" value="#667eea">
-                </div>
-              </div>
-              <div class="color-picker-item">
-                <label>Background End Color</label>
-                <div class="color-input-wrapper">
-                  <input type="color" id="custom-bg-end" value="#764ba2">
-                  <input type="text" id="custom-bg-end-text" value="#764ba2">
-                </div>
-              </div>
-              <div class="color-picker-item">
-                <label>Text Color</label>
-                <div class="color-input-wrapper">
-                  <input type="color" id="custom-text-color" value="#ffffff">
-                  <input type="text" id="custom-text-color-text" value="#ffffff">
-                </div>
-              </div>
-              <div class="color-picker-item">
-                <label>Accent Color</label>
-                <div class="color-input-wrapper">
-                  <input type="color" id="custom-accent-color" value="#ff6b6b">
-                  <input type="text" id="custom-accent-color-text" value="#ff6b6b">
-                </div>
-              </div>
-              <div class="color-picker-item">
-                <label>Button Start Color</label>
-                <div class="color-input-wrapper">
-                  <input type="color" id="custom-button-start" value="#ff6b6b">
-                  <input type="text" id="custom-button-start-text" value="#ff6b6b">
-                </div>
-              </div>
-              <div class="color-picker-item">
-                <label>Button End Color</label>
-                <div class="color-input-wrapper">
-                  <input type="color" id="custom-button-end" value="#ff9a76">
-                  <input type="text" id="custom-button-end-text" value="#ff9a76">
-                </div>
-              </div>
-              <div class="color-picker-item">
-                <label>Font Family</label>
-                <select id="custom-font-family">
-                  <option value="'Poppins', sans-serif">Poppins (Default)</option>
-                  <option value="'Arial', sans-serif">Arial</option>
-                  <option value="'Helvetica', sans-serif">Helvetica</option>
-                  <option value="'Georgia', serif">Georgia</option>
-                  <option value="'Times New Roman', serif">Times New Roman</option>
-                  <option value="'Courier New', monospace">Courier New</option>
-                  <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
-                  <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
-                  <option value="'Verdana', sans-serif">Verdana</option>
-                  <option value="'Impact', sans-serif">Impact</option>
-                  <option value="'Brush Script MT', cursive">Brush Script</option>
-                  <option value="'Palatino', serif">Palatino</option>
-                </select>
-              </div>
-            </div>
-            <div class="custom-theme-actions">
-              <button id="preview-custom-theme">👁️ Preview</button>
-              <button id="save-custom-theme">💾 Save Theme</button>
-              <button id="reset-custom-theme">🔄 Reset</button>
-              <button id="random-color-theme">🎲 Random</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="currency-display" class="currency-panel">
-      <span>🪙 Nothing Coins: </span><span id="coin-count">0</span>
-    </div>
-    
-    <div class="shop-and-user">
-
-      <div id="user-section">
-        <input type="text" id="username" placeholder="Enter your name" />
-        <button id="saveName">Save</button>
-        <p id="greeting"></p>
-      </div>
-
-      <div id="shop" class="shop-panel">
-        <h3>Nothing Shop</h3>
-        <div class="shop-item" id="shinier-nothing">
-          <div class="shop-info">
-            <p class="item-name">✨ Shinier Nothing</p>
-            <p class="item-cost">Cost: 50 Nothing Coins</p>
-          </div>
-          <button id="buy-shinier">Buy</button>
-        </div>
-      </div>
-      
-    </div>
-
     <script src="js/script.js"></script>
     <script src="js/clock.js"></script>
-    
+
+    <!-- 🧠 BOT DETECTION LOGIC -->
+    <script>
+      window.onload = function () {
+        let clickCount = 0;
+
+        const uselessButton = document.getElementById("useless-button");
+        const botPopup = document.getElementById("bot-detection-popup");
+        const submitAnswerBtn = document.getElementById("submit-bot-answer");
+
+        if (uselessButton) {
+          uselessButton.addEventListener("click", function () {
+            clickCount++;
+
+            // 🔢 Change this number to 1500 for real use
+            if (clickCount === 1500) {
+              botPopup.style.display = "flex";
+            }
+          });
+        }
+
+        if (submitAnswerBtn) {
+          submitAnswerBtn.addEventListener("click", function () {
+            const answer = document.getElementById("bot-answer").value.trim();
+            const feedback = document.getElementById("bot-feedback");
+
+            if (answer === "8") {
+              feedback.textContent = "✅ Verified! You’re human.";
+              feedback.style.color = "limegreen";
+
+              setTimeout(() => {
+                botPopup.style.display = "none";
+                clickCount = 0;
+              }, 1000);
+            } else {
+              feedback.textContent = "❌ Wrong answer. Try again.";
+              feedback.style.color = "red";
+            }
+          });
+        }
+      };
+    </script>
   </body>
 </html>
