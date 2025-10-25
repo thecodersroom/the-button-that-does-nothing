@@ -1554,11 +1554,12 @@ if (button) {
 initializeCounter();
 initSoundSettings();
 
-// ===== Reset Score Button (Rickroll) - 
+// ===== Reset Score Button (Rickroll) =====
 const resetScoreButton = document.getElementById('reset-score-button');
 
 if (resetScoreButton) {
     resetScoreButton.addEventListener('click', function() {
+        // Open rickroll video in new tab
         window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
         
         // Add fake loading animation
