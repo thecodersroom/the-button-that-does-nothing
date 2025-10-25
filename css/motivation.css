@@ -1,0 +1,149 @@
+body {
+  background: linear-gradient(180deg, #0f1724, #071024 75%);
+  color: #e6eef8;
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.motivation-container {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 14px;
+  padding: 32px;
+  max-width: 900px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.motivation-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.motivation-header h1 {
+  margin: 0 0 6px 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #9be7ff;
+}
+
+.motivation-header p {
+  color: #9aa6bf;
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 6px;
+  color: #9be7ff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: opacity 0.2s ease;
+}
+
+.back-link:hover {
+  opacity: 0.8;
+}
+
+.motivation-note {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 24px;
+  color: #9aa6bf;
+  font-size: 0.9rem;
+}
+
+.motivation-note ul {
+  margin: 8px 0 0 20px;
+  padding: 0;
+}
+
+#quotes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: quote;
+  display: grid;
+  gap: 14px;
+}
+
+#quotes li.quote {
+  counter-increment: quote;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 4px 14px rgba(2, 6, 23, 0.35);
+  position: relative;
+}
+
+#quotes li.quote::before {
+  content: counter(quote) ".";
+  font-weight: 600;
+  color: #9be7ff;
+  font-size: 1rem;
+  min-width: 28px;
+  text-align: center;
+  position: absolute;
+  left: 60px;
+  top: 16px;
+  opacity: 0.4;
+}
+
+blockquote {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: #e8f3ff;
+  quotes: "“" "”" "‘" "’";
+}
+
+blockquote::before {
+  content: open-quote;
+  color: #9be7ff;
+  margin-right: 4px;
+}
+blockquote::after {
+  content: close-quote;
+  color: #9be7ff;
+  margin-left: 4px;
+}
+
+cite {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #9aa6bf;
+}
+
+/* Avatar Styling */
+.quote img.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  object-fit: cover;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.quote img.avatar:hover {
+  transform: scale(1.1);
+}
+
+.motivation-footer {
+  text-align: center;
+  margin-top: 28px;
+  color: #9aa6bf;
+  font-size: 0.85rem;
+}
