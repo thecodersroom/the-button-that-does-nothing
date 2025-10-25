@@ -310,10 +310,6 @@ body.dark-mode .app-container {
   backdrop-filter: blur(20px) saturate(180%);
 }
 
-/* REMOVED .clock, #timer.timer, #dark-mode-toggle rules from here */
-/* REMOVED .theme-sound button rule from here */
-/* REMOVED .currency-panel rule from here */
-
 body.dark-mode .shop-panel,
 body.dark-mode #user-section {
   background: rgba(0, 0, 0, 0.5);
@@ -327,7 +323,7 @@ body.dark-mode .toggle-label {
 }
 
 body.dark-mode .stat-card,
-body.dark-mode .quote { /* Keep quote styling separate */
+body.dark-mode .quote {
   background: rgba(0, 0, 0, 0.4);
   border-color: rgba(255, 255, 255, 0.15);
 }
@@ -335,11 +331,6 @@ body.dark-mode .quote { /* Keep quote styling separate */
 body.dark-mode #username {
   background-color: rgba(0, 0, 0, 0.3);
   border-color: rgba(255, 255, 255, 0.2);
-}
-
-body.dark-mode .control-buttons button {
-  background: rgba(0, 0, 0, 0.6);
-  border-color: rgba(255, 255, 255, 0.15);
 }
 
 /* === GLOBAL RESET & BASE STYLES === */
@@ -419,14 +410,17 @@ h1::after {
   border-radius: var(--radius-full);
 }
 
-/* === IMPOSSIBLE MODE TOGGLE === */
+/* === IMPOSSIBLE MODE TOGGLE & TIME ATTACK BUTTON CONTAINER === */
 .toggle-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: var(--space-lg); /* Add gap between items */
   margin-bottom: var(--space-xl);
+  flex-wrap: wrap; /* Allow wrapping on small screens */
 }
 
+/* Base style for both toggle and button */
 .toggle-label {
   display: flex;
   align-items: center;
@@ -438,6 +432,7 @@ h1::after {
   border-radius: var(--radius-full);
   border: 1px solid var(--border-color);
   transition: all var(--transition-base);
+  color: var(--text-color); /* Ensure text color */
 }
 
 .toggle-label:hover {
@@ -446,6 +441,7 @@ h1::after {
   border-color: var(--accent-color);
 }
 
+/* Style for Impossible Mode specifically */
 .toggle-label input[type="checkbox"] {
   position: absolute;
   opacity: 0;
@@ -498,6 +494,35 @@ h1::after {
   text-shadow: 0 0 10px currentColor;
   animation: pulseText 1.5s ease infinite;
 }
+
+/* Adjust Time Attack button when placed next to toggle */
+#time-attack-button.toggle-label {
+  cursor: pointer; /* Ensure cursor is pointer */
+  padding: var(--space-md) var(--space-lg); /* Match padding */
+  background: var(--card-bg); /* Use card background */
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  font-weight: 600;
+  transition: all var(--transition-base); /* Inherit transition */
+  text-decoration: none; /* Remove default button underline */
+  font-size: var(--text-base); /* Match toggle text size */
+}
+
+#time-attack-button.toggle-label:hover {
+  /* Keep hover consistent with toggle label */
+   transform: translateY(-2px);
+   box-shadow: var(--shadow-lg);
+   border-color: var(--accent-color);
+}
+
+#time-attack-button.toggle-label:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border-color);
+}
+
 
 @keyframes pulseText {
   0%, 100% { opacity: 1; }
@@ -875,8 +900,6 @@ h1::after {
   animation: fadeIn 0.5s ease;
 }
 
-/* REMOVED old .timer styles */
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -1177,7 +1200,16 @@ h1::after {
   animation: pulseGlow 2s infinite;
 }
 
-/* @keyframes pulseGlow - defined elsewhere, ensure it exists */
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 20px var(--accent-color));
+  }
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 40px var(--accent-color));
+  }
+}
 
 .result-stats {
   margin: var(--space-2xl) 0;
@@ -1952,8 +1984,6 @@ body.flipped {
   }
 }
 
-/* REMOVED .currency-panel rules */
-
 .shop-and-user {
   display: flex;
   justify-content: center;
@@ -2155,9 +2185,7 @@ body.flipped {
 }
 
 /* Style adjustments for items moved into the panel */
-#top-panel #currency-display,
-#top-panel .clock-container,
-#top-panel #timer {
+#top-panel .panel-item { /* Base class for consistent styling */
   position: relative; /* Override fixed/absolute if any existed */
   top: auto;
   left: auto;
@@ -2172,7 +2200,10 @@ body.flipped {
   background: transparent; /* Make background transparent, panel handles glass */
   backdrop-filter: none; /* Panel handles blur */
   color: var(--text-color); /* Ensure text color matches theme */
+  display: flex; /* Helps vertical alignment */
+  align-items: center;
 }
+
 
 /* Adjust coin display specifics */
 #top-panel #currency-display {
@@ -2182,23 +2213,27 @@ body.flipped {
 }
 
 /* Adjust clock text specifics */
+#top-panel .clock-container {
+   padding: 0; /* Remove padding from container */
+}
 #top-panel .clock {
     background: transparent;
-    padding: 0;
+    padding: 0; /* Remove padding from clock itself */
     font-size: 1em; /* Adjust relative to container */
     font-weight: 600;
     box-shadow: none;
     border: none;
     backdrop-filter: none;
-    /* Removed text-align: right */
+    /* text-align: right; removed */
 }
 
 /* Adjust timer text specifics */
 #top-panel #timer {
-    /* Removed text-align: center */
+    /* text-align: center; removed */
     display: flex; /* Help align icon and text */
     align-items: center;
     gap: 5px; /* Space between icon and text */
+    padding: 6px 10px; /* Re-apply padding */
 }
 
 /* Group the buttons */
@@ -2206,6 +2241,7 @@ body.flipped {
   display: flex;
   align-items: center;
   gap: 8px; /* Space between buttons */
+  padding: 0; /* Remove padding from the button group container */
 }
 
 /* Style buttons within the panel */
@@ -2262,21 +2298,22 @@ body.dark-mode #top-panel {
   border-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
-
+body.dark-mode #top-panel .panel-item { /* Ensure text stays white */
+   color: #ffffff;
+}
 body.dark-mode #top-panel .panel-buttons button {
    background: rgba(0, 0, 0, 0.2);
    border-color: rgba(255, 255, 255, 0.1);
+   color: #ffffff; /* Ensure icon stays white */
 }
-
 body.dark-mode #top-panel .panel-buttons button:hover {
    background: rgba(0, 0, 0, 0.3);
    border-color: rgba(255, 255, 255, 0.2);
 }
-
 body.dark-mode #top-panel #currency-display {
    background: rgba(255, 215, 0, 0.15); /* Slightly darker gold */
    border-color: rgba(255, 215, 0, 0.2);
+   color: #ffffff; /* Ensure text stays white */
 }
 /* --- END NEW Top Panel Styles --- */
-
 
