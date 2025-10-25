@@ -671,6 +671,20 @@ window.addEventListener("click", () => {
 if (button) {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
+    button.classList.add("button-active");
+    setTimeout(() => button.classList.remove("button-active"), 150);
+    // Scale down and back up animation
+    button.animate(
+      [
+        { transform: "scale(1)" },
+        { transform: "scale(0.9)" },
+        { transform: "scale(1)" },
+      ],
+      {
+        duration: 180,
+        easing: "ease-in-out",
+      }
+    );
 
     // --- START TIME ATTACK LOGIC ---
     if (isTimeAttackActive) {
@@ -688,7 +702,7 @@ if (button) {
     if (clicks > highScore) {
       highScore = clicks;
       if (highScoreDisplay) highScoreDisplay.textContent = highScore;
-      localStorage.setItem('nothingHighScore', highScore); // Save high score
+      localStorage.setItem("nothingHighScore", highScore); // Save high score
     }
     // === END MERGE ===
 
@@ -696,14 +710,21 @@ if (button) {
     getNewAction();
     addRippleEffect(e);
     button.textContent = getNewButtonText();
-    isButtonMoving = true; setTimeout(() => { isButtonMoving = false; }, 300);
+    isButtonMoving = true;
+    setTimeout(() => {
+      isButtonMoving = false;
+    }, 300);
     const randomMessage = messages[Math.floor(Math.random() * messages.length)];
     updateCounter(`— ${randomMessage}`);
     button.style.backgroundColor = getRandomColor();
-    const width = getRandomNumber(150, 250); const height = getRandomNumber(80, 150);
-    button.style.width = `${width}px`; button.style.height = `${height}px`;
+    const width = getRandomNumber(150, 250);
+    const height = getRandomNumber(80, 150);
+    button.style.width = `${width}px`;
+    button.style.height = `${height}px`;
     button.style.transform = "scale(1.2) rotate(10deg)";
-    setTimeout(() => { if(button) button.style.transform = "scale(1) rotate(0deg)"; }, 150);
+    setTimeout(() => {
+      if (button) button.style.transform = "scale(1) rotate(0deg)";
+    }, 150);
     if (!userInteracted) userInteracted = true;
     playSound(clickSound);
     createSmokeTrail();
@@ -726,8 +747,8 @@ if (button) {
     // === MERGED: Random Mini Event Trigger from main ===
     // --- MODIFIED FOR TIME ATTACK ---
     if (!isTimeAttackActive && Math.random() < 0.15) {
-        const randomIndex = Math.floor(Math.random() * miniEvents.length);
-        miniEvents[randomIndex]();
+      const randomIndex = Math.floor(Math.random() * miniEvents.length);
+      miniEvents[randomIndex]();
     }
     // === END MERGE ===
     const { left, top } = getRandomLocation(); // Destructure correctly

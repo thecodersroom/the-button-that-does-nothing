@@ -906,6 +906,14 @@ h1::after {
   }
 }
 
+.nothing-button {
+  transition: transform 0.15s ease-in-out;
+}
+
+.nothing-button.button-active {
+  transform: scale(0.9);
+}
+
 .control-buttons button {
   width: 76px;
   height: 90px;
