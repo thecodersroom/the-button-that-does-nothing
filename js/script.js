@@ -1588,36 +1588,171 @@ if (button) {
 initializeCounter();
 initSoundSettings();
 
-// ===== Reset Score Button (Rickroll) =====
+
+// ===== Reset Score Button (Threatening Messages with Cycle) =====
 const resetScoreButton = document.getElementById('reset-score-button');
 if (resetScoreButton) {
-    resetScoreButton.addEventListener('click', function() {
-        // Open rickroll video in new tab
-        window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+    // Array of threatening/funny messages
+    const threats = [
+        "This is where you die.",
+        "The End is Nigh.",
+        "Commit Suicide.",
+        "The Devs were here.",
+        "No going back.",
+        "Accept your fate.",
+        "Nice try, human.",
+        "Error 404: Reset not found",
+        "Ctrl+Alt+Delete your life.",
+        "Have you tried turning it off?",
+        "Instructions unclear.",
+        "Task failed successfully.",
+        "It's a feature, not a bug.",
+        "Working as intended.",
+        "You're not the admin here.",
+        "Access: DENIED.",
+        "sudo rm -rf your_hopes",
+        "Console.log(your_pain)",
+        "Git commit -m 'your regrets'",
+        "Undefined is not a function.",
+        "NullPointerException: Hope",
+        "Segmentation fault (core dumped)",
+        "Press F to pay respects.",
+        "Press Alt+F4 to reset.",
+        "Did you read the docs? No.",
+        "RTFM.",
+        "Skill issue detected.",
+        "Main character syndrome.",
+        "The lion, the witch, the audacity.",
+        "Not today, Satan.",
+        "This ain't it, chief.",
+        "Nope. Try again. Never.",
+        "Delete System32 for reset.",
+        "Windows has stopped working.",
+        "Blue Screen of Death incoming.",
+        "Fatal Error: Life.exe",
+        "Restart pending: 2-5 business days",
+        "Your click has been noted.",
+        "Forwarded to the void.",
+        "Request timed out. Forever.",
+        "503: Service Unavailable. Always.",
+        "Your call is important to us.",
+        "Please hold. Indefinitely.",
+        "Loading... 0% complete.",
+        "Buffering... since 1999.",
+        "Connection lost. Never had one.",
+        "Server not responding. Neither are we.",
+        "Out of office: Permanently.",
+        "Unsubscribe from existence?",
+        "You've been blocked.",
+        "Muted. Forever.",
+        "This tweet has been deleted.",
+        "Comment removed by moderator.",
+        "Banned from life.",
+        "You lack the required permissions.",
+        "Insufficient privilege level.",
+        "Admin rights required. You're not admin.",
+        "Root access denied.",
+        "Authentication failed miserably."
+    ];
+    
+    // Store original text
+    const originalText = resetScoreButton.textContent;
+    let isShowingThreat = false;
+    let threatTimeout = null;
+    
+    // Click handler
+    resetScoreButton.addEventListener('click', function(e) {
+        e.preventDefault();
         
-        // Add fake loading animation
+        // Prevent rapid clicking
+        if (isShowingThreat) return;
+        
+        isShowingThreat = true;
         const btn = this;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '⏳ Resetting...';
-        btn.disabled = true;
         
-        setTimeout(() => {
-            btn.innerHTML = '😏 Nice Try!';
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }, 1500);
-        }, 2000);
+        // Pick random threat
+        const randomThreat = threats[Math.floor(Math.random() * threats.length)];
         
-        // Optional: Play a sound effect
-        if (userInteracted && soundsEnabled) {
+        // Add threatening class and shake
+        btn.classList.add('threatening', 'shake');
+        btn.textContent = randomThreat;
+        
+        // Play ominous sound
+        if (userInteracted && soundsEnabled && failSound) {
             playSound(failSound);
         }
         
-        // Optional: Show a sarcastic message
+        // Show sarcastic message in quote
         if (quoteDiv) {
-            quoteDiv.textContent = "😂 Did you really think it would be that easy?";
+            const snarkyMessages = [
+                "😈 You were warned...",
+                "💀 The button does nothing. Like everything else here.",
+                "⚠️ Did you expect something to happen?",
+                "🔥 Bold of you to click that.",
+                "👻 Congratulations, you've achieved... nothing.",
+                "⚡ The devs are laughing at you right now.",
+                "☠️ Nice try. But no.",
+                "🎭 The audacity...",
+                "⚰️ That button is just for show.",
+                "🌑 Darkness awaits... but not your reset.",
+                "💥 SIKE! Nothing happened.",
+                "🚫 Permission denied. Forever.",
+                "🎪 Welcome to the circus of disappointment.",
+                "🤡 Honk honk! You just played yourself.",
+                "🎯 You missed. Like, really badly.",
+                "🧠 Big brain move... not.",
+                "💩 Well, that was a waste of a click.",
+                "🤦 Even I'm embarrassed for you.",
+                "🙃 Plot twist: Nothing resets. Ever.",
+                "🎲 You rolled a critical failure.",
+                "📉 Your IQ just dropped 5 points.",
+                "🏆 Achievement Unlocked: Professional Idiot",
+                "🎬 And the Oscar for worst decision goes to...",
+                "🍿 This is entertaining. For me.",
+                "⏰ Time wasted: +1 second. Worth it? No.",
+                "🎮 Game Over. You lose. Again.",
+                "📱 This is why we can't have nice things.",
+                "🔮 The crystal ball says: NOPE.",
+                "🎰 You lost. House always wins.",
+                "🎪 Step right up to the disappointment show!",
+                "🤖 Beep boop: Human stupidity detected.",
+                "👽 Even aliens wouldn't abduct you after this.",
+                "🌟 You're a star! A dying one.",
+                "🎨 That's not how any of this works.",
+                "📚 Maybe try reading next time?",
+                "🔬 Science can't explain your logic.",
+                "⚗️ The experiment failed. You're the control group.",
+                "🎵 Cue the Curb Your Enthusiasm theme.",
+                "📞 Tech support is not available for you.",
+                "💸 You just lost The Game.",
+                "🎁 Surprise! It's nothing. Like this button.",
+                "🌈 Follow the rainbow to nowhere.",
+                "⚡ Zeus himself couldn't help you now.",
+                "🧙 Expecto Patronum? More like Expecto Nothing.",
+                "🦄 Even unicorns think you're delusional.",
+                "🐉 The dragon guards the reset. You're not worthy.",
+                "🗡️ Your sword has no power here.",
+                "🛡️ Your defense against stupidity: 0",
+                "🎪 The greatest show on earth: Your failure.",
+                "🎭 Breaking news: Local person clicks useless button.",
+                "📰 In other news: Water is wet, you're confused."
+            ];
+            quoteDiv.textContent = snarkyMessages[Math.floor(Math.random() * snarkyMessages.length)];
         }
+        
+        // Remove shake after animation
+        setTimeout(() => {
+            btn.classList.remove('shake');
+        }, 500);
+        
+        // Revert back to original after 2.5 seconds
+        threatTimeout = setTimeout(() => {
+            btn.classList.remove('threatening');
+            btn.textContent = originalText;
+            isShowingThreat = false;
+        }, 2500);
     });
+    
+    // Add hover tooltip
+    resetScoreButton.title = "Try me if you dare...";
 }
-
