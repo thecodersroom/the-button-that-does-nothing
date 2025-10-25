@@ -120,7 +120,7 @@ body::after {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: 
+  background:
     radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
     radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
@@ -310,27 +310,9 @@ body.dark-mode .app-container {
   backdrop-filter: blur(20px) saturate(180%);
 }
 
-body.dark-mode .clock,
-body.dark-mode #timer.timer,
-body.dark-mode #dark-mode-toggle {
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-/* DARK MODE FIX: Apply dark mode to new buttons */
-body.dark-mode .theme-sound button {
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-
-body.dark-mode .currency-panel {
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
-  border-color: rgba(255, 215, 0, 0.3);
-}
+/* REMOVED .clock, #timer.timer, #dark-mode-toggle rules from here */
+/* REMOVED .theme-sound button rule from here */
+/* REMOVED .currency-panel rule from here */
 
 body.dark-mode .shop-panel,
 body.dark-mode #user-section {
@@ -345,8 +327,7 @@ body.dark-mode .toggle-label {
 }
 
 body.dark-mode .stat-card,
-body.dark-mode .quote,
-body.dark-mode .timer {
+body.dark-mode .quote { /* Keep quote styling separate */
   background: rgba(0, 0, 0, 0.4);
   border-color: rgba(255, 255, 255, 0.15);
 }
@@ -384,7 +365,8 @@ body {
   color: var(--text-color);
   overflow-x: hidden;
   padding: var(--space-lg);
-  background: transparent !important;
+  background: transparent !important; /* Let ::before handle the background */
+  padding-top: 80px; /* Add padding to prevent overlap with fixed top panel */
 }
 
 /* Remove the old gradient animation since we have the new background */
@@ -414,7 +396,7 @@ h1 {
   font-size: clamp(var(--text-3xl), 5vw, var(--text-6xl));
   font-weight: 700;
   margin: 0 0 var(--space-xl) 0;
-  margin-top: var(--space-3xl);
+  /* Removed margin-top as body padding handles spacing */
   background: linear-gradient(135deg, var(--text-color), var(--accent-color));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -560,7 +542,7 @@ h1::after {
   justify-content: center;
   --magnetic-x: 0px;
   --magnetic-y: 0px;
-  box-shadow: 
+  box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.1),
     0 10px 20px rgba(0, 0, 0, 0.15),
     0 20px 40px rgba(0, 0, 0, 0.1),
@@ -572,7 +554,7 @@ h1::after {
 
 @keyframes buttonBreath {
   0%, 100% {
-    box-shadow: 
+    box-shadow:
       0 4px 6px rgba(0, 0, 0, 0.1),
       0 10px 20px rgba(0, 0, 0, 0.15),
       0 20px 40px rgba(0, 0, 0, 0.1),
@@ -581,7 +563,7 @@ h1::after {
       inset 0 2px 0 rgba(255, 255, 255, 0.2);
   }
   50% {
-    box-shadow: 
+    box-shadow:
       0 4px 6px rgba(0, 0, 0, 0.1),
       0 10px 20px rgba(0, 0, 0, 0.15),
       0 20px 40px rgba(0, 0, 0, 0.1),
@@ -603,7 +585,7 @@ h1::after {
 
 #useless-button:hover {
   transform: translate(var(--magnetic-x), calc(var(--magnetic-y) - 8px)) scale(1.05);
-  box-shadow: 
+  box-shadow:
     0 8px 12px rgba(0, 0, 0, 0.15),
     0 20px 40px rgba(0, 0, 0, 0.2),
     0 30px 60px rgba(0, 0, 0, 0.15),
@@ -618,7 +600,7 @@ h1::after {
 
 #useless-button:active {
   transform: translate(var(--magnetic-x), calc(var(--magnetic-y) - 2px)) scale(0.98);
-  box-shadow: 
+  box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.1),
     0 5px 10px rgba(0, 0, 0, 0.15),
     0 0 40px rgba(255, 107, 107, 0.4),
@@ -639,6 +621,9 @@ h1::after {
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  display: block; /* Make it block level */
+  width: fit-content; /* Size to content */
+  margin: var(--space-md) auto; /* Center it */
 }
 
 #share-button:hover {
@@ -754,7 +739,7 @@ h1::after {
 }
 
 /* To make the score number (e.g., "7") stand out */
-#high-score {
+#high-score, #time-attack-high-score { /* Apply to both */
   font-weight: 700;
   color: var(--accent-color);
   font-size: var(--text-xl);
@@ -843,8 +828,8 @@ h1::after {
   letter-spacing: 1px;
 }
 
-/* === QUOTE & TIMER === */
-.quote, .timer {
+/* === QUOTE (Outside Top Panel) === */
+.quote {
   margin: var(--space-lg) 0;
   padding: var(--space-lg);
   background: var(--card-bg);
@@ -853,9 +838,6 @@ h1::after {
   border: 1px solid var(--border-color);
   text-align: center;
   transition: all var(--transition-base);
-}
-
-.quote {
   font-size: var(--text-lg);
   font-style: italic;
   min-height: 60px;
@@ -865,18 +847,14 @@ h1::after {
   animation: fadeIn 0.5s ease;
 }
 
-.timer {
-  font-size: var(--text-base);
-  font-weight: 600;
-  color: var(--text-secondary);
-}
+/* REMOVED old .timer styles */
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* === FLOATING CONTROL PANEL === */
+/* === FLOATING CONTROL PANEL (Bottom Right) === */
 .control-buttons {
   position: fixed;
   right: var(--space-xl);
@@ -934,9 +912,8 @@ h1::after {
   background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
 }
 
-/* Tooltip */
-.control-buttons button::before,
-.top-right-controls button:before{
+/* Tooltip for bottom-right buttons */
+.control-buttons button::before {
   content: attr(title);
   position: absolute;
   right: calc(100% + var(--space-md));
@@ -954,17 +931,16 @@ h1::after {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.control-buttons button:hover::before,
-.top-right-controls button:hover::before {
+.control-buttons button:hover::before {
   opacity: 1;
   transform: translateX(0);
 }
 
-/* make theme and sound in same line */
-.theme-sound {
-  display: flex;
-  gap: 10px;
-}
+/* REMOVED old .top-right-controls rules */
+/* REMOVED old #dark-mode-toggle rule */
+/* REMOVED old .theme-sound rules */
+/* REMOVED old #timer.timer rule */
+
 
 @media (max-width: 768px) {
   .control-buttons {
@@ -1165,16 +1141,7 @@ h1::after {
   animation: pulseGlow 2s infinite;
 }
 
-@keyframes pulseGlow {
-  0%, 100% {
-    transform: scale(1);
-    filter: drop-shadow(0 0 20px var(--accent-color));
-  }
-  50% {
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 40px var(--accent-color));
-  }
-}
+/* @keyframes pulseGlow - defined elsewhere, ensure it exists */
 
 .result-stats {
   margin: var(--space-2xl) 0;
@@ -1708,6 +1675,28 @@ h1::after {
 }
 
 /* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+    /* Styles for the new top panel on smaller screens */
+  #top-panel {
+    flex-wrap: wrap; /* Allow items to wrap */
+    justify-content: center; /* Center items when wrapped */
+    padding: 6px 10px;
+    gap: 10px;
+    top: 10px;
+  }
+  #top-panel .panel-item { /* Adjust font size for items */
+    font-size: 0.8em;
+    padding: 4px 8px;
+  }
+   #top-panel .panel-buttons button { /* Adjust button size */
+    font-size: 1.1em;
+    padding: 6px;
+  }
+  body {
+    padding-top: 100px; /* Adjust if panel wraps to two lines */
+  }
+}
+
 @media (max-width: 600px) {
   :root {
     --space-2xl: 32px;
@@ -1716,6 +1705,7 @@ h1::after {
 
   body {
     padding: var(--space-md);
+    padding-top: 100px; /* Ensure space for the top panel */
   }
 
   .app-container {
@@ -1926,26 +1916,7 @@ body.flipped {
   }
 }
 
-/* Currency Display Panel */
-.currency-panel {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  background: rgba(255, 215, 0, 0.2);
-  backdrop-filter: blur(8px);
-  color: var(--text-color);
-  padding: 10px 20px;
-  font-weight: 700;
-  font-size: 1.1em;
-  border-radius: 50px;
-  border: 2px solid rgba(255, 215, 0, 0.4);
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
-  z-index: 1000;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+/* REMOVED .currency-panel rules */
 
 .shop-and-user {
   display: flex;
@@ -2030,17 +2001,7 @@ body.flipped {
   box-shadow: none;
 }
 
-@keyframes pulseGlow {
-
-  0%,
-  100% {
-    box-shadow: 0 0 30px 6px #FFD700;
-  }
-
-  50% {
-    box-shadow: 0 0 50px 12px #FFD700;
-  }
-}
+/* @keyframes pulseGlow - defined elsewhere, ensure it exists */
 
 .golden-pulse {
   animation: pulseGlow 2s infinite;
@@ -2136,87 +2097,150 @@ body.flipped {
   text-align: center;
 }
 
-/* --- from main --- */
-/* Top-Right Controls Fix */
-.top-right-controls {
+/* --- NEW: Top Control Panel Styles --- */
+
+#top-panel {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 15px; /* Adjust spacing from top */
+  left: 50%;
+  transform: translateX(-50%); /* Center horizontally */
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
-  z-index: 800;
+  align-items: center; /* Vertically align items */
+  gap: 15px; /* Space between items */
+  padding: 8px 15px; /* Padding inside the panel */
+  background: rgba(255, 255, 255, 0.1); /* Glassmorphism background */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px; /* Squircle shape */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  z-index: 1000; /* Keep on top */
+  transition: background var(--transition-base); /* Smooth theme transition */
 }
 
-.top-right-controls>div,
-.top-right-controls>button {
-  position: relative !important;
-  top: auto !important;
-  right: auto !important;
-  left: auto !important;
-  bottom: auto !important;
-  margin: 0;
-  width: auto;
+/* Style adjustments for items moved into the panel */
+#top-panel #currency-display,
+#top-panel .clock-container,
+#top-panel #timer {
+  position: relative; /* Override fixed/absolute if any existed */
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  padding: 6px 10px; /* Consistent padding */
+  margin: 0; /* Remove potential extra margins */
+  box-shadow: none; /* Remove individual shadows if needed */
+  border: none; /* Remove individual borders if needed */
+  font-size: 0.9em; /* Slightly smaller text */
+  white-space: nowrap; /* Prevent timer text wrapping */
+  background: transparent; /* Make background transparent, panel handles glass */
+  backdrop-filter: none; /* Panel handles blur */
+  color: var(--text-color); /* Ensure text color matches theme */
 }
 
-/* Dark Mode Toggle Button */
-#dark-mode-toggle {
-  padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  font-size: 1.3em;
-  cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  color: var(--text-color); /* Added for consistency */
+/* Adjust coin display specifics */
+#top-panel #currency-display {
+   background: rgba(255, 215, 0, 0.1); /* Keep subtle gold bg */
+   border-radius: 12px;
+   font-weight: 600;
 }
 
-#dark-mode-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+/* Adjust clock text specifics */
+#top-panel .clock {
+    background: transparent;
+    padding: 0;
+    font-size: 1em; /* Adjust relative to container */
+    font-weight: 600;
+    box-shadow: none;
+    border: none;
+    backdrop-filter: none;
+    /* Removed text-align: right */
 }
 
-/* FIX: Added styles for theme and sound buttons
-  to match the other glassmorphism controls.
-*/
-.theme-sound {
+/* Adjust timer text specifics */
+#top-panel #timer {
+    /* Removed text-align: center */
+    display: flex; /* Help align icon and text */
+    align-items: center;
+    gap: 5px; /* Space between icon and text */
+}
+
+/* Group the buttons */
+.panel-buttons {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 8px; /* Space between buttons */
 }
 
-.theme-sound button {
-  padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  font-size: 1.3em; /* Match dark mode toggle */
-  cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  color: var(--text-color); /* Match dark mode toggle */
-  line-height: 1.3; /* Fix icon alignment */
-}
-
-.theme-sound button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-}
-
-
-/* Time spent timer - reduced backdrop filter to prevent conflicts */
-#timer.timer {
+/* Style buttons within the panel */
+#top-panel .panel-buttons button {
+  position: relative; /* Needed for tooltips */
+  padding: 8px; /* Smaller padding */
+  font-size: 1.2em; /* Adjust icon size */
+  line-height: 1; /* Center icon */
+  border-radius: 10px; /* Slightly less rounded */
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  backdrop-filter: none; /* Panel handles blur */
+  transition: all var(--transition-fast);
   color: var(--text-color);
-  background-color: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
-  padding: 10px 16px;
-  border-radius: 12px;
-  font-size: 0.9em;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  text-align: center;
-  white-space: nowrap;
+  cursor: pointer;
 }
+
+#top-panel .panel-buttons button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Ensure tooltips work for buttons inside panel */
+#top-panel .panel-buttons button::before {
+  content: attr(title);
+  position: absolute;
+  bottom: calc(100% + 8px); /* Position above the button */
+  left: 50%;
+  transform: translateX(-50%); /* Center horizontally */
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85));
+  color: white;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease-out; /* Faster transition */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#top-panel .panel-buttons button:hover::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-5px); /* Add slight upward move */
+}
+
+
+/* Dark Mode for the panel */
+body.dark-mode #top-panel {
+  background: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode #top-panel .panel-buttons button {
+   background: rgba(0, 0, 0, 0.2);
+   border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode #top-panel .panel-buttons button:hover {
+   background: rgba(0, 0, 0, 0.3);
+   border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode #top-panel #currency-display {
+   background: rgba(255, 215, 0, 0.15); /* Slightly darker gold */
+   border-color: rgba(255, 215, 0, 0.2);
+}
+/* --- END NEW Top Panel Styles --- */
+
+
