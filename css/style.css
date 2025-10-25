@@ -690,32 +690,119 @@ h1::after {
   box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
 
-/* ===== Reset Score Button (Rickroll) ===== */
+/* ===== Reset Score Button (Attractive Theme-Matching) ===== */
 #reset-score-button {
-  background: linear-gradient(135deg, #ff6b6b, #ff5252);
+  position: relative;
+  background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 12px 32px;
   font-size: 1rem;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: all var(--transition-base);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    0 0 20px rgba(255, 107, 107, 0.3);
   display: block;
   width: fit-content;
   margin: var(--space-md) auto;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+  border: 2px solid transparent;
+}
+
+/* Animated gradient background */
+#reset-score-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-base);
 }
 
 #reset-score-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-  background: linear-gradient(135deg, #ff5252, #ff3838);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 6px 25px rgba(0, 0, 0, 0.25),
+    0 0 40px rgba(255, 107, 107, 0.5);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+#reset-score-button:hover::before {
+  opacity: 1;
 }
 
 #reset-score-button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 
+    0 3px 15px rgba(0, 0, 0, 0.2),
+    0 0 25px rgba(255, 107, 107, 0.4);
+}
+
+/* Shake animation when showing threat */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+  20%, 40%, 60%, 80% { transform: translateX(8px); }
+}
+
+#reset-score-button.shake {
+  animation: shake 0.5s;
+}
+
+/* Threatening state */
+#reset-score-button.threatening {
+  background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+  color: #ff4444;
+  border-color: #ff0000;
+  box-shadow: 
+    0 4px 20px rgba(255, 0, 0, 0.4),
+    0 0 30px rgba(255, 0, 0, 0.3),
+    inset 0 0 20px rgba(255, 0, 0, 0.1);
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+#reset-score-button.threatening:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 6px 30px rgba(255, 0, 0, 0.5),
+    0 0 50px rgba(255, 0, 0, 0.4),
+    inset 0 0 25px rgba(255, 0, 0, 0.15);
+}
+
+/* Pulse animation for threatening state */
+@keyframes ominous-pulse {
+  0%, 100% { 
+    box-shadow: 
+      0 4px 20px rgba(255, 0, 0, 0.4),
+      0 0 30px rgba(255, 0, 0, 0.3);
+  }
+  50% { 
+    box-shadow: 
+      0 4px 25px rgba(255, 0, 0, 0.6),
+      0 0 50px rgba(255, 0, 0, 0.5);
+  }
+}
+
+#reset-score-button.threatening {
+  animation: ominous-pulse 1.5s ease-in-out infinite;
+}
+
+/* Dark mode support */
+body.dark-mode #reset-score-button {
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 25px rgba(255, 107, 107, 0.4);
+}
+
+body.dark-mode #reset-score-button.threatening {
+  background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+  box-shadow: 
+    0 4px 25px rgba(255, 0, 0, 0.5),
+    0 0 40px rgba(255, 0, 0, 0.4);
 }
 
 /* ===== Modal ===== */
