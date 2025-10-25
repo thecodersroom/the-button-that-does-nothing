@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/clock.css" />
     <link rel="icon" type="image/x-icon" href="image/favicon.ico" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
   </head>
 
   <body>
@@ -54,6 +56,22 @@
   Time Attack High Score: <span id="time-attack-high-score">0</span>
 </div>
 <button id="share-button">Share My Score</button>
+<!-- Start Popup Modal -Dev/Jetrock -->
+  <div id="share-modal" class="modal">
+    <div class="modal-content">
+      <h3>Share Your Score</h3>
+      <p id="share-text"></p>
+
+      <div class="social-icons">
+        <i class="fab fa-whatsapp" data-platform="whatsapp"></i>
+        <i class="fab fa-x-twitter" data-platform="twitter"></i>
+        <i class="fab fa-facebook" data-platform="facebook"></i>
+        <i class="fab fa-linkedin" data-platform="linkedin"></i>
+      </div>
+    </div>
+  </div>
+<!-- End Popup Modal -Dev/Jetrock  -->
+
       <div class="control-buttons">
         <button id="time-attack-button">⏱️ Time Attack</button>
       </div>
