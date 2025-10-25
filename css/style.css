@@ -2268,27 +2268,26 @@ body.flipped {
 
 /* Ensure tooltips work for buttons inside panel */
 #top-panel .panel-buttons button::before {
-  content: attr(title);
-  position: absolute;
-  bottom: calc(100% + 8px); /* Position above the button */
-  left: 50%;
-  transform: translateX(-50%); /* Center horizontally */
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85));
-  color: white;
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-sm);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.2s ease-out; /* Faster transition */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    content: attr(title);
+    position: absolute;
+    top: calc(100% + 8px); /* Changed to position below the button */
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85));
+    color: white;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease-out;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 #top-panel .panel-buttons button:hover::before {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-5px); /* Add slight upward move */
+    opacity: 1;
+    transform: translateX(-50%) translateY(5px); /* Changed to move down on hover */
 }
 
 
