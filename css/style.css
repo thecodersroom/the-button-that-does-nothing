@@ -616,18 +616,125 @@ h1::after {
     0 0 40px rgba(255, 107, 107, 0.4),
     inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+/* ===== START CSS UPDATE DEV/Jetrock ===== */
+
+/* ===== Share Button ===== */
 #share-button {
-  background: linear-gradient(135deg, var(--info), #2563eb);
+  background: linear-gradient(135deg, var(--info, #3b82f6), #2563eb);
   color: white;
   border: none;
-  padding: var(--space-sm) var(--space-lg);
-  font-size: var(--text-sm);
+  padding: 10px 20px;
+  font-size: 1rem;
   font-weight: 600;
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
+
+#share-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+/* ===== Modal ===== */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  width: 90%;
+  max-width: 400px;
+  animation: popup 0.3s ease;
+  position: relative;
+}
+
+@keyframes popup {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ===== Modal Heading ===== */
+.modal-content h3 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: #2563eb;
+}
+
+/* ===== Share Text Box ===== */
+#share-text {
+  margin: 12px 0;
+  font-size: 0.95rem;
+  color: #333;
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 6px;
+  word-wrap: break-word;
+  line-height: 1.4;
+  min-height: 50px;
+}
+
+/* ===== Social Icons ===== */
+.social-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.social-icons i {
+  font-size: 2rem;
+  cursor: pointer;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* Brand Colors */
+.social-icons i[data-platform="whatsapp"] { color: #25D366; }
+.social-icons i[data-platform="twitter"]  { color: #1DA1F2; }
+.social-icons i[data-platform="facebook"] { color: #1877F2; }
+.social-icons i[data-platform="linkedin"] { color: #0077B5; }
+
+/* Hover Effect */
+.social-icons i:hover {
+  transform: scale(1.25);
+  opacity: 0.85;
+}
+
+/* Optional: Close Button */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s ease;
+}
+
+.modal-close:hover { color: #000; }
+
+/* Responsive */
+@media (max-width: 400px) {
+  .modal-content { padding: 20px; }
+  .social-icons { gap: 15px; }
+  .social-icons i { font-size: 1.8rem; }
+}
+
+/* ===== END CSS UPDATE Dev/Jetrock ===== */
+
 /* For the "My High Score: 7" line */
 .high-score-display {
   font-size: var(--text-lg);
@@ -645,10 +752,7 @@ h1::after {
   font-size: var(--text-xl);
   margin-left: var(--space-xs);
 }
-#share-button:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
+
 /* Ripple effect */
 #useless-button::after {
   content: '';

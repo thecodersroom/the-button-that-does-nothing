@@ -32,6 +32,13 @@ const closeSoundPanel = document.getElementById("close-sound-panel");
 // === MERGED: Added High Score and Share Button Elements from main ===
 const highScoreDisplay = document.getElementById('high-score');
 const shareButton = document.getElementById('share-button');
+
+// ---- START SCRIPT UPDATE SHARE BUTTON DEV/Jetrock ----
+const modal = document.getElementById('share-modal');
+const shareText = document.getElementById('share-text');
+const socialIcons = document.querySelectorAll('.social-icons i');
+// ---- END SCRIPT UPDATE SHARE BUTTON DEV/Jetrock ----
+
 // === END MERGE ===
 
 // === TIME ATTACK DOM ELEMENTS ===
@@ -1149,46 +1156,71 @@ if (popupNoButton) {
 }
 ["click", "mousemove", "keydown"].forEach(eventType => document.addEventListener(eventType, updateActivityTime));
 
-// === MERGED: Share Button Logic from main ===
+// === START: Share Button Logic from main DEV/Jetrock ===
+// === SHARE BUTTON LOGIC ===
 if (shareButton) {
   shareButton.addEventListener('click', () => {
     const shareMessage = `😲 I have clicked the button 'The Button That Does Nothing' ${clicks} times! My High Score is ${highScore}. Can you beat it?`;
     const gameUrl = window.location.href; // Use current URL
 
-    // Use navigator.clipboard API for better compatibility and security
+    // Show the message inside modal
+    shareText.textContent = shareMessage;
+
+    // Copy to clipboard
     if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(shareMessage + '\n' + gameUrl)
-            .then(() => {
-                const originalText = shareButton.textContent;
-                shareButton.textContent = 'Copied!';
-                setTimeout(() => { shareButton.textContent = originalText; }, 2000);
-            })
-            .catch(err => {
-                console.error('Failed to copy using navigator.clipboard: ', err);
-                // Fallback for older browsers or if permission denied
-                try {
-                    const textArea = document.createElement("textarea");
-                    textArea.value = shareMessage + '\n' + gameUrl;
-                    document.body.appendChild(textArea);
-                    textArea.focus();
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    const originalText = shareButton.textContent;
-                    shareButton.textContent = 'Copied!';
-                    setTimeout(() => { shareButton.textContent = originalText; }, 2000);
-                } catch (fallbackErr) {
-                    console.error('Fallback copy failed: ', fallbackErr);
-                    alert('Could not copy score. Please copy manually.');
-                }
-            });
-    } else {
-        // Very old browser fallback
-        alert('Clipboard API not supported. Please copy the score manually.');
+      navigator.clipboard.writeText(`${shareMessage}\n${gameUrl}`)
+        .then(() => console.log("Copied to clipboard"))
+        .catch(err => console.error('Clipboard copy failed:', err));
     }
+
+    modal.style.display = 'flex';
   });
 }
-// === END MERGE ===
+
+// === CLOSE MODAL WHEN CLICK OUTSIDE ===
+window.addEventListener('click', (e) => {
+  if (e.target === modal) {
+    modal.style.display = 'none';
+  }
+});
+
+// === SOCIAL MEDIA SHARE LINKS ===
+const socialLinks = {
+  whatsapp: `https://api.whatsapp.com/send?text=`,
+  twitter: `https://twitter.com/intent/tweet?text=`,
+  facebook: `https://www.facebook.com/sharer/sharer.php?u=`,
+  linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=`
+};
+
+// === ICON CLICK HANDLER ===
+socialIcons.forEach(icon => {
+  icon.addEventListener('click', () => {
+    const platform = icon.dataset.platform; 
+    const shareMessage = `😲 I clicked 'The Button That Does Nothing' ${clicks} times! My High Score is ${highScore}. Can you beat it?`;
+    const gameUrl = encodeURIComponent(window.location.href);
+    const encodedMessage = encodeURIComponent(shareMessage);
+    let url;
+
+    switch (platform) {
+      case 'whatsapp':
+        url = socialLinks.whatsapp + encodedMessage + '%0A' + gameUrl;
+        break;
+      case 'twitter':
+        url = socialLinks.twitter + encodedMessage + '%0A' + gameUrl;
+        break;
+      case 'facebook':
+        url = socialLinks.facebook + gameUrl + '&quote=' + encodedMessage;
+        break;
+      case 'linkedin':
+        url = socialLinks.linkedin + gameUrl;
+        break;
+    }
+
+    window.open(url, '_blank');
+    modal.style.display = 'none'; // Close modal after sharing
+  });
+});
+// === END: Share Button Logic from main DEV/Jetrock ===
 
 // === Sound Settings System ===
 function loadUnlockedTracks() {
