@@ -1,6 +1,3 @@
-<p align="center">
-  <img src="./public/logo.png" alt="The Button That Does Nothing Logo" width="160"/>
-</p>
 
 <h1 align="center">🖱️ The Button That Does Nothing</h1>
 
