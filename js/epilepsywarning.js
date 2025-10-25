@@ -3,10 +3,18 @@ window.addEventListener("load", () => {
   const warning = document.getElementById("epilepsy-warning");
   const continueBtn = document.getElementById("continue-warning");
 
-  document.body.style.overflow = "hidden";
+  const hasSeenWarning = localStorage.getItem("epilepsyAcknowledged");
 
-  continueBtn.addEventListener("click", () => {
+  if(!hasSeenWarning){
+    warning.style.display = "flex";
+    document.body.style.overflow = "hidden";
+    continueBtn.addEventListener("click", () => {
+      warning.style.display = "none";
+      document.body.style.overflow = "auto";
+      localStorage.setItem("epilepsyAcknowledged", "true");
+    });
+  } else {
     warning.style.display = "none";
     document.body.style.overflow = "auto";
-  });
+  }
 });
