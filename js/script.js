@@ -1644,7 +1644,6 @@ if (resetScoreButton) {
     const threats = [
         "This is where you die.",
         "The End is Nigh.",
-        "Commit Suicide.",
         "The Devs were here.",
         "No going back.",
         "Accept your fate.",
@@ -1667,7 +1666,6 @@ if (resetScoreButton) {
         "Press F to pay respects.",
         "Press Alt+F4 to reset.",
         "Did you read the docs? No.",
-        "RTFM.",
         "Skill issue detected.",
         "Main character syndrome.",
         "The lion, the witch, the audacity.",
