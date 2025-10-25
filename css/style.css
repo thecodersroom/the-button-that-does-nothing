@@ -414,10 +414,44 @@ h1::after {
 .toggle-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: var(--space-lg); /* Add gap between items */
+  align-items: stretch;
+  gap: var(--space-lg);
   margin-bottom: var(--space-xl);
-  flex-wrap: wrap; /* Allow wrapping on small screens */
+  flex-wrap: wrap;
+}
+
+.mode-action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md) var(--space-lg);
+  min-height: calc((var(--space-md) * 2) + 30px);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: var(--text-base);
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), filter var(--transition-base);
+  white-space: nowrap;
+}
+
+.mode-action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+.mode-action-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+  filter: brightness(0.95);
+}
+
+.mode-action-button:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 3px;
 }
 
 /* Base style for both toggle and button */
