@@ -10,12 +10,26 @@
     />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/clock.css" />
+    <link rel="stylesheet" href="css/epilepsywarning.css" />
     <link rel="icon" type="image/x-icon" href="image/favicon.ico" />
     <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   </head>
 
   <body>
+
+    <!-- ⚠️ Epilepsy Warning Modal -->
+      <div id="epilepsy-warning" class="warning-modal">
+        <div class="warning-content">
+          <h2>⚠️ Epilepsy Warning</h2>
+          <p>
+            This page may contain flashing lights or rapidly changing colors that could
+            trigger seizures in individuals with photosensitive epilepsy.
+            Viewer discretion is advised.
+          </p>
+          <button id="continue-warning">I Understand & Continue</button>
+        </div>
+      </div>
 
     <div id="dev-comments-container">
       <div class="dev-comment" style="top: 15%; left: 20%;">// TODO: Give meaning to life.</div>
@@ -78,6 +92,7 @@
         Time Attack High Score: <span id="time-attack-high-score">0</span>
       </div>
       <button id="share-button">Share My Score</button>
+      <button id="reset-score-button">🔄 Reset Score</button
 
       <!-- Start Popup Modal -Dev/Jetrock -->
       <div id="share-modal" class="modal">
@@ -223,5 +238,6 @@
 
     <script src="js/script.js"></script>
     <script src="js/clock.js"></script>
+    <script src="js/epilepsywarning.js"></script>
   </body>
 </html>

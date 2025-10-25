@@ -656,6 +656,34 @@ h1::after {
   box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
 
+/* ===== Reset Score Button (Rickroll) ===== */
+#reset-score-button {
+  background: linear-gradient(135deg, #ff6b6b, #ff5252);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  display: block;
+  width: fit-content;
+  margin: var(--space-md) auto;
+}
+
+#reset-score-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  background: linear-gradient(135deg, #ff5252, #ff3838);
+}
+
+#reset-score-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
 /* ===== Modal ===== */
 .modal {
   display: none;
@@ -877,6 +905,139 @@ h1::after {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* === FLOATING CONTROL PANEL (Bottom Right) === */
+.control-buttons {
+  position: fixed;
+  right: var(--space-xl);
+  bottom: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  z-index: 100;
+  animation: slideInRight 0.5s ease;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.nothing-button {
+  transition: transform 0.15s ease-in-out;
+}
+
+.nothing-button.button-active {
+  transform: scale(0.9);
+}
+
+.control-buttons button {
+  width: 76px;
+  height: 90px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  font-size: var(--text-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  color: var(--text-color);
+}
+
+.control-buttons button:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+  border-color: var(--accent-color);
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+}
+
+.control-buttons button:active {
+  transform: translateY(2px) scale(0.95);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+}
+
+/* Tooltip for bottom-right buttons */
+.control-buttons button::before {
+  content: attr(title);
+  position: absolute;
+  right: calc(100% + var(--space-md));
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85));
+  color: white;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.control-buttons button:hover::before {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* REMOVED old .top-right-controls rules */
+/* REMOVED old #dark-mode-toggle rule */
+/* REMOVED old .theme-sound rules */
+/* REMOVED old #timer.timer rule */
+
+
+@media (max-width: 768px) {
+  .control-buttons {
+    flex-direction: row;
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+    left: var(--space-lg);
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .control-buttons button {
+    width: 60px;
+    height: 70px;
+    font-size: var(--text-lg);
+  }
+
+  .control-buttons button:hover {
+    transform: translateY(-3px) scale(1.05);
+  }
+
+  .control-buttons button::before {
+    bottom: calc(100% + var(--space-sm));
+    right: 50%;
+    transform: translateX(50%) translateY(10px);
+    text-align: center;
+  }
+
+  .control-buttons button:hover::before {
+    transform: translateX(50%) translateY(0);
+  }
+}
 
 /* === TOAST NOTIFICATIONS === */
 #achievement-popup {
