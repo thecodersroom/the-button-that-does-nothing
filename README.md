@@ -11,6 +11,7 @@
 
 A hilariously useless web project: a button that looks important, invites you to click it, and… absolutely does nothing. Perfect for procrastination, confusion, or just a good laugh.
 
+****Epilepsy warning, run at your own risk.****
 ---
 
 ## 🚀 Demo
