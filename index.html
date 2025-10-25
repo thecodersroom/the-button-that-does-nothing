@@ -10,36 +10,70 @@
     />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/clock.css" />
-    <link rel="icon" type="image/x-icon" href="/image/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="image/favicon.ico" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
   </head>
 
   <body>
-    <div class="clock-container">
+ <div id="dev-comments-container">
+  <div class="dev-comment" style="top: 15%; left: 20%;">// TODO: Give meaning to life.</div>
+  <div class="dev-comment" style="top: 30%; left: 60%;">// Is anyone even clicking this?</div>
+  <div class="dev-comment" style="top: 50%; left: 10%;">// FIXME: Button does too much. Needs more nothing.</div>
+  <div class="dev-comment" style="top: 75%; left: 70%;">// Hope the boss doesn't see this.</div>
+  <div class="dev-comment" style="top: 85%; left: 30%;">// A single click... a single dream...</div>
+</div>
+    <!-- <div class="clock-container">
       <div class="clock">
         <span id="hrs">00</span>:<span id="min">00</span>:<span id="sec"
           >00</span
         >
-      </div>
+      </div> -->
     </div>
+    <div id="time-attack-progress-bar" style="display: none;">
+    <div id="time-attack-progress-inner"></div>
+  </div>
     <div class="app-container">
       <h1>The Button That Does Nothing</h1>
 
-      <!-- NEW: Impossible Mode Toggle -->
       <div class="toggle-container">
         <label class="toggle-label">
-          <input type="checkbox" id="impossible-toggle" />
-          <span class="toggle-slider"></span>
+          <input type="checkbox" id="impossible-toggle" aria-label="Toggle Impossible Mode" />
+          <span class="toggle-slider"></span> 
           <span class="toggle-text">🔥 IMPOSSIBLE MODE</span>
         </label>
       </div>
 
       <div class="button-container">
-        <button id="useless-button">Click Me!</button>
+        <button id="useless-button" aria-label="The useless button">Click Me!</button>
       </div>
       <!--Control buttons-->
+      
+<div class="high-score-display">
+  My High Score: <span id="high-score">0</span>
+</div>
+<div class="high-score-display">
+  Time Attack High Score: <span id="time-attack-high-score">0</span>
+</div>
+<button id="share-button">Share My Score</button>
+<!-- Start Popup Modal -Dev/Jetrock -->
+  <div id="share-modal" class="modal">
+    <div class="modal-content">
+      <h3>Share Your Score</h3>
+      <p id="share-text"></p>
+
+      <div class="social-icons">
+        <i class="fab fa-whatsapp" data-platform="whatsapp"></i>
+        <i class="fab fa-x-twitter" data-platform="twitter"></i>
+        <i class="fab fa-facebook" data-platform="facebook"></i>
+        <i class="fab fa-linkedin" data-platform="linkedin"></i>
+      </div>
+    </div>
+  </div>
+<!-- End Popup Modal -Dev/Jetrock  -->
+
       <div class="control-buttons">
-        <button id="theme-toggle">Toggle Theme</button>
-        <button id="sound-toggle">🎵</button>
+        <button id="time-attack-button">⏱️ Time Attack</button>
       </div>
       <div id="counter">Clicks: 0 | Failed clicks: 0</div>
       <div id="achievement-popup">
@@ -47,15 +81,38 @@
         <span class="achievement-text"> </span>
       </div>
       <div id="quote" class="quote">"Loading some wisdom..."</div>
-      <div id="timer" class="timer">Time spent doing nothing: 00:00</div>
+<div id="time-attack-timer" class="timer" style="display: none;">Time Left: 60s</div>
+
     </div>
 
-    <!-- Sounds -->
+     <div class="top-right-controls">
+      <button id="dark-mode-toggle" title="Toggle Dark Mode">🌙</button>
+      <div class="theme-sound">
+        <button id="theme-toggle" title="Theme">🎨</button>
+        <button id="sound-toggle" title="Sound Settings">🎵</button>
+      </div>
+    
+      <div class="clock-container">
+        <div class="clock">
+          <span id="hrs">00</span>:<span id="min">00</span>:<span id="sec"
+            >00</span
+          >
+        </div>
+      </div>
+
+      <div id="timer" class="timer">⏱️ Time spent doing nothing: 00:00</div>
+    </div>
+
+
+    <div id="achievement-popup">
+      <span class="achievement-icon"></span>
+      <span class="achievement-text"></span>
+    </div>
+
     <audio id="click-sound" src="audio/click1.mp3"></audio>
     <audio id="fail-sound" src="audio/failedClick.mp3"></audio>
     <audio id="bg-music" loop></audio>
 
-    <!-- Are You Still Clicking Popup -->
     <div id="still-clicking-popup" class="popup-container">
       <div class="popup-content">
         <h2>Are you still clicking?</h2>
@@ -66,7 +123,27 @@
       </div>
     </div>
 
-    <!-- Sound Settings Panel -->
+    <!-- Time Attack Result Modal -->
+    <div id="time-attack-result-popup" class="popup-container">
+      <div class="popup-content time-attack-result">
+        <div class="result-icon">⏰</div>
+        <h2>Time's Up!</h2>
+        <div class="result-stats">
+          <div class="result-stat-item">
+            <span class="result-label">You clicked</span>
+            <span class="result-value" id="time-attack-final-score">0</span>
+            <span class="result-label">times!</span>
+          </div>
+        </div>
+        <div id="time-attack-new-record" class="new-record" style="display: none;">
+          🏆 NEW HIGH SCORE! 🏆
+        </div>
+        <div class="popup-buttons">
+          <button id="time-attack-close-btn">OK</button>
+        </div>
+      </div>
+    </div>
+
     <div id="sound-panel" class="popup-container">
       <div class="popup-content">
         <h2>🎵 Sound Settings</h2>
@@ -88,7 +165,139 @@
       </div>
     </div>
 
+    <div id="theme-selector">
+      <div class="theme-selector-content">
+        <div class="theme-selector-header">
+          <h2>🎨 Theme Selector</h2>
+          <button id="close-theme-selector">✕</button>
+        </div>
+        
+        <div class="theme-tabs">
+          <button class="theme-tab active" data-tab="predefined">Predefined Themes</button>
+          <button class="theme-tab" data-tab="custom">Custom Theme</button>
+        </div>
+        
+        <div class="theme-tab-content active" id="predefined-tab">
+          <div class="themes-grid" id="themes-grid">
+            </div>
+        </div>
+        
+        <div class="theme-tab-content" id="custom-tab">
+          <div class="custom-theme-creator">
+            <h3>✨ Create Your Custom Theme</h3>
+            <div class="color-picker-group">
+              <div class="color-picker-item">
+                <label>Background Start Color</label>
+                <div class="color-input-wrapper">
+                  <input type="color" id="custom-bg-start" value="#667eea">
+                  <input type="text" id="custom-bg-start-text" value="#667eea">
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <label>Background End Color</label>
+                <div class="color-input-wrapper">
+                  <input type="color" id="custom-bg-end" value="#764ba2">
+                  <input type="text" id="custom-bg-end-text" value="#764ba2">
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <label>Text Color</label>
+                <div class="color-input-wrapper">
+                  <input type="color" id="custom-text-color" value="#ffffff">
+                  <input type="text" id="custom-text-color-text" value="#ffffff">
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <label>Accent Color</label>
+                <div class="color-input-wrapper">
+                  <input type="color" id="custom-accent-color" value="#ff6b6b">
+                  <input type="text" id="custom-accent-color-text" value="#ff6b6b">
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <label>Button Start Color</label>
+                <div class="color-input-wrapper">
+                  <input type="color" id="custom-button-start" value="#ff6b6b">
+                  <input type="text" id="custom-button-start-text" value="#ff6b6b">
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <label>Button End Color</label>
+                <div class="color-input-wrapper">
+                  <input type="color" id="custom-button-end" value="#ff9a76">
+                  <input type="text" id="custom-button-end-text" value="#ff9a76">
+                </div>
+              </div>
+              <div class="color-picker-item">
+                <label>Font Family</label>
+                <select id="custom-font-family">
+                  <option value="'Poppins', sans-serif">Poppins (Default)</option>
+                  <option value="'Arial', sans-serif">Arial</option>
+                  <option value="'Helvetica', sans-serif">Helvetica</option>
+                  <option value="'Georgia', serif">Georgia</option>
+                  <option value="'Times New Roman', serif">Times New Roman</option>
+                  <option value="'Courier New', monospace">Courier New</option>
+                  <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
+                  <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                  <option value="'Verdana', sans-serif">Verdana</option>
+                  <option value="'Impact', sans-serif">Impact</option>
+                  <option value="'Brush Script MT', cursive">Brush Script</option>
+                  <option value="'Palatino', serif">Palatino</option>
+                </select>
+              </div>
+            </div>
+            <div class="custom-theme-actions">
+              <button id="preview-custom-theme">👁️ Preview</button>
+              <button id="save-custom-theme">💾 Save Theme</button>
+              <button id="reset-custom-theme">🔄 Reset</button>
+              <button id="random-color-theme">🎲 Random</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="currency-display" class="currency-panel">
+      <span>🪙 Nothing Coins: </span><span id="coin-count">0</span>
+    </div>
+    
+    <div class="shop-and-user">
+
+      <div id="user-section">
+        <input type="text" id="username" placeholder="Enter your name" />
+        <button id="saveName">Save</button>
+        <p id="greeting"></p>
+      </div>
+
+      <div id="shop" class="shop-panel">
+        <h3>Nothing Shop</h3>
+        <div class="shop-item" id="shinier-nothing">
+          <div class="shop-info">
+            <p class="item-name">✨ Shinier Nothing</p>
+            <p class="item-cost">Cost: 50 Nothing Coins</p>
+          </div>
+          <button id="buy-shinier">Buy</button>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- Bot Detection Puzzle Modal -->
+    <div id="bot-detection-popup" class="popup-container" style="display: none;">
+      <div class="popup-content">
+        <h2>🤖 Bot Check!</h2>
+        <p>Solve this quick puzzle to prove you're human:</p>
+        <div id="puzzle-question">What is 5 + 3?</div>
+        <input type="text" id="puzzle-answer" placeholder="Your answer here" />
+        <div class="popup-buttons">
+          <button id="puzzle-submit">Submit</button>
+        </div>
+        <p id="puzzle-feedback" class="puzzle-feedback"></p>
+      </div>
+    </div>
+
     <script src="js/script.js"></script>
     <script src="js/clock.js"></script>
+    
   </body>
 </html>
