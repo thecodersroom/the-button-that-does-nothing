@@ -86,11 +86,60 @@
   box-shadow: var(--shadow-md, 0 0 12px rgba(0, 162, 255, 0.7));
 }
 
+.shop-item button.owned {
+  background: var(--success-gradient, linear-gradient(135deg, #34d399, #059669));
+  opacity: 0.8;
+  cursor: default;
+}
+
+.shop-item button.expensive {
+  background: var(--error-gradient, linear-gradient(135deg, #ef4444, #991b1b));
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .shop-item button:disabled {
   background: var(--button-disabled-bg, rgba(255,255,255,0.08));
   color: var(--text-disabled, #777);
   box-shadow: none;
   cursor: not-allowed;
+}
+
+/* Purchase animation */
+@keyframes purchaseSuccess {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.shop-item.purchase-animation {
+  animation: purchaseSuccess 0.5s ease;
+}
+
+/* Item cost states */
+.item-cost.owned {
+  color: var(--success-color, #34d399);
+}
+
+.item-cost.expensive {
+  color: var(--error-color, #ef4444);
+}
+
+/* Preview hover effect */
+.shop-item[data-previewing="true"] {
+  border-color: var(--accent-color, #00c6ff);
+  box-shadow: 0 0 15px var(--accent-color, #00c6ff);
+}
+
+/* Coin update animation */
+@keyframes coinUpdate {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.coin-update {
+  animation: coinUpdate 0.5s ease;
 }
 
 /* === MOBILE LAYOUT === */
