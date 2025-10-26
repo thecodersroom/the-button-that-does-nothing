@@ -95,3 +95,73 @@ cd the-button-that-does-nothing
 
 # Open the app
 open index.html
+```
+## 🤝 How to Contribute
+**We love contributions! Follow these steps to contribute to The Button That Does Nothing:**
+
+##🪜 Step-by-Step Guide
+
+**1. Check Assigned Issues**
+  - Visit the [Issues](https://github.com/thecodersroom/the-button-that-does-nothing/issues) tab.
+  - Look for any open issues related to what you want to work on.
+  - If someone is already assigned, please pick a different one or ask to be assigned.
+
+**2. Get Assigned**
+  - Comment on the issue saying:
+    > "I’d like to work on this issue., Can you please assign it to me?"
+  - Wait until a maintainer assigns you the issue.
+
+**3. Fork the Repository**
+  - Click the **Fork** button (top right) on the [main repository](https://github.com/thecodersroom/the-button-that-does-nothing)
+  - This creates your own copy of the repo under your GitHub account.
+
+**4. Clone Your Fork**
+```bash
+git clone https://github.com/<your-username>/the-button-that-does-nothing.git
+cd the-button-that-does-nothing
+```
+**5. Create a New Branch fix or feat**
+```bash
+git checkout -b feat/<your-branch-name>
+git checkout -b feat/<your-branch-name>
+```
+**6. Sync with the Latest Code**
+Before starting, make sure your local copy is up-to-date:
+```
+git remote add upstream https://github.com/thecodersroom/the-button-that-does-nothing.git
+git fetch upstream
+git merge upstream/main
+```
+
+**7. Make Your Changes**
+- Add or modify code, update docs, fix bugs — whatever your issue requires.
+- Follow the project's existing code style and formatting.
+
+**8. Commit Your Changes**
+```
+git add .
+git commit -m "feat: add contribution guide section to README"
+```
+**9. Push Your Branch**
+```
+git push origin feat/<your-branch-name>
+```
+**10. Create a Pull Request**
+- Go to your fork on GitHub.
+- Click “Compare & Pull Request”.
+- In the PR description, refer to the issue number (e.g., `Fixes #186`).
+- Explain briefly what changes you made.
+*
+## 💡 Contribution Tips
+- **Keep PRs small and focused.**
+- **Always pull the latest code before starting new work.**
+- **Use meaningful commit messages.**
+- **Be respectful and collaborative in discussions.**
+
+<!-- CONTRIBUTORS -->
+## 🏁 Contributors
+
+<a href="https://github.com/thecodersroom/the-button-that-does-nothing/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=thecodersroom/the-button-that-does-nothing" />
+</a>
+
