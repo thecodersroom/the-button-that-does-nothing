@@ -18,6 +18,7 @@ body {
   width: 100%;
   box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  align-content: center;
 }
 
 .motivation-header {
@@ -29,11 +30,11 @@ body {
   margin: 0 0 6px 0;
   font-size: 1.8rem;
   font-weight: 600;
-  color: #9be7ff;
+  color: #b7dce7;
 }
 
 .motivation-header p {
-  color: #9aa6bf;
+  color: #c7cedd;
   font-size: 0.95rem;
   margin-bottom: 12px;
 }
@@ -52,11 +53,11 @@ body {
 }
 
 .motivation-note {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.156);
   border-radius: 10px;
   padding: 16px;
   margin-bottom: 24px;
-  color: #9aa6bf;
+  color: #e7eaf0;
   font-size: 0.9rem;
 }
 
@@ -69,9 +70,10 @@ body {
   list-style: none;
   padding: 0;
   margin: 0;
+  text-align: center;
   counter-reset: quote;
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 #quotes li.quote {
@@ -81,7 +83,7 @@ body {
   border-radius: 12px;
   padding: 14px 16px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   box-shadow: 0 4px 14px rgba(2, 6, 23, 0.35);
   position: relative;
@@ -103,14 +105,16 @@ body {
 blockquote {
   margin: 0;
   font-size: 1rem;
+  display: flex;
+  text-align: center;
   line-height: 1.4;
   color: #e8f3ff;
-  quotes: "“" "”" "‘" "’";
+  quotes: "“" "”" "‘" "’";;
 }
 
 blockquote::before {
   content: open-quote;
-  color: #9be7ff;
+  color:  #9be7ff;
   margin-right: 4px;
 }
 blockquote::after {
@@ -128,6 +132,7 @@ cite {
 
 /* Avatar Styling */
 .quote img.avatar {
+  margin-right: 10px;
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -144,6 +149,17 @@ cite {
 .motivation-footer {
   text-align: center;
   margin-top: 28px;
-  color: #9aa6bf;
+  color: #cbd1de;
   font-size: 0.85rem;
+}
+
+#theme-toggle {
+  top: 20px;
+  right: 20px;
+  padding: 5px;
+  background: rgba(255, 255, 255, 0.216);
+  font-size: xx-large;
+  cursor: pointer;
+  color: #9be7ff;
+  transition: transform 0.2s ease;
 }
