@@ -6,6 +6,7 @@ const clickSoundFiles = [
 ];
 
 // DOM Elements
+const wrapper = document.querySelector('.scroll-wrapper');
 const button = document.getElementById("useless-button");
 const counterDiv = document.getElementById("counter");
 const quoteDiv = document.getElementById("quote");
@@ -267,6 +268,11 @@ function buttonTeleport(posX, posY) {
   button.style.top = `${posY}px`;
   button.style.transition = "all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)";
 }
+document.body.style.height = `${wrapper.scrollWidth}px`;
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  wrapper.style.transform = `translateX(-${scrollTop}px)`;
+});
 
 // Initialize modern card-based counter
 function initializeCounter() {
@@ -336,6 +342,25 @@ function addRippleEffect(event) {
   setTimeout(() => {
     button.classList.remove('ripple');
   }, 600);
+}
+// Animals Animation
+function createPersistentAnimals(targetEl) {
+  if (!targetEl) return;
+  if (document.querySelector('.animals-overlay')) return;
+
+  const rect = targetEl.getBoundingClientRect();
+  const img = document.createElement('img');
+  img.src = 'image/animals.gif';
+  img.alt = 'Animals animation';
+  img.className = 'animals-overlay';
+  img.style.position = 'absolute';
+  img.style.left = `${rect.left + rect.width / 2}px`;
+  img.style.top = `${rect.top + rect.height / 2}px`;
+  img.style.transform = 'translate(-50%, -50%)';
+  img.style.pointerEvents = 'none';
+  img.style.background = 'transparent';
+  img.style.zIndex = 1500; 
+  document.body.appendChild(img);
 }
 
 function playSound(sound) {
@@ -733,6 +758,15 @@ if (button) {
     // --- END TIME ATTACK LOGIC ---
 
     clicks++;
+
+    // create persistent animals GIF on the very first click
+    if (clicks === 1) {
+      try {
+        createPersistentAnimals(button);
+      } catch (err) {
+        console.warn('Failed to create animals overlay:', err);
+      }
+    }
 
     // === MERGED: High Score Logic from main ===
     if (clicks > highScore) {
@@ -1886,3 +1920,4 @@ if (resetScoreButton) {
     // Add hover tooltip
     resetScoreButton.title = "Try me if you dare...";
 }
+window.addEventListener('load', createParticles);
