@@ -2437,3 +2437,37 @@ body.dark-mode #top-panel #currency-display {
 }
 /* --- END NEW Top Panel Styles --- */
 
+/* ===== START CSS UPDATE DEV/Kronpatel ===== */
+/* === COIN REWARD SYSTEM ANIMATIONS === */
+@keyframes coinSpin {
+  0% {
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.5) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translate(-50%, -150%) translateY(0);
+    opacity: 1;
+    font-size: 48px;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -150%) translateY(-100px);
+    opacity: 0;
+    font-size: 64px;
+  }
+}
+
+/* ===== END CSS UPDATE Dev/Kronpatel ===== */

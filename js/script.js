@@ -48,12 +48,21 @@ const timeAttackHighScoreDisplay = document.getElementById('time-attack-high-sco
 const timeAttackProgressBar = document.getElementById('time-attack-progress-bar');
 const timeAttackProgressInner = document.getElementById('time-attack-progress-inner');
 
+// keron start
+// === COIN REWARD SYSTEM DOM ELEMENTS ===
+const coinCountDisplay = document.getElementById('coin-count');
+// keron end
+
 // State
 // --- MERGED: Keep game reset from fix/game-bugs, add high score from main ---
 let clicks = 0;
 let failedClicks = 0;
 let highScore = Number(localStorage.getItem('nothingHighScore')) || 0; // High score still saved
 // --- END MERGE ---
+
+// keron start
+let nothingCoins = Number(localStorage.getItem('nothingCoins')) || 0; // Load saved coins
+// keron end
 
 let userInteracted = false;
 let impossibleMode = false;
@@ -733,6 +742,11 @@ if (button) {
     }
     // === END MERGE ===
 
+    // keron start
+    // === COIN REWARD SYSTEM ===
+    checkCoinReward();
+    // keron end
+
     checkCombo();
     getNewAction();
     addRippleEffect(e);
@@ -1000,6 +1014,71 @@ function getRandomColor() {
   for (let i = 0; i < 6; i++) color += letters[Math.floor(Math.random() * 16)];
   return color;
 }
+
+/* ===== START JS UPDATE DEV/Kronpatel ===== */
+// === COIN REWARD SYSTEM FUNCTIONS ===
+function updateCoinDisplay() {
+  if (coinCountDisplay) {
+    coinCountDisplay.textContent = nothingCoins;
+  }
+}
+
+function addCoins(amount) {
+  nothingCoins += amount;
+  localStorage.setItem('nothingCoins', nothingCoins);
+  updateCoinDisplay();
+}
+
+function checkCoinReward() {
+  // Every 30 clicks, user earns 5 Nothing Coins
+  if (clicks > 0 && clicks % 30 === 0) {
+    addCoins(5);
+    showCoinAnimation();
+  }
+}
+
+function showCoinAnimation() {
+  // Create animated coin element
+  const coin = document.createElement('div');
+  coin.innerHTML = '🪙';
+  coin.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 80px;
+    z-index: 10000;
+    pointer-events: none;
+    animation: coinSpin 0.8s ease-out forwards;
+  `;
+  document.body.appendChild(coin);
+
+  // Create +5 indicator
+  const plusFive = document.createElement('div');
+  plusFive.textContent = '+5';
+  plusFive.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -150%);
+    font-size: 48px;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    z-index: 10001;
+    pointer-events: none;
+    animation: floatUp 1.2s ease-out forwards;
+  `;
+  document.body.appendChild(plusFive);
+
+  // Remove elements after animation
+  setTimeout(() => {
+    coin.remove();
+    plusFive.remove();
+  }, 1500);
+}
+/* ===== END JS UPDATE Dev/Kronpatel ===== */
+
 function assignRandomColorsToCustomTheme() {
     const inputs = [
         [customBgStart, customBgStartText], [customBgEnd, customBgEndText],
@@ -1553,6 +1632,11 @@ window.addEventListener('load', () => {
     timeAttackHighScoreDisplay.textContent = timeAttackHighScore;
   }
   // === END MERGE ===
+
+  // keron start
+  // === COIN REWARD SYSTEM ===
+  updateCoinDisplay(); // Initialize coin display
+  // keron end
 
   if (quoteDiv && clicks === 0 && failedClicks === 0) {
       quoteDiv.textContent = "Click the button to begin your pointless journey! 🚀";
