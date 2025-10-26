@@ -359,7 +359,7 @@ function createPersistentAnimals(targetEl) {
   img.style.transform = 'translate(-50%, -50%)';
   img.style.pointerEvents = 'none';
   img.style.background = 'transparent';
-  img.style.zIndex = 1500; 
+  img.style.zIndex = 1; 
   document.body.appendChild(img);
 }
 
