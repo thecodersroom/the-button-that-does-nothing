@@ -94,6 +94,9 @@
   --button-gradient-end: #ff9a76;
   --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
 
+  /* UI offsets */
+  --top-panel-offset: 100px; 
+
   /* Utility Colors */
   --success: #10b981;
   --warning: #f59e0b;
@@ -148,19 +151,37 @@ body::after {
     transform: translate(0, 0) rotate(0deg);
   }
 }
-
 /* Floating particles */
 .floating-particle {
+  /* particle sizing and color are configurable */
+  --particle-size: 98px; /* default size, increased */
   position: fixed;
-  background: rgba(255, 255, 255, 0.1);
+  width: var(--particle-size);
+  height: var(--particle-size);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 50%;
   pointer-events: none;
-  z-index: -1;
-  animation: float-particle 15s infinite linear;
+  z-index: 8;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25), 0 1px 3px rgba(255,255,255,0.02) inset;
+  transform-origin: center;
+  animation: float-particle 18s infinite linear;
 }
 
+/* Slight variety between particles */
 .floating-particle:nth-child(odd) {
-  background: rgba(255, 255, 255, 0.05);
+  --particle-size: 26px;
+  width: var(--particle-size);
+  height: var(--particle-size);
+  background: rgba(255, 255, 255, 0.08);
+  animation-duration: 22s;
+}
+
+.floating-particle:nth-child(3n) {
+  --particle-size: 36px;
+  width: var(--particle-size);
+  height: var(--particle-size);
+  background: rgba(255, 255, 255, 0.06);
+  animation-duration: 26s;
 }
 
 @keyframes float-particle {
@@ -177,6 +198,100 @@ body::after {
   100% {
     transform: translateY(-100vh) translateX(100px) rotate(360deg);
     opacity: 0;
+  }
+}
+
+/* animals GIF overlay */
+.animals-overlay {
+  width: 260px;
+  max-width: 34vmin;
+  background: transparent ;
+  pointer-events: none;
+  transform-origin: center center;
+  animation: animals-pop 0.35s cubic-bezier(0.2, 1, 0.3, 1);
+  filter: drop-shadow(0 12px 24px rgba(0,0,0,0.35));
+}
+
+@keyframes animals-pop {
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+  60% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+/* === GRID OVERLAY (reusable) === */
+:root {
+  --grid-color: rgba(255, 255, 255, 0.06);
+  --grid-gap: 5rem; 
+  --grid-line: 2px; 
+}
+/* Background Container */
+.background-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; 
+}
+
+.app-container, #top-panel, #dev-comments-container {
+  position: relative;
+  z-index: 1; 
+}
+
+.grid-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+  background-size: 100px 100px;
+  pointer-events: none;
+  z-index: -1;
+}
+.grid-background {
+  position: fixed;
+  inset: 0;
+  pointer-events: none; 
+  z-index: -1; 
+  background-color: transparent;
+  --grid-major-color: rgba(255, 255, 255, 0.10);
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent calc(var(--grid-gap) - var(--grid-line)),
+      var(--grid-color) calc(var(--grid-gap) - var(--grid-line)),
+      var(--grid-color) var(--grid-gap)
+    ),
+    linear-gradient(
+      0deg,
+      transparent calc(var(--grid-gap) - var(--grid-line)),
+      var(--grid-color) calc(var(--grid-gap) - var(--grid-line)),
+      var(--grid-color) var(--grid-gap)
+    ),
+    linear-gradient(90deg, transparent calc(50% - var(--grid-line)), var(--grid-major-color) calc(50% - var(--grid-line)), var(--grid-major-color) calc(50% + var(--grid-line)), transparent calc(50% + var(--grid-line))),
+    linear-gradient(0deg, transparent calc(50% - var(--grid-line)), var(--grid-major-color) calc(50% - var(--grid-line)), var(--grid-major-color) calc(50% + var(--grid-line)), transparent calc(50% + var(--grid-line)));
+  background-size: var(--grid-gap) var(--grid-gap), var(--grid-gap) var(--grid-gap), 100% 100%, 100% 100%;
+  mix-blend-mode: overlay;
+  opacity: 0.75;
+}
+
+/* slightly darker grid on light theme so it remains visible */
+[data-theme="light"] {
+  --grid-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="neon"] {
+  --grid-color: rgba(0, 255, 136, 0.06);
+}
+
+@media (max-width: 600px) {
+  .grid-background {
+    --grid-gap: 3rem; 
+    opacity: 0.5;
   }
 }
 
@@ -351,13 +466,13 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* anchor content to top to avoid vertical shifting */
   align-items: center;
   color: var(--text-color);
   overflow-x: hidden;
   padding: var(--space-lg);
   background: transparent !important; /* Let ::before handle the background */
-  padding-top: 80px; /* Add padding to prevent overlap with fixed top panel */
+  padding-top: var(--top-panel-offset); /* space for fixed top panel */
 }
 
 /* Remove the old gradient animation since we have the new background */
@@ -2285,41 +2400,45 @@ body.flipped {
 }
 
 /* --- NEW: Top Control Panel Styles --- */
-/* === TOP PANEL (Navbar) === */
+
 #top-panel {
   position: fixed;
-  top: 15px;
+  top: 15px; /* Adjust spacing from top */
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%); /* Center horizontally */
   display: flex;
-  align-items: center;
-  justify-content: space-between; /* Distribute evenly */
-  gap: 18px;
-  padding: 10px 20px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  align-items: center; /* Vertically align items */
+  gap: 15px; /* Space between items */
+  padding: 8px 15px; /* Padding inside the panel */
+  background: rgba(255, 255, 255, 0.1); /* Glassmorphism background */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 20px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
-  z-index: 1000;
-  transition: all 0.3s ease;
+  border-radius: 18px; /* Squircle shape */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  z-index: 1000; /* Keep on top */
+  transition: background var(--transition-base); 
 }
 
-/* Base style for items inside */
-#top-panel .panel-item {
+#top-panel .panel-item { 
+  position: fixed; 
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  padding: 6px 10px; 
+  margin: 0;
+  box-shadow: none; 
+  border: none;
+  font-size: 0.9em;
+  white-space: nowrap; 
+  background: transparent;
+  backdrop-filter: none; 
+  color: var(--text-color);
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 8px;
-  margin: 0;
-  color: var(--text-color);
-  font-size: 0.95em;
-  font-weight: 500;
-  background: transparent;
-  border: none;
-  white-space: nowrap;
 }
+
 
 /* === COIN DISPLAY === */
 #top-panel #currency-display {
