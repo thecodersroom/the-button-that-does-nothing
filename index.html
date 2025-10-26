@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/clock.css" />
   <link rel="stylesheet" href="css/shop.css" />
+  <link rel="stylesheet" href="css/invisibleButton.css">
   <link rel="stylesheet" href="css/epilepsywarning.css" />
   <link rel="icon" type="image/x-icon" href="image/favicon.ico" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -81,6 +82,17 @@
 
   <div class="app-container">
     <h1>The Button That Does Nothing</h1>
+
+  <!-- Hidden Easter Egg Button -->
+<button id="hidden-button">
+  <img src="image/Invisible-Egg.png" class="hidden-image" width="75px" height="100px" alt="Easter Egg">
+</button>
+
+<!-- Popup Card -->
+<div id="easter-card" class="easter-card">
+  <h1>🥚 You found the Easter Egg!</h1>
+  <h3>Congrats! You discovered a hidden feature 🎉</h3>
+</div>
 
     <div class="toggle-container">
       <label class="toggle-label">
@@ -257,6 +269,7 @@
   <script src="js/clock.js"></script>
   <script src="js/shop.js"></script>
   <script src="js/epilepsywarning.js"></script>
+  <script src="js/invisibleButton.js"></script>
   <script>
     window.onload = function () {
       let clickCount = 0;
