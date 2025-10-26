@@ -1920,4 +1920,3 @@ if (resetScoreButton) {
     // Add hover tooltip
     resetScoreButton.title = "Try me if you dare...";
 }
-window.addEventListener('load', createParticles);
