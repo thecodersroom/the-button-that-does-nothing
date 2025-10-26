@@ -1920,3 +1920,9 @@ if (resetScoreButton) {
     // Add hover tooltip
     resetScoreButton.title = "Try me if you dare...";
 }
+
+
+
+
+// === Initialize Shop if script loaded ===
+if (typeof renderShop === 'function') renderShop();
