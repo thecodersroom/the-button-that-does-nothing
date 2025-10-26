@@ -1,0 +1,39 @@
+/* Invisible button with Random position on the page */
+
+#hidden-button {
+  position: absolute;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.hidden-image {
+  width: 75px;
+  height: 100px;
+  display: none; 
+}
+
+.easter-card {
+  position: fixed; /* fixed for centering */
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: black;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  text-align: center;
+  font-family: sans-serif;
+  display: none;
+  z-index: 9999;
+  width: 750px;
+  animation: fadeIn 0.3s ease;
+  z-index: 1000000;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -60%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
