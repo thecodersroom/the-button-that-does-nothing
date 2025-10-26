@@ -2220,88 +2220,6 @@ body.flipped {
   }
 }
 
-.shop-and-user {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-xl);
-  flex-wrap: wrap;
-  margin-top: var(--space-xl);
-}
-
-/* Shop Panel */
-.shop-panel {
-  width: 280px;
-  background: var(--card-bg);
-  backdrop-filter: blur(10px);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border-color);
-  padding: var(--space-lg);
-  font-family: 'Poppins', sans-serif;
-  color: var(--text-color);
-}
-
-.shop-panel h3 {
-  margin: 0 0 var(--space-md) 0;
-  color: var(--accent-color);
-  font-weight: 700;
-  text-align: center;
-  font-size: var(--text-xl);
-}
-
-.shop-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border-top: 1px solid #eee;
-}
-
-.shop-item:first-child {
-  border-top: none;
-}
-
-.shop-info {
-  max-width: 140px;
-}
-
-.item-name {
-  font-size: var(--text-base);
-  font-weight: 600;
-  margin: 0 0 4px 0;
-  color: var(--text-color);
-}
-
-.item-cost {
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--text-secondary);
-  margin: 0;
-}
-
-.shop-item button {
-  background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
-  border: none;
-  border-radius: var(--radius-full);
-  color: white;
-  font-weight: 600;
-  padding: var(--space-sm) var(--space-lg);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: var(--shadow-sm);
-}
-
-.shop-item button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.shop-item button:disabled {
-  background: rgba(255, 255, 255, 0.1);
-  color: var (--text-secondary);
-  cursor: not-allowed;
-  box-shadow: none;
-}
 
 /* @keyframes pulseGlow - defined elsewhere, ensure it exists */
 
@@ -2332,71 +2250,68 @@ body.flipped {
 }
 
 /* Centering the greeting section */
-#user-section {
+/* === USER SECTION ABOVE SHOP === */
+.user-section {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: var(--space-md);
-  font-family: "Poppins", sans-serif;
-  width: 280px;
-  background: var(--card-bg);
-  backdrop-filter: blur(10px);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border-color);
-  padding: var(--space-xl) var(--space-lg);
-  color: var(--text-color);
-}
-
-/* Input field styling */
-#username {
-  padding: 10px 16px;
-  width: 100%;
-  font-size: 1rem;
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  outline: none;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: var(--text-color);
+  background: var(--card-alt-bg, rgba(255,255,255,0.05));
+  border: 1px solid var(--border-light, rgba(255,255,255,0.1));
+  border-radius: var(--radius-md, 12px);
+  padding: var(--space-md, 12px);
+  margin-bottom: var(--space-md, 16px);
   text-align: center;
-  transition: all 0.3s ease;
+  transition: background var(--transition-base, 0.3s ease);
 }
 
-#username::placeholder {
-  color: var(--text-secondary);
-  opacity: 0.8;
+.user-section:hover {
+  background: var(--card-hover-bg, rgba(255,255,255,0.12));
 }
 
-#username:focus {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
+.user-section input {
+  width : 100%;
+  padding: var(--space-xs, 6px) var(--space-sm, 10px);
+  border-radius: var(--radius-full, 999px);
+  border: 1px solid var(--border-color, rgba(255,255,255,0.2));
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-color, #fff);
+  text-align: center;
+  outline: none;
+  margin-bottom: var(--space-sm, 8px);
+  transition: border-color 0.3s ease, background 0.3s ease;
 }
 
-#saveName {
-  padding: var(--space-sm) var(--space-xl);
+.user-section input:focus {
+  border-color: var(--accent-color, #00c6ff);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.user-section button {
+  background: linear-gradient(
+    135deg,
+    var(--button-gradient-start, #00c6ff),
+    var(--button-gradient-end, #0072ff)
+  );
+  color: #fff;
   border: none;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
-  color: white;
-  font-size: 1rem;
+  border-radius: var(--radius-full, 999px);
+  padding: var(--space-xs, 6px) var(--space-md, 14px);
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast, 0.25s ease);
+  box-shadow: var(--shadow-sm, 0 0 8px rgba(0, 162, 255, 0.4));
 }
 
-#saveName:hover {
+.user-section button:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md, 0 0 12px rgba(0, 162, 255, 0.7));
 }
 
-#greeting {
-  margin-top: var(--space-md);
-  font-size: var(--text-lg);
-  font-weight: 600;
-  color: var(--text-color);
-  text-align: center;
+.user-section p#greeting {
+  margin-top: var(--space-xs, 6px);
+  font-size: var(--text-sm, 0.85rem);
+  color: var(--text-secondary, #bbb);
+  min-height: 1em;
 }
 
 /* --- NEW: Top Control Panel Styles --- */
