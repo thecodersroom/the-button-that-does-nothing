@@ -2285,160 +2285,171 @@ body.flipped {
 }
 
 /* --- NEW: Top Control Panel Styles --- */
-
+/* === TOP PANEL (Navbar) === */
 #top-panel {
   position: fixed;
-  top: 15px; /* Adjust spacing from top */
+  top: 15px;
   left: 50%;
-  transform: translateX(-50%); /* Center horizontally */
+  transform: translateX(-50%);
   display: flex;
-  align-items: center; /* Vertically align items */
-  gap: 15px; /* Space between items */
-  padding: 8px 15px; /* Padding inside the panel */
-  background: rgba(255, 255, 255, 0.1); /* Glassmorphism background */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 18px; /* Squircle shape */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-  z-index: 1000; /* Keep on top */
-  transition: background var(--transition-base); /* Smooth theme transition */
-}
-
-/* Style adjustments for items moved into the panel */
-#top-panel .panel-item { /* Base class for consistent styling */
-  position: relative; /* Override fixed/absolute if any existed */
-  top: auto;
-  left: auto;
-  right: auto;
-  bottom: auto;
-  padding: 6px 10px; /* Consistent padding */
-  margin: 0; /* Remove potential extra margins */
-  box-shadow: none; /* Remove individual shadows if needed */
-  border: none; /* Remove individual borders if needed */
-  font-size: 0.9em; /* Slightly smaller text */
-  white-space: nowrap; /* Prevent timer text wrapping */
-  background: transparent; /* Make background transparent, panel handles glass */
-  backdrop-filter: none; /* Panel handles blur */
-  color: var(--text-color); /* Ensure text color matches theme */
-  display: flex; /* Helps vertical alignment */
   align-items: center;
+  justify-content: space-between; /* Distribute evenly */
+  gap: 18px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+  z-index: 1000;
+  transition: all 0.3s ease;
 }
 
+/* Base style for items inside */
+#top-panel .panel-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  margin: 0;
+  color: var(--text-color);
+  font-size: 0.95em;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  white-space: nowrap;
+}
 
-/* Adjust coin display specifics */
+/* === COIN DISPLAY === */
 #top-panel #currency-display {
-   background: rgba(255, 215, 0, 0.1); /* Keep subtle gold bg */
-   border-radius: 12px;
-   font-weight: 600;
+  background: rgba(255, 215, 0, 0.15);
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  box-shadow: inset 0 0 8px rgba(255, 215, 0, 0.1);
 }
 
-/* Adjust clock text specifics */
+/* === CLOCK === */
+/* CLOCK CONTAINER FIX */
 #top-panel .clock-container {
-   padding: 0; /* Remove padding from container */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centers the time text */
+  min-width: 90px; /* Prevents box shrinking too much */
+  max-width: fit-content; /* Grows only as needed */
+  padding: 4px 10px;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  overflow: hidden; /* Prevents text overflow */
+  box-sizing: border-box;
 }
+
+/* CLOCK TEXT FIX */
 #top-panel .clock {
-    background: transparent;
-    padding: 0; /* Remove padding from clock itself */
-    font-size: 1em; /* Adjust relative to container */
-    font-weight: 600;
-    box-shadow: none;
-    border: none;
-    backdrop-filter: none;
-    /* text-align: right; removed */
+  font-size: 1.05em;
+  font-weight: 700;
+  color: var(--text-color);
+  letter-spacing: 0.5px; /* keeps digits readable */
+  white-space: nowrap; /* prevents wrapping */
+  text-align: center;
 }
 
-/* Adjust timer text specifics */
+
+/* === TIMER === */
 #top-panel #timer {
-    /* text-align: center; removed */
-    display: flex; /* Help align icon and text */
-    align-items: center;
-    gap: 5px; /* Space between icon and text */
-    padding: 6px 10px; /* Re-apply padding */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
 }
 
-/* Group the buttons */
+/* === ICON BUTTON GROUP === */
 .panel-buttons {
   display: flex;
   align-items: center;
-  gap: 8px; /* Space between buttons */
-  padding: 0; /* Remove padding from the button group container */
+  gap: 10px;
+  padding: 0;
 }
 
-/* Style buttons within the panel */
+/* === INDIVIDUAL BUTTONS === */
 #top-panel .panel-buttons button {
-  position: relative; /* Needed for tooltips */
-  padding: 8px; /* Smaller padding */
-  font-size: 1.2em; /* Adjust icon size */
-  line-height: 1; /* Center icon */
-  border-radius: 10px; /* Slightly less rounded */
+  position: relative;
+  padding: 8px;
+  font-size: 1.2em;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  backdrop-filter: none; /* Panel handles blur */
-  transition: all var(--transition-fast);
   color: var(--text-color);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  backdrop-filter: none; /* Parent handles blur */
   cursor: pointer;
+  transition: all 0.25s ease;
 }
 
 #top-panel .panel-buttons button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.08);
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.25);
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Ensure tooltips work for buttons inside panel */
+/* === BUTTON TOOLTIP === */
 #top-panel .panel-buttons button::before {
-    content: attr(title);
-    position: absolute;
-    top: calc(100% + 8px); /* Changed to position below the button */
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85));
-    color: white;
-    padding: var(--space-sm) var(--space-md);
-    border-radius: var(--radius-sm);
-    font-size: var(--text-sm);
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.2s ease-out;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  content: attr(title);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 0.75em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
+
 #top-panel .panel-buttons button:hover::before {
-    opacity: 1;
-    transform: translateX(-50%) translateY(5px); /* Changed to move down on hover */
+  opacity: 1;
+  transform: translateX(-50%) translateY(4px);
 }
 
-
-/* Dark Mode for the panel */
+/* === DARK MODE === */
 body.dark-mode #top-panel {
-  background: rgba(0, 0, 0, 0.2);
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, rgba(0,0,0,0.35), rgba(30,30,30,0.2));
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
-body.dark-mode #top-panel .panel-item { /* Ensure text stays white */
-   color: #ffffff;
-}
-body.dark-mode #top-panel .panel-buttons button {
-   background: rgba(0, 0, 0, 0.2);
-   border-color: rgba(255, 255, 255, 0.1);
-   color: #ffffff; /* Ensure icon stays white */
-}
-body.dark-mode #top-panel .panel-buttons button:hover {
-   background: rgba(0, 0, 0, 0.3);
-   border-color: rgba(255, 255, 255, 0.2);
-}
-body.dark-mode #top-panel #currency-display {
-   background: rgba(255, 215, 0, 0.15); /* Slightly darker gold */
-   border-color: rgba(255, 215, 0, 0.2);
-   color: #ffffff; /* Ensure text stays white */
-}
-/* --- END NEW Top Panel Styles --- */
 
-/* ===== START CSS UPDATE DEV/Kronpatel ===== */
-/* === COIN REWARD SYSTEM ANIMATIONS === */
+body.dark-mode #top-panel .panel-item {
+  color: #ffffff;
+}
+
+body.dark-mode #top-panel #currency-display {
+  background: rgba(255, 215, 0, 0.15);
+  border-color: rgba(255, 215, 0, 0.2);
+  color: #ffffff;
+}
+
+body.dark-mode #top-panel .panel-buttons button {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+body.dark-mode #top-panel .panel-buttons button:hover {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.25);
+}
+
+/* === ANIMATIONS === */
 @keyframes coinSpin {
   0% {
     transform: translate(-50%, -50%) scale(0) rotate(0deg);
@@ -2470,4 +2481,25 @@ body.dark-mode #top-panel #currency-display {
   }
 }
 
-/* ===== END CSS UPDATE Dev/Kronpatel ===== */
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 600px) {
+  #top-panel {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 8px 10px;
+  }
+
+  #top-panel .panel-buttons button {
+    font-size: 1em;
+    padding: 6px;
+  }
+
+  #top-panel #currency-display {
+    padding: 4px 8px;
+    font-size: 0.85em;
+  }
+
+  #top-panel .clock {
+    font-size: 0.9em;
+  }
+}
