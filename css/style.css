@@ -2537,3 +2537,233 @@ body.dark-mode #top-panel .panel-buttons button:hover {
     font-size: 0.9em;
   }
 }
+
+/* === MOTIVATION BUTTON === */
+.motivation-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  z-index: 1000;
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+  width: auto;
+  white-space: nowrap;
+  
+  /* Subtle breathing animation */
+  animation: motivationBreath 3s ease-in-out infinite;
+}
+
+/* Breathing glow animation */
+@keyframes motivationBreath {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(102, 126, 234, 0.6), 0 0 30px rgba(118, 75, 162, 0.3);
+  }
+}
+
+/* Shimmer effect overlay */
+.motivation-btn::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  transform: rotate(45deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+/* Pulsing border effect */
+.motivation-btn::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  background: linear-gradient(135deg, #667eea, #764ba2, #667eea);
+  border-radius: 50px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: rotateBorder 3s linear infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes rotateBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Hover state */
+.motivation-btn:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.7), 0 0 40px rgba(118, 75, 162, 0.5);
+  animation: none; /* Stop breathing on hover */
+}
+
+.motivation-btn:hover::after {
+  opacity: 1;
+}
+
+/* Emoji bounce on hover */
+.motivation-btn:hover {
+  animation: buttonBounce 0.6s ease;
+}
+
+@keyframes buttonBounce {
+  0%, 100% {
+    transform: translateY(-5px) scale(1.05);
+  }
+  25% {
+    transform: translateY(-8px) scale(1.08);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.05);
+  }
+  75% {
+    transform: translateY(-7px) scale(1.06);
+  }
+}
+
+/* Active/Click state */
+.motivation-btn:active {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 2px 10px rgba(102, 126, 234, 0.5);
+}
+
+/* Floating particles effect on hover */
+.motivation-btn:hover::before {
+  animation: shimmer 1s infinite;
+}
+
+/* Text gradient animation on hover */
+.motivation-btn:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 50%, #764ba2 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 2s ease infinite, buttonBounce 0.6s ease;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Ripple effect on click */
+.motivation-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s, opacity 0.6s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.motivation-btn:active::after {
+  width: 300px;
+  height: 300px;
+  opacity: 0;
+}
+
+/* Add sparkle effect */
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+}
+
+/* Responsive adjustment */
+@media (max-width: 768px) {
+  .motivation-btn {
+    bottom: 80px; /* Move up to avoid conflict with control buttons */
+    left: 15px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .motivation-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+  }
+}
+
+/* Dark mode enhancement */
+body.dark-mode .motivation-btn {
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5), 0 0 20px rgba(118, 75, 162, 0.3);
+}
+
+body.dark-mode .motivation-btn:hover {
+  box-shadow: 0 8px 35px rgba(102, 126, 234, 0.8), 0 0 50px rgba(118, 75, 162, 0.6);
+}
+
+/* Optional: Add a subtle float animation */
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.motivation-btn {
+  animation: motivationBreath 3s ease-in-out infinite, gentleFloat 4s ease-in-out infinite;
+}
+
+/* Stop float on hover */
+.motivation-btn:hover {
+  animation: buttonBounce 0.6s ease, gradientShift 2s ease infinite;
+}
