@@ -2893,3 +2893,23 @@ body.dark-mode .motivation-btn:hover {
     transform: translateY(0);
   }
 }
+/* keron start */
+/* === Particle Burst Animation === */
+.particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  animation: particleBurst 1.5s ease-out forwards;
+}
+
+@keyframes particleBurst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--particle-x, 0), var(--particle-y, 0)) scale(0);
+  }
+}
+/* keron end */

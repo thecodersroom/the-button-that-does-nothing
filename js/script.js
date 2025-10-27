@@ -483,6 +483,43 @@ function createSmokeTrail() {
   }
 }
 
+/* keron start */
+// === Particle Burst Effect ===
+function createParticleBurst() {
+  if (!button) return;
+  const rect = button.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  
+  // Create a more intense particle burst
+  for (let i = 0; i < 30; i++) {
+    const particle = document.createElement("span");
+    particle.classList.add("particle");
+    
+    // Create a circular burst pattern
+    const angle = (Math.PI * 2 * i) / 30;
+    const distance = Math.random() * 80 + 40;
+    const offsetX = Math.cos(angle) * distance;
+    const offsetY = Math.sin(angle) * distance;
+    
+    // Set initial position
+    particle.style.left = `${centerX}px`;
+    particle.style.top = `${centerY}px`;
+    
+    // Set final position using CSS custom properties
+    particle.style.setProperty('--particle-x', `${offsetX}px`);
+    particle.style.setProperty('--particle-y', `${offsetY}px`);
+    
+    particle.style.background = getRandomColor();
+    particle.style.width = `${Math.random() * 8 + 4}px`;
+    particle.style.height = `${Math.random() * 8 + 4}px`;
+    particle.style.borderRadius = '50%';
+    
+    document.body.appendChild(particle);
+    setTimeout(() => particle.remove(), 1500);
+  }
+}
+/* keron end */
 // === Disable Teleport Method ===
 function buttonDisableTeleport() {
   if (!button) return;
@@ -804,6 +841,13 @@ if (button) {
 
     clicks++;
 
+    /* keron start */
+    // === PARTICLE BURST EFFECT (Shop Item) ===
+    if (document.body.dataset.particleBurst === 'true') {
+      createParticleBurst();
+    }
+    // === END PARTICLE BURST ===
+    /* keron end */
     // create persistent animals GIF on the very first click
     if (clicks === 1) {
       try {
