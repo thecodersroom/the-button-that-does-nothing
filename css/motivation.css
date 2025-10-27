@@ -163,3 +163,187 @@ cite {
   color: #9be7ff;
   transition: transform 0.2s ease;
 }
+
+/* === SMART SCROLL BUTTON  === */
+.smart-scroll-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  z-index: 1000;
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+  width: auto;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(100px);
+  animation: smartScrollBreath 3s ease-in-out infinite;
+}
+
+.smart-scroll-btn.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+@keyframes smartScrollBreath {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(102, 126, 234, 0.6), 0 0 30px rgba(118, 75, 162, 0.3);
+  }
+}
+
+.smart-scroll-btn::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+  transform: rotate(45deg);
+  animation: shimmerSmart 3s infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmerSmart {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.smart-scroll-btn::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  background: linear-gradient(135deg, #667eea, #764ba2, #667eea);
+  border-radius: 50px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: rotateBorderSmart 3s linear infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes rotateBorderSmart {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.scroll-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+  z-index: 1;
+}
+
+.scroll-text {
+  z-index: 1;
+}
+
+.smart-scroll-btn:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.7), 0 0 40px rgba(118, 75, 162, 0.5);
+  animation: none;
+}
+
+.smart-scroll-btn:hover::after {
+  opacity: 1;
+}
+
+.smart-scroll-btn:hover {
+  animation: smartScrollBounce 0.6s ease;
+}
+
+@keyframes smartScrollBounce {
+  0%, 100% { transform: translateY(-5px) scale(1.05); }
+  25% { transform: translateY(-8px) scale(1.08); }
+  50% { transform: translateY(-5px) scale(1.05); }
+  75% { transform: translateY(-7px) scale(1.06); }
+}
+
+.smart-scroll-btn:active {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 2px 10px rgba(102, 126, 234, 0.5);
+}
+
+.smart-scroll-btn:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 50%, #764ba2 100%);
+  background-size: 200% 200%;
+  animation: gradientShiftSmart 2s ease infinite, smartScrollBounce 0.6s ease;
+}
+
+@keyframes gradientShiftSmart {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.smart-scroll-btn.flip-animation {
+  animation: flipButton 0.6s ease;
+}
+
+@keyframes flipButton {
+  0% { transform: rotateX(0deg) scale(1); }
+  50% { transform: rotateX(90deg) scale(0.8); }
+  100% { transform: rotateX(0deg) scale(1); }
+}
+
+.smart-scroll-btn.show {
+  animation: smartScrollBreath 3s ease-in-out infinite, gentleFloatSmart 4s ease-in-out infinite;
+}
+
+@keyframes gentleFloatSmart {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.smart-scroll-btn:hover {
+  animation: smartScrollBounce 0.6s ease, gradientShiftSmart 2s ease infinite;
+}
+
+@media (max-width: 768px) {
+  .smart-scroll-btn {
+    bottom: 80px;
+    right: 15px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .scroll-icon {
+    font-size: 1.1rem;
+  }
+  
+  .smart-scroll-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+  }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(100px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.smart-scroll-btn.show {
+  animation: slideInRight 0.5s ease, smartScrollBreath 3s ease-in-out infinite 0.5s, gentleFloatSmart 4s ease-in-out infinite 0.5s;
+}

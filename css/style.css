@@ -672,6 +672,116 @@ h1::after {
   border-color: var(--border-color);
 }
 
+#time-attack-button.time-attack-active {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1), 0 10px 24px rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body[data-theme="light"] #time-attack-button.time-attack-active,
+body[data-theme="pastel"] #time-attack-button.time-attack-active {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+body.dark-mode #time-attack-button.time-attack-active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.time-attack-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  position: relative;
+}
+
+.time-attack-settings {
+  position: relative;
+}
+
+.time-attack-settings-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: var(--text-lg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.time-attack-settings-btn:hover,
+.time-attack-settings-btn:focus-visible,
+.time-attack-settings-btn.active {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.time-attack-settings-btn.active {
+  transform: none;
+}
+
+.time-attack-settings-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.time-attack-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 180px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--card-bg-solid);
+  box-shadow: var(--shadow-xl);
+  display: none;
+  flex-direction: column;
+  padding: var(--space-xs) 0;
+  z-index: 1500;
+  backdrop-filter: blur(10px);
+}
+
+.time-attack-menu.show {
+  display: flex;
+}
+
+.time-attack-menu button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: var(--space-sm) var(--space-md);
+  color: var(--text-color);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.time-attack-menu button:hover,
+.time-attack-menu button:focus-visible {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--accent-color);
+}
+
+.time-attack-menu button.selected {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--accent-color);
+}
+
+body.dark-mode .time-attack-menu button:hover,
+body.dark-mode .time-attack-menu button.selected {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 
 @keyframes pulseText {
   0%, 100% { opacity: 1; }
@@ -2766,4 +2876,20 @@ body.dark-mode .motivation-btn:hover {
 /* Stop float on hover */
 .motivation-btn:hover {
   animation: buttonBounce 0.6s ease, gradientShift 2s ease infinite;
+}
+
+/* Smooth fade for quote updates */
+.fade-in {
+  animation: fadeInQuote 0.4s ease forwards;
+}
+
+@keyframes fadeInQuote {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

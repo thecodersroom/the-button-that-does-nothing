@@ -51,12 +51,8 @@ function simulateFakeCrash() {
     }, 7000);
   }
   
-  // Trigger after 500 clicks
-  if (button) {
-    button.addEventListener("click", () => {
-      if (clicks === 2) simulateFakeCrash();
-    });
-  }
+  // Note: simulateFakeCrash is now triggered from script.js module
+  // This code is kept for reference but the actual trigger is in script.js
   
 
 
