@@ -1,3 +1,5 @@
+import { submitScore } from './leaderboard.js';
+
 // sound files
 const clickSoundFiles = [
   "audio/click1.mp3","audio/click2.wav","audio/click3.wav",
@@ -773,6 +775,11 @@ if (button) {
       highScore = clicks;
       if (highScoreDisplay) highScoreDisplay.textContent = highScore;
       localStorage.setItem("nothingHighScore", highScore); // Save high score
+      // Submit score to leaderboard
+      console.log("submitted high score");
+      const totalInitial = clicks + failedClicks;
+      const initialAccuracy = totalInitial > 0 ? Math.round((clicks / totalInitial) * 100) : 100;
+      submitScore(highScore, initialAccuracy, seconds);
     }
     // === END MERGE ===
 
