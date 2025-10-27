@@ -68,7 +68,38 @@ let highScore = Number(localStorage.getItem('nothingHighScore')) || 0; // High s
 
 // keron start
 let nothingCoins = Number(localStorage.getItem('nothingCoins')) || 0; // Load saved coins
-// keron end
+// keron start 
+// Export coin functions for shop.js
+export function getCurrentCoins() {
+  return nothingCoins;
+}
+
+export function setCurrentCoins(value) {
+  nothingCoins = value;
+  localStorage.setItem('nothingCoins', nothingCoins);
+  updateCoinDisplay();
+}
+
+export function getCoinDisplayElement() {
+  return coinCountDisplay;
+}
+
+export function updateCoinDisplay() {
+  if (coinCountDisplay) {
+    coinCountDisplay.textContent = nothingCoins;
+  }
+}
+
+// Export confetti function for shop.js
+export function createConfettiForShop() {
+  createConfetti();
+}
+
+// Export createParticles for shop.js
+export function createParticlesForShop(x, y, count = 20) {
+  createParticles(x, y, count, true);
+}
+// keron end 
 
 let userInteracted = false;
 let impossibleMode = false;
@@ -1062,11 +1093,7 @@ function getRandomColor() {
 
 /* ===== START JS UPDATE DEV/Kronpatel ===== */
 // === COIN REWARD SYSTEM FUNCTIONS ===
-function updateCoinDisplay() {
-  if (coinCountDisplay) {
-    coinCountDisplay.textContent = nothingCoins;
-  }
-}
+// Update: function is now exported above
 
 function addCoins(amount) {
   nothingCoins += amount;
@@ -2044,4 +2071,4 @@ if (resetScoreButton) {
 
 
 // === Initialize Shop if script loaded ===
-if (typeof renderShop === 'function') renderShop();
+// Shop now initializes itself via DOMContentLoaded event in shop.js

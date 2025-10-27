@@ -1,4 +1,17 @@
+// keron start
 // === NOTHING SHOP SCRIPT ===
+import { 
+  getCurrentCoins, 
+  setCurrentCoins, 
+  getCoinDisplayElement,
+  updateCoinDisplay as updateCoinDisplayFromMain,
+  createConfettiForShop as createConfetti,
+  createParticlesForShop as createParticles
+} from './script.js';
+
+let nothingCoins = getCurrentCoins();
+let coinCountDisplay = getCoinDisplayElement();
+// keron end
 
 const shopItems = [
   {
@@ -90,6 +103,7 @@ function renderShop() {
   if (!container) return;
   
   container.innerHTML = '';
+  nothingCoins = getCurrentCoins(); // Refresh coins from main script
   shopItems.forEach(item => {
     const owned = ownedItems.includes(item.id);
     const affordable = nothingCoins >= item.cost;
@@ -145,12 +159,13 @@ function renderShop() {
 }
 
 async function purchaseItem(item) {
+  nothingCoins = getCurrentCoins(); // Get fresh coin count
   if (nothingCoins < item.cost || ownedItems.includes(item.id)) return;
   
   try {
-    // Deduct coins first
-    nothingCoins -= item.cost;
-    localStorage.setItem('nothingCoins', nothingCoins);
+    // Deduct coins using the exported function
+    setCurrentCoins(nothingCoins - item.cost);
+    nothingCoins = getCurrentCoins(); // Update local variable
     
     // Update display immediately
     if (coinCountDisplay) {
@@ -183,7 +198,7 @@ async function purchaseItem(item) {
     }
     
     // Show purchase celebration
-    createConfetti();
+    createConfetti(); // This now uses the imported function
     
     // Show success message
     showPurchaseNotification(item.name);
@@ -194,9 +209,9 @@ async function purchaseItem(item) {
   } catch (error) {
     console.error('Purchase failed:', error);
     // Rollback if something fails
-    nothingCoins += item.cost;
-    localStorage.setItem('nothingCoins', nothingCoins);
-    if (coinCountDisplay) coinCountDisplay.textContent = nothingCoins;
+    nothingCoins = getCurrentCoins();
+    setCurrentCoins(nothingCoins + item.cost);
+    nothingCoins = getCurrentCoins();
     throw error;
   }
 }
@@ -238,11 +253,8 @@ function addDancingDuck() {
 
 function enableParticleBurst() {
   document.body.dataset.particleBurst = 'true';
-  document.addEventListener('click', e => {
-    if (document.body.dataset.particleBurst === 'true') {
-      createParticles(e.clientX, e.clientY, 15);
-    }
-  });
+  // Note: Particle burst effect is now handled globally in script.js
+  // This is just for the shop preview
 }
 
 function playAmbientNothing() {
