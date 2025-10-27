@@ -27,11 +27,79 @@
 </p>
 
 ---
+## 🧭 Table of Contents
 
+- [🚀 Live Demo](#-live-demo)
+- [📂 File Structure](#file-structure)
+- [⚡ About the Project](#-about-the-project)
+- [✨ Features](#-features)
+  - [🖱️ Core Fun](#️-core-fun)
+  - [🎨 Multi-Theme System](#-multi-theme-system)
+  - [🔊 Sound & Interaction](#-sound--interaction)
+  - [🕹️ Game Modes](#️-game-modes)
+  - [⏱️ Utilities](#️-utilities)
+  - [🧠 Extras & Easter Eggs](#-extras--easter-eggs)
+- [🧩 Installation](#-installation)
+- [🤝 How to Contribute](#-how-to-contribute)
+  - [🪜 Step-by-Step Guide](#-step-by-step-guide)
+  - [💡 Contribution Tips](#-contribution-tips)
+- [🏁 Contributors](#-contributors)
+
+
+---
 ## 🚀 Live Demo
 
 👉 **[Launch The Button That Does Nothing](https://thecodersroom.github.io/the-button-that-does-nothing)**  
 Click the most important button you’ll ever encounter — that still does *absolutely nothing*.
+
+---
+## File structure
+the-button-that-does-nothing/
+├── .vscode/
+│    └── settings.json
+├── audio/
+│   ├── 8-bit.mp3
+│   ├── boss.mp3
+│   ├── click1.mp3
+│   ├── click2.mp3
+│   ├── click3.mp3
+│   ├── click4.mp3
+│   ├── click5.mp3
+│   ├── click6.mp3
+│   ├── click7.mp3
+│   ├── click8.mp3
+│   ├── failedClick.mp3
+│   ├── horror.mp3
+│   ├── lo-fi.mp3
+│   └── suspence.mp3
+├── css/
+│   ├── clock.css
+│   ├── epilepsywarning.css
+│   ├── invisibleButton.css
+│   ├── leaderboard.css
+│   ├── motivation.css
+│   ├── shop.css
+│   └── style.css
+├── image/
+│   ├── animals.gif
+│   ├── favicon.ico
+│   └── Invisible-Egg.png
+├── js/
+│   ├── clock.js
+│   ├── epilepsywarning.js
+│   ├── invisibleButton.js
+│   ├── leaderboard.js
+│   ├── script.js
+│   └── shop.js
+├── FEATURE_SUMMARY.md
+├── FEATURES.md
+├── IMPLEMENTATION_CHECKLIST.md
+├── index.html
+├── LICENSE
+├── motivation.html
+├── package-lock.json
+├── README.md
+└──THEME_SYSTEM.md
 
 ---
 
@@ -96,10 +164,14 @@ cd the-button-that-does-nothing
 # Open the app
 open index.html
 ```
+
+---
+
 ## 🤝 How to Contribute
 **We love contributions! Follow these steps to contribute to The Button That Does Nothing:**
 
-##🪜 Step-by-Step Guide
+
+## 🪜 Step-by-Step Guide
 
 **1. Check Assigned Issues**
   - Visit the [Issues](https://github.com/thecodersroom/the-button-that-does-nothing/issues) tab.
@@ -165,3 +237,6 @@ git push origin feat/<your-branch-name>
   <img src="https://contrib.rocks/image?repo=thecodersroom/the-button-that-does-nothing" />
 </a>
 
+---
+
+- [🔝 Back to Top](#-live-demo)
