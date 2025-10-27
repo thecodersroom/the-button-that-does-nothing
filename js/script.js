@@ -50,6 +50,9 @@ const timeAttackTimerDisplay = document.getElementById('time-attack-timer');
 const timeAttackHighScoreDisplay = document.getElementById('time-attack-high-score');
 const timeAttackProgressBar = document.getElementById('time-attack-progress-bar');
 const timeAttackProgressInner = document.getElementById('time-attack-progress-inner');
+const timeAttackSettingsButton = document.getElementById('time-attack-settings');
+const timeAttackMenu = document.getElementById('time-attack-menu');
+const timeAttackDurationOptions = timeAttackMenu ? timeAttackMenu.querySelectorAll('[data-duration]') : [];
 
 // keron start
 // === COIN REWARD SYSTEM DOM ELEMENTS ===
@@ -85,7 +88,8 @@ let isCelebrationAnimationComplete = false; // Kept from fix/game-bugs
 let timeAttackHighScore = Number(localStorage.getItem('timeAttackHighScore')) || 0;
 let isTimeAttackActive = false;
 let timeAttackScore = 0;
-let timeAttackCountdown = 60;
+let timeAttackDuration = Number(localStorage.getItem('timeAttackDuration')) || 60;
+let timeAttackCountdown = timeAttackDuration;
 let timeAttackInterval = null;
 
 // Sound Settings
@@ -876,7 +880,7 @@ document.addEventListener("click", (e) => {
   const clickedButton = e.target.closest('button');
   const clickedInput = e.target.closest('input, select, textarea'); // Broaden check
   const clickedLabel = e.target.closest('label');
-  const clickedControl = e.target.closest('.control-buttons button, #theme-selector, #sound-panel'); // Ignore UI controls
+  const clickedControl = e.target.closest('.control-buttons button, #theme-selector, #sound-panel, .time-attack-settings, #time-attack-menu'); // Ignore UI controls
 
   if (!clickedButton && !clickedInput && !clickedLabel && !clickedControl) {
     failedClicks++;
@@ -1481,13 +1485,75 @@ if (musicToggle) musicToggle.addEventListener('change', () => { musicEnabled = m
 if (volumeSlider) volumeSlider.addEventListener('input', () => { masterVolume = volumeSlider.value / 100; updateSoundSettings(); });
 if (trackSelector) trackSelector.addEventListener('change', () => { currentTrack = trackSelector.value; updateSoundSettings(); updateMusicPlayback(); });
 
+function updateTimeAttackMenuSelection() {
+  if (!timeAttackDurationOptions) return;
+  timeAttackDurationOptions.forEach((option) => {
+    const optionDuration = Number(option.dataset.duration);
+    const isSelected = optionDuration === timeAttackDuration;
+    option.classList.toggle('selected', isSelected);
+    option.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+  });
+}
+
+function openTimeAttackMenu() {
+  if (!timeAttackMenu || !timeAttackSettingsButton) return;
+  timeAttackMenu.classList.add('show');
+  timeAttackSettingsButton.setAttribute('aria-expanded', 'true');
+  timeAttackSettingsButton.classList.add('active');
+}
+
+function closeTimeAttackMenu() {
+  if (!timeAttackMenu || !timeAttackSettingsButton) return;
+  timeAttackMenu.classList.remove('show');
+  timeAttackSettingsButton.setAttribute('aria-expanded', 'false');
+  timeAttackSettingsButton.classList.remove('active');
+}
+
+function toggleTimeAttackMenu() {
+  if (!timeAttackMenu || !timeAttackSettingsButton) return;
+  const isOpen = timeAttackMenu.classList.contains('show');
+  if (isOpen) {
+    closeTimeAttackMenu();
+  } else {
+    openTimeAttackMenu();
+  }
+}
+
+function setTimeAttackDuration(duration, { announce = true } = {}) {
+  if (!Number.isFinite(duration)) return;
+  const normalized = Math.max(5, Math.round(duration));
+  let applied = normalized;
+  if (timeAttackDurationOptions && timeAttackDurationOptions.length) {
+    const allowedValues = Array.from(timeAttackDurationOptions).map((option) => Number(option.dataset.duration));
+    if (!allowedValues.includes(applied)) {
+      applied = allowedValues[allowedValues.length - 1];
+    }
+  }
+  const previous = timeAttackDuration;
+  timeAttackDuration = applied;
+  timeAttackCountdown = applied;
+  localStorage.setItem('timeAttackDuration', applied);
+  updateTimeAttackMenuSelection();
+  if (announce && applied !== previous) {
+    updateCounter(`— Time Attack duration set to ${applied}s.`);
+  }
+}
+
 // === TIME ATTACK MODE ===
 function startTimeAttack() {
+  clearInterval(timeAttackInterval);
+  closeTimeAttackMenu();
   isTimeAttackActive = true;
   timeAttackScore = 0;
-  timeAttackCountdown = 60; // 60 second timer
+  const totalDuration = timeAttackDuration;
+  timeAttackCountdown = totalDuration;
+  updateCounter('— Go! Time Attack started.');
+  if (timeAttackButton) {
+    timeAttackButton.classList.add('time-attack-active');
+    timeAttackButton.setAttribute('aria-pressed', 'true');
+  }
   
-  if(timeAttackButton) timeAttackButton.disabled = true;
+  if(timeAttackSettingsButton) timeAttackSettingsButton.disabled = true;
   if(impossibleToggle) impossibleToggle.disabled = true; // Disable impossible mode during
   if(timeAttackTimerDisplay) {
     timeAttackTimerDisplay.textContent = `Time Left: ${timeAttackCountdown}s`;
@@ -1515,62 +1581,76 @@ function startTimeAttack() {
     if(timeAttackTimerDisplay) timeAttackTimerDisplay.textContent = `Time Left: ${timeAttackCountdown}s`;
 
     if (timeAttackProgressInner) {
-      const percentLeft = (timeAttackCountdown / 60) * 100;
+      const percentLeft = Math.max(0, (timeAttackCountdown / totalDuration) * 100);
       timeAttackProgressInner.style.width = `${percentLeft}%`;
     }
 
     if (timeAttackCountdown <= 0) {
       endTimeAttack();
+      return;
     }
   }, 1000);
 }
 
-function endTimeAttack() {
+function endTimeAttack({ cancelled = false } = {}) {
   clearInterval(timeAttackInterval);
+  timeAttackInterval = null;
   isTimeAttackActive = false;
+  timeAttackCountdown = timeAttackDuration;
+  if (timeAttackProgressInner) {
+    timeAttackProgressInner.style.width = '0%';
+  }
 
   if (timeAttackProgressBar) {
     timeAttackProgressBar.style.display = 'none';
   }
 
-  // Show custom themed modal instead of alert
   const resultPopup = document.getElementById('time-attack-result-popup');
   const finalScoreDisplay = document.getElementById('time-attack-final-score');
   const newRecordDisplay = document.getElementById('time-attack-new-record');
-  
-  if (finalScoreDisplay) {
-    finalScoreDisplay.textContent = timeAttackScore;
-  }
 
-  // Check for new high score
-  const isNewRecord = timeAttackScore > timeAttackHighScore;
-  
-  if (isNewRecord) {
-    timeAttackHighScore = timeAttackScore;
-    localStorage.setItem('timeAttackHighScore', timeAttackHighScore);
-    if(timeAttackHighScoreDisplay) timeAttackHighScoreDisplay.textContent = timeAttackHighScore;
-    if(quoteDiv) quoteDiv.textContent = `🏆 New Time Attack High Score: ${timeAttackHighScore}!`;
-    
-    // Show new record message
-    if (newRecordDisplay) {
-      newRecordDisplay.style.display = 'block';
+  if (!cancelled) {
+    if (finalScoreDisplay) {
+      finalScoreDisplay.textContent = timeAttackScore;
+    }
+
+    // Check for new high score
+    const isNewRecord = timeAttackScore > timeAttackHighScore;
+
+    if (isNewRecord) {
+      timeAttackHighScore = timeAttackScore;
+      localStorage.setItem('timeAttackHighScore', timeAttackHighScore);
+      if(timeAttackHighScoreDisplay) timeAttackHighScoreDisplay.textContent = timeAttackHighScore;
+      if(quoteDiv) quoteDiv.textContent = `🏆 New Time Attack High Score: ${timeAttackHighScore}!`;
+
+      if (newRecordDisplay) {
+        newRecordDisplay.style.display = 'block';
+      }
+    } else {
+      if (newRecordDisplay) {
+        newRecordDisplay.style.display = 'none';
+      }
+    }
+
+    if (resultPopup) {
+      resultPopup.classList.add('show');
     }
   } else {
-    // Hide new record message
-    if (newRecordDisplay) {
-      newRecordDisplay.style.display = 'none';
+    if (resultPopup) {
+      resultPopup.classList.remove('show');
     }
+    updateCounter('— Time Attack cancelled.');
   }
   
-  // Show the custom modal
-  if (resultPopup) {
-    resultPopup.classList.add('show');
-  }
-  
-  if(timeAttackButton) timeAttackButton.disabled = false;
+  if(timeAttackSettingsButton) timeAttackSettingsButton.disabled = false;
   if(impossibleToggle) impossibleToggle.disabled = false;
   if(timeAttackTimerDisplay) timeAttackTimerDisplay.style.display = 'none';
   if(timerDiv) timerDiv.style.display = 'block';
+  closeTimeAttackMenu();
+  if (timeAttackButton) {
+    timeAttackButton.classList.remove('time-attack-active');
+    timeAttackButton.setAttribute('aria-pressed', 'false');
+  }
 
   // Restore button to its original state
   if (button) {
@@ -1585,11 +1665,38 @@ function endTimeAttack() {
 // Add the listener for the button
 if (timeAttackButton) {
   timeAttackButton.addEventListener('click', () => {
-    if (!isTimeAttackActive) {
+    if (isTimeAttackActive) {
+      endTimeAttack({ cancelled: true });
+    } else {
       startTimeAttack();
     }
   });
 }
+
+if (timeAttackSettingsButton) {
+  timeAttackSettingsButton.addEventListener('click', () => {
+    if (timeAttackSettingsButton.disabled) return;
+    toggleTimeAttackMenu();
+  });
+}
+
+if (timeAttackMenu) {
+  timeAttackMenu.addEventListener('click', (event) => {
+    const option = event.target.closest('button[data-duration]');
+    if (!option || timeAttackSettingsButton?.disabled) return;
+    const selectedDuration = Number(option.dataset.duration);
+    setTimeAttackDuration(selectedDuration);
+    closeTimeAttackMenu();
+  });
+}
+
+document.addEventListener('click', (event) => {
+  if (!timeAttackMenu || !timeAttackMenu.classList.contains('show')) return;
+  const isSettingsButton = timeAttackSettingsButton?.contains(event.target);
+  const isMenu = timeAttackMenu.contains(event.target);
+  if (isSettingsButton || isMenu) return;
+  closeTimeAttackMenu();
+});
 
 // Add listener for Time Attack result modal close button
 const timeAttackCloseBtn = document.getElementById('time-attack-close-btn');
@@ -1655,6 +1762,7 @@ document.addEventListener('keydown', (e) => {
     popupContainer?.classList.remove('show');
     const timeAttackResultPopup = document.getElementById('time-attack-result-popup');
     timeAttackResultPopup?.classList.remove('show');
+    closeTimeAttackMenu();
   }
 });
 
@@ -1671,6 +1779,10 @@ window.addEventListener('load', () => {
   // === ADDED FOR TIME ATTACK ===
   if (timeAttackHighScoreDisplay) {
     timeAttackHighScoreDisplay.textContent = timeAttackHighScore;
+  }
+  setTimeAttackDuration(timeAttackDuration, { announce: false });
+  if (timeAttackButton) {
+    timeAttackButton.setAttribute('aria-pressed', 'false');
   }
   // === END MERGE ===
 

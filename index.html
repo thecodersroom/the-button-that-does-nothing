@@ -102,7 +102,17 @@
         <span class="toggle-slider"></span>
         <span class="toggle-text">🔥 IMPOSSIBLE MODE</span>
       </label>
-      <button id="time-attack-button" class="toggle-label" title="Time Attack Mode">⏱️ Time Attack</button>
+      <div class="time-attack-controls">
+        <button id="time-attack-button" class="toggle-label" title="Time Attack Mode" aria-pressed="false">⏱️ Time Attack</button>
+        <div class="time-attack-settings">
+          <button id="time-attack-settings" class="time-attack-settings-btn" title="Time Attack Settings" aria-label="Time Attack Settings" aria-haspopup="true" aria-expanded="false" aria-controls="time-attack-menu">⚙️</button>
+          <div id="time-attack-menu" class="time-attack-menu" role="menu" aria-label="Select Time Attack duration">
+            <button type="button" data-duration="15" role="menuitemradio" aria-checked="false">15s Sprint</button>
+            <button type="button" data-duration="30" role="menuitemradio" aria-checked="false">30s Challenge</button>
+            <button type="button" data-duration="60" role="menuitemradio" aria-checked="false">60s Marathon</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="button-container">
