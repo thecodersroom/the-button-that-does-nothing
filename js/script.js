@@ -364,12 +364,12 @@ function updateCounter(extraText = "") {
     accuracyEl.textContent = `${accuracy}%`;
   }
   if (extraText && quoteDiv) {
-    quoteDiv.textContent = extraText;
-    quoteDiv.style.animation = "none";
-    setTimeout(() => {
-      if(quoteDiv) quoteDiv.style.animation = "fadeIn 0.5s ease-in forwards";
-    }, 10);
-  }
+  quoteDiv.classList.remove("fade-in");
+  void quoteDiv.offsetWidth; 
+  quoteDiv.textContent = extraText;
+  quoteDiv.classList.add("fade-in");
+}
+
 }
 
 // Add ripple effect to button
