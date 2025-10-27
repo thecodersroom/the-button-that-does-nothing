@@ -306,6 +306,11 @@ function resetShop() {
   renderShop();
 }
 
+// Export function to refresh shop when coin balance changes
+export function refreshShop() {
+  renderShop();
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', initializeShop);
 
@@ -324,6 +329,9 @@ document.addEventListener("DOMContentLoaded", () => {
   openBtn.addEventListener("click", () => {
     shop.classList.remove("closed", "closing");
     shop.classList.add("opening");
+    
+    // Refresh shop to show latest coin balance
+    renderShop();
 
     setTimeout(() => {
       shop.classList.remove("opening");

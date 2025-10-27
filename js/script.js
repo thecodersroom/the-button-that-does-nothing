@@ -1,5 +1,13 @@
 import { submitScore } from './leaderboard.js';
 
+// Import refreshShop with optional chaining to handle cases where shop.js might not be loaded
+let refreshShop = null;
+import('./shop.js').then(shopModule => {
+  refreshShop = shopModule.refreshShop;
+}).catch(() => {
+  // shop.js might not be available, that's okay
+});
+
 // sound files
 const clickSoundFiles = [
   "audio/click1.mp3","audio/click2.wav","audio/click3.wav",
@@ -1099,6 +1107,10 @@ function addCoins(amount) {
   nothingCoins += amount;
   localStorage.setItem('nothingCoins', nothingCoins);
   updateCoinDisplay();
+  // Refresh shop if available
+  if (refreshShop) {
+    refreshShop();
+  }
 }
 
 function checkCoinReward() {
