@@ -893,26 +893,69 @@ body.dark-mode .time-attack-menu button.selected {
 
 /* ===== START CSS UPDATE DEV/Jetrock ===== */
 
-/* ===== Share Button ===== */
+/* ===== Share Button - Gamified Style ===== */
 #share-button {
-  background: linear-gradient(135deg, var(--info, #3b82f6), #2563eb);
+  position: relative;
+  background: linear-gradient(135deg, #10b981, #059669);
   color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 8px;
+  border: 2px solid rgba(16, 185, 129, 0.5);
+  padding: 14px 36px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  display: block; /* Make it block level */
-  width: fit-content; /* Size to content */
-  margin: var(--space-md) auto; /* Center it */
+  transition: all var(--transition-base);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    0 0 25px rgba(16, 185, 129, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: var(--space-md) auto;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  overflow: hidden;
+}
+
+#share-button::before {
+  content: '🎯';
+  font-size: 1.2rem;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+#share-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-base);
 }
 
 #share-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    0 0 40px rgba(16, 185, 129, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-color: rgba(16, 185, 129, 0.8);
+}
+
+#share-button:hover::after {
+  opacity: 1;
+}
+
+#share-button:active {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    0 0 30px rgba(16, 185, 129, 0.4);
 }
 
 /* ===== Reset Score Button (Attractive Theme-Matching) ===== */
@@ -1127,22 +1170,153 @@ body.dark-mode #reset-score-button.threatening {
 
 /* ===== END CSS UPDATE Dev/Jetrock ===== */
 
-/* For the "My High Score: 7" line */
+/* Gamified High Score Display - Card Style */
 .high-score-display {
-  font-size: var(--text-lg);
-  font-weight: 600;
-  color: var(--text-color);
-  margin-top: var(--space-lg);
-  margin-bottom: var(--space-md);
+  position: relative;
+  padding: var(--space-xl) var(--space-2xl);
+  margin: var(--space-xl) auto;
+  max-width: 500px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 107, 107, 0.15));
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-lg);
+  border: 2px solid rgba(255, 215, 0, 0.4);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 0 40px rgba(255, 215, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
   text-align: center;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  transition: all var(--transition-base);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
-/* To make the score number (e.g., "7") stand out */
-#high-score, #time-attack-high-score { /* Apply to both */
-  font-weight: 700;
-  color: var(--accent-color);
-  font-size: var(--text-xl);
-  margin-left: var(--space-xs);
+/* Animated gradient background overlay */
+.high-score-display::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, 
+    transparent 0%, 
+    rgba(255, 215, 0, 0.1) 25%, 
+    transparent 50%, 
+    rgba(255, 107, 107, 0.1) 75%, 
+    transparent 100%);
+  background-size: 200% 200%;
+  animation: shimmer 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Trophy icon decoration */
+.high-score-display::after {
+  content: '🏆';
+  position: absolute;
+  top: -15px;
+  right: 20px;
+  font-size: 2.5rem;
+  opacity: 0.3;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.high-score-display:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(255, 215, 0, 0.7);
+  box-shadow: 
+    0 12px 48px rgba(0, 0, 0, 0.3),
+    0 0 60px rgba(255, 215, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Label styling */
+.high-score-display::first-line {
+  font-size: var(--text-sm);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+/* Score number - big and bold */
+#high-score, #time-attack-high-score {
+  position: relative;
+  z-index: 1;
+  display: block;
+  font-weight: 900;
+  font-size: 3.5rem;
+  background: linear-gradient(135deg, #ffd700, #ffed4e, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.6));
+  margin-top: var(--space-sm);
+  line-height: 1;
+  animation: scoreGlow 2s ease-in-out infinite;
+}
+
+@keyframes scoreGlow {
+  0%, 100% {
+    filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 6px 20px rgba(255, 215, 0, 0.9));
+  }
+}
+
+/* Different styling for Time Attack high score */
+.high-score-display:nth-of-type(2) {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(147, 51, 234, 0.15));
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 0 40px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.high-score-display:nth-of-type(2)::after {
+  content: '⚡';
+}
+
+.high-score-display:nth-of-type(2):hover {
+  border-color: rgba(59, 130, 246, 0.7);
+  box-shadow: 
+    0 12px 48px rgba(0, 0, 0, 0.3),
+    0 0 60px rgba(59, 130, 246, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .high-score-display {
+    padding: var(--space-lg) var(--space-xl);
+    margin: var(--space-lg) auto;
+  }
+  
+  #high-score, #time-attack-high-score {
+    font-size: 2.5rem;
+  }
+  
+  .high-score-display::after {
+    font-size: 2rem;
+    top: -10px;
+    right: 15px;
+  }
 }
 
 /* Ripple effect */
