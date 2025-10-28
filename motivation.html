@@ -55,6 +55,19 @@
         </li>
       -->
 
+        <ul id="quotes">
+        <li class="quote">
+          <blockquote>Nothing isn’t empty — it’s the canvas of everything.</blockquote>
+          <cite>@Samriddhi</cite>
+        </li>
+
+          <ul id="quotes">
+        <li class="quote">
+          <blockquote>in the space of nothing, ideas quietly begin</blockquote>
+          <cite>@Samriddhi</cite>
+        </li>
+      
+
       <ul id="quotes">
         <li class="quote">
           <blockquote>Nothing is the beginning of everything.</blockquote>
@@ -93,12 +106,24 @@
           <cite>@AyushBurde</cite>
         </li>
        
-        
         <li class="quote">
           <blockquote>Nothing ventured, nothing gained — but sometimes nothing gained is everything you need.</blockquote>
           <cite>@kronpatel</cite>
         </li>
+
+
+        <li class="quote">
+          <blockquote>Sometimes doing nothing is exactly what you need to find everything that matters.</blockquote>
+          <cite>@shatakshi220805</cite>
+        </li>
+
+         <li class="quote">
+          <blockquote>Nothing is ever wasted when it teaches you who you are.</blockquote>
+          <cite>@shatakshi220805</cite>
+        </li>
         
+        
+    
         <li class="quote">
           <blockquote>In the silence of nothing, we find the loudest truths.</blockquote>
           <cite>@kronpatel</cite>
@@ -108,7 +133,30 @@
           <blockquote>Nothing is permanent, not even nothing itself.</blockquote>
           <cite>@kronpatel</cite>
         </li>
+
+        <li class="quote">
+          <blockquote>Embrace the void. It's less work.</blockquote>
+          <cite>@HossamSaberr</cite>
+        </li>
+        <li class="quote">
+          <blockquote>Sometimes, the most productive thing you can do is nothing.</blockquote>
+          <cite>@HossamSaberr</cite>
+        </li>
+
+        <li class="quote">
+          <blockquote>Nothing is so underrated — after all, the universe started with absolutely nothing!</blockquote>
+          <cite>@Gowtham-arja</cite>
+        </li>
+        <li class="quote">
+          <blockquote>Why choose between something or nothing, when you can take a nap instead?</blockquote>
+          <cite>@Gowtham-arja</cite>
+        </li>
       </ul>
+
+     <button id="smart-scroll-btn" class="smart-scroll-btn" aria-label="Scroll to bottom">
+      <span class="scroll-icon">⬇️</span>
+      <span class="scroll-text">Scroll Down</span>
+     </button>
 
       <footer class="motivation-footer">
         <p>✨ Add your voice to the void. Keep it short and thoughtful.</p>
@@ -129,6 +177,52 @@
           parent.insertBefore(img, parent.firstChild);
         }
       });
+      
+const smartScrollBtn = document.getElementById('smart-scroll-btn');
+const scrollIcon = smartScrollBtn.querySelector('.scroll-icon');
+const scrollText = smartScrollBtn.querySelector('.scroll-text');
+    
+let isAtTop = true;
+    
+function updateScrollButton() {
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight;
+  const clientHeight = document.documentElement.clientHeight;
+  const scrollPercentage = (scrollTop / (scrollHeight - clientHeight)) * 100; 
+    if (scrollPercentage < 10) {
+      if (!isAtTop) {
+        scrollIcon.textContent = '⬇️';
+        scrollText.textContent = 'Scroll Down';
+        smartScrollBtn.setAttribute('aria-label', 'Scroll to bottom');
+        smartScrollBtn.classList.add('flip-animation');
+        isAtTop = true;
+        setTimeout(() => smartScrollBtn.classList.remove('flip-animation'), 600);
+        }
+        smartScrollBtn.classList.add('show');
+      } else {
+        if (isAtTop) {
+          scrollIcon.textContent = '⬆️';
+          scrollText.textContent = 'Back to Top';
+          smartScrollBtn.setAttribute('aria-label', 'Scroll to top');
+          smartScrollBtn.classList.add('flip-animation');
+          isAtTop = false;
+          setTimeout(() => smartScrollBtn.classList.remove('flip-animation'), 600);
+        }
+        smartScrollBtn.classList.add('show');
+      }
+    }
+    
+    window.addEventListener('load', updateScrollButton);
+    window.addEventListener('scroll', updateScrollButton);
+    
+    smartScrollBtn.addEventListener('click', () => {
+      if (isAtTop) {
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
     </script>
     <script src="js/script.js"></script>
   </body>

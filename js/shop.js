@@ -1,4 +1,17 @@
+// keron start
 // === NOTHING SHOP SCRIPT ===
+import { 
+  getCurrentCoins, 
+  setCurrentCoins, 
+  getCoinDisplayElement,
+  updateCoinDisplay as updateCoinDisplayFromMain,
+  createConfettiForShop as createConfetti,
+  createParticlesForShop as createParticles
+} from './script.js';
+
+let nothingCoins = getCurrentCoins();
+let coinCountDisplay = getCoinDisplayElement();
+// keron end
 
 const shopItems = [
   {
@@ -8,6 +21,7 @@ const shopItems = [
     description: 'Makes your nothing slightly shinier.',
     effect: () => addVisualGlow(),
     persistent: true,
+    category: null, // Stackable effect
     activate: () => {
       document.body.classList.add('shinier-nothing');
       document.documentElement.style.setProperty('--glow-intensity', '1.5');
@@ -24,6 +38,7 @@ const shopItems = [
     description: 'Adds a joyful dancing duck at the center.',
     effect: () => addDancingDuck(),
     persistent: true,
+    category: 'character', // Mutually exclusive category
     activate: () => {
       if (!document.querySelector('.dancing-duck')) {
         addDancingDuck();
@@ -32,6 +47,9 @@ const shopItems = [
     deactivate: () => {
       const duck = document.querySelector('.dancing-duck');
       if (duck) duck.remove();
+      // Also remove any other characters
+      const chars = document.querySelectorAll('.shop-character');
+      chars.forEach(char => char.remove());
     }
   },
   {
@@ -41,6 +59,7 @@ const shopItems = [
     description: 'Triggers a colorful particle explosion every click.',
     effect: () => enableParticleBurst(),
     persistent: true,
+    category: null, // Stackable effect
     activate: () => {
       document.body.dataset.particleBurst = 'true';
       enableParticleBurst();
@@ -56,6 +75,7 @@ const shopItems = [
     description: 'Adds a calming ambient hum of… nothing.',
     effect: () => playAmbientNothing(),
     persistent: true,
+    category: null, // Stackable effect
     activate: () => {
       if (!window.ambientSound) {
         window.ambientSound = new Audio('audio/ambient-nothing.mp3');
@@ -78,6 +98,7 @@ const shopItems = [
     description: 'Every purchase rains confetti of pure emptiness.',
     effect: () => createConfetti(),
     persistent: false, // This is a one-time effect
+    category: null,
     activate: () => createConfetti(),
     deactivate: () => {} // No need to deactivate one-time effects
   },
@@ -90,6 +111,7 @@ function renderShop() {
   if (!container) return;
   
   container.innerHTML = '';
+  nothingCoins = getCurrentCoins(); // Refresh coins from main script
   shopItems.forEach(item => {
     const owned = ownedItems.includes(item.id);
     const affordable = nothingCoins >= item.cost;
@@ -145,12 +167,36 @@ function renderShop() {
 }
 
 async function purchaseItem(item) {
+  nothingCoins = getCurrentCoins(); // Get fresh coin count
   if (nothingCoins < item.cost || ownedItems.includes(item.id)) return;
   
   try {
-    // Deduct coins first
-    nothingCoins -= item.cost;
-    localStorage.setItem('nothingCoins', nothingCoins);
+    // If this item has a category (mutually exclusive items)
+    if (item.category) {
+      // Find other items in the same category that are currently active
+      const activeItems = JSON.parse(localStorage.getItem('activeShopItems') || '[]');
+      const activeItemsArray = [...activeItems];
+      
+      // Deactivate other items in the same category
+      for (const activeItemId of activeItemsArray) {
+        const activeItem = shopItems.find(i => i.id === activeItemId);
+        if (activeItem && activeItem.category === item.category && activeItem.persistent && activeItem.deactivate) {
+          activeItem.deactivate();
+          // Remove from active items list
+          const index = activeItems.indexOf(activeItemId);
+          if (index > -1) {
+            activeItems.splice(index, 1);
+          }
+        }
+      }
+      
+      // Save updated active items
+      localStorage.setItem('activeShopItems', JSON.stringify(activeItems));
+    }
+    
+    // Deduct coins using the exported function
+    setCurrentCoins(nothingCoins - item.cost);
+    nothingCoins = getCurrentCoins(); // Update local variable
     
     // Update display immediately
     if (coinCountDisplay) {
@@ -183,7 +229,7 @@ async function purchaseItem(item) {
     }
     
     // Show purchase celebration
-    createConfetti();
+    createConfetti(); // This now uses the imported function
     
     // Show success message
     showPurchaseNotification(item.name);
@@ -194,9 +240,9 @@ async function purchaseItem(item) {
   } catch (error) {
     console.error('Purchase failed:', error);
     // Rollback if something fails
-    nothingCoins += item.cost;
-    localStorage.setItem('nothingCoins', nothingCoins);
-    if (coinCountDisplay) coinCountDisplay.textContent = nothingCoins;
+    nothingCoins = getCurrentCoins();
+    setCurrentCoins(nothingCoins + item.cost);
+    nothingCoins = getCurrentCoins();
     throw error;
   }
 }
@@ -223,26 +269,27 @@ function addVisualGlow() {
 }
 
 function addDancingDuck() {
-  if (document.querySelector('.dancing-duck')) return;
+  // Remove any existing character items first
+  const existingCharacters = document.querySelectorAll('.shop-character');
+  existingCharacters.forEach(char => char.remove());
+  
   const duck = document.createElement('img');
-  duck.src = 'image/dancing-duck.gif';
-  duck.className = 'dancing-duck';
+  duck.src = 'image/animals.gif';
+  duck.className = 'dancing-duck shop-character';
   duck.style.position = 'absolute';
   duck.style.left = '50%';
   duck.style.top = '50%';
   duck.style.transform = 'translate(-50%, -50%)';
   duck.style.zIndex = 2000;
   duck.style.width = '100px';
+  duck.alt = 'Dancing Duck';
   document.body.appendChild(duck);
 }
 
 function enableParticleBurst() {
   document.body.dataset.particleBurst = 'true';
-  document.addEventListener('click', e => {
-    if (document.body.dataset.particleBurst === 'true') {
-      createParticles(e.clientX, e.clientY, 15);
-    }
-  });
+  // Note: Particle burst effect is now handled globally in script.js
+  // This is just for the shop preview
 }
 
 function playAmbientNothing() {
@@ -261,14 +308,25 @@ function initializeShop() {
     ownedItems.push(...JSON.parse(savedItems));
   }
   
-  // Restore active persistent effects
+  // Restore active persistent effects, but only if they are owned
   const activeItems = JSON.parse(localStorage.getItem('activeShopItems') || '[]');
+  const validActiveItems = [];
+  
   activeItems.forEach(itemId => {
-    const item = shopItems.find(i => i.id === itemId);
-    if (item && item.persistent && item.activate) {
-      item.activate();
+    // Only activate if the item is actually owned
+    if (ownedItems.includes(itemId)) {
+      const item = shopItems.find(i => i.id === itemId);
+      if (item && item.persistent && item.activate) {
+        item.activate();
+        validActiveItems.push(itemId);
+      }
     }
   });
+  
+  // Update activeItems list to only include valid owned items
+  if (validActiveItems.length !== activeItems.length) {
+    localStorage.setItem('activeShopItems', JSON.stringify(validActiveItems));
+  }
   
   // Initialize display
   renderShop();
@@ -294,6 +352,11 @@ function resetShop() {
   renderShop();
 }
 
+// Export function to refresh shop when coin balance changes
+export function refreshShop() {
+  renderShop();
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', initializeShop);
 
@@ -312,6 +375,9 @@ document.addEventListener("DOMContentLoaded", () => {
   openBtn.addEventListener("click", () => {
     shop.classList.remove("closed", "closing");
     shop.classList.add("opening");
+    
+    // Refresh shop to show latest coin balance
+    renderShop();
 
     setTimeout(() => {
       shop.classList.remove("opening");

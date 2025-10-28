@@ -1,3 +1,13 @@
+import { submitScore } from './leaderboard.js';
+
+// Import refreshShop with optional chaining to handle cases where shop.js might not be loaded
+let refreshShop = null;
+import('./shop.js').then(shopModule => {
+  refreshShop = shopModule.refreshShop;
+}).catch(() => {
+  // shop.js might not be available, that's okay
+});
+
 // sound files
 const clickSoundFiles = [
   "audio/click1.mp3","audio/click2.wav","audio/click3.wav",
@@ -48,6 +58,9 @@ const timeAttackTimerDisplay = document.getElementById('time-attack-timer');
 const timeAttackHighScoreDisplay = document.getElementById('time-attack-high-score');
 const timeAttackProgressBar = document.getElementById('time-attack-progress-bar');
 const timeAttackProgressInner = document.getElementById('time-attack-progress-inner');
+const timeAttackSettingsButton = document.getElementById('time-attack-settings');
+const timeAttackMenu = document.getElementById('time-attack-menu');
+const timeAttackDurationOptions = timeAttackMenu ? timeAttackMenu.querySelectorAll('[data-duration]') : [];
 
 // keron start
 // === COIN REWARD SYSTEM DOM ELEMENTS ===
@@ -58,12 +71,45 @@ const coinCountDisplay = document.getElementById('coin-count');
 // --- MERGED: Keep game reset from fix/game-bugs, add high score from main ---
 let clicks = 0;
 let failedClicks = 0;
+let totalClicks = 0; // NEW: Track ALL clicks on the page
 let highScore = Number(localStorage.getItem('nothingHighScore')) || 0; // High score still saved
+
 // --- END MERGE ---
 
 // keron start
 let nothingCoins = Number(localStorage.getItem('nothingCoins')) || 0; // Load saved coins
-// keron end
+// keron start 
+// Export coin functions for shop.js
+export function getCurrentCoins() {
+  return nothingCoins;
+}
+
+export function setCurrentCoins(value) {
+  nothingCoins = value;
+  localStorage.setItem('nothingCoins', nothingCoins);
+  updateCoinDisplay();
+}
+
+export function getCoinDisplayElement() {
+  return coinCountDisplay;
+}
+
+export function updateCoinDisplay() {
+  if (coinCountDisplay) {
+    coinCountDisplay.textContent = nothingCoins;
+  }
+}
+
+// Export confetti function for shop.js
+export function createConfettiForShop() {
+  createConfetti();
+}
+
+// Export createParticles for shop.js
+export function createParticlesForShop(x, y, count = 20) {
+  createParticles(x, y, count, true);
+}
+// keron end 
 
 let userInteracted = false;
 let impossibleMode = false;
@@ -83,7 +129,8 @@ let isCelebrationAnimationComplete = false; // Kept from fix/game-bugs
 let timeAttackHighScore = Number(localStorage.getItem('timeAttackHighScore')) || 0;
 let isTimeAttackActive = false;
 let timeAttackScore = 0;
-let timeAttackCountdown = 60;
+let timeAttackDuration = Number(localStorage.getItem('timeAttackDuration')) || 60;
+let timeAttackCountdown = timeAttackDuration;
 let timeAttackInterval = null;
 
 // Sound Settings
@@ -276,26 +323,31 @@ window.addEventListener('scroll', () => {
   wrapper.style.transform = `translateX(-${scrollTop}px)`;
 });
 
-// Initialize modern card-based counter
 function initializeCounter() {
   if (!counterDiv) return;
-  const totalInitial = clicks + failedClicks;
+
+  const totalInitial = totalClicks; 
   const initialAccuracy = totalInitial > 0 ? Math.round((clicks / totalInitial) * 100) : 100;
+
   counterDiv.innerHTML = `
     <div class="stat-card">
       <span class="stat-icon">👆</span>
-      <div class="stat-value" id="clicks-value">${clicks}</div> <div class="stat-label">Total Clicks</div>
+      <div class="stat-value" id="clicks-value">${totalClicks}</div> 
+      <div class="stat-label">Total Clicks</div>
     </div>
     <div class="stat-card">
       <span class="stat-icon">❌</span>
-      <div class="stat-value" id="failed-value">${failedClicks}</div> <div class="stat-label">Failed Clicks</div>
+      <div class="stat-value" id="failed-value">${failedClicks}</div> 
+      <div class="stat-label">Failed Clicks</div>
     </div>
     <div class="stat-card">
       <span class="stat-icon">🎯</span>
-      <div class="stat-value" id="accuracy-value">${initialAccuracy}%</div> <div class="stat-label">Accuracy</div>
+      <div class="stat-value" id="accuracy-value">${initialAccuracy}%</div> 
+      <div class="stat-label">Accuracy</div>
     </div>
   `;
 }
+
 
 function animateNumber(element, newValue) {
   if (!element) return;
@@ -321,21 +373,23 @@ function updateCounter(extraText = "") {
   const clicksEl = document.getElementById('clicks-value');
   const failedEl = document.getElementById('failed-value');
   const accuracyEl = document.getElementById('accuracy-value');
-  if (clicksEl) animateNumber(clicksEl, clicks);
+
+  if (clicksEl) animateNumber(clicksEl, totalClicks);
   if (failedEl) animateNumber(failedEl, failedClicks);
+
   if (accuracyEl) {
-    const total = clicks + failedClicks;
-    const accuracy = total > 0 ? Math.round((clicks / total) * 100) : 100;
+    const accuracy = totalClicks > 0 ? Math.round((clicks / totalClicks) * 100) : 100;
     accuracyEl.textContent = `${accuracy}%`;
   }
+
   if (extraText && quoteDiv) {
+    quoteDiv.classList.remove("fade-in");
+    void quoteDiv.offsetWidth;
     quoteDiv.textContent = extraText;
-    quoteDiv.style.animation = "none";
-    setTimeout(() => {
-      if(quoteDiv) quoteDiv.style.animation = "fadeIn 0.5s ease-in forwards";
-    }, 10);
+    quoteDiv.classList.add("fade-in");
   }
 }
+
 
 // Add ripple effect to button
 function addRippleEffect(event) {
@@ -440,6 +494,43 @@ function createSmokeTrail() {
   }
 }
 
+/* keron start */
+// === Particle Burst Effect ===
+function createParticleBurst() {
+  if (!button) return;
+  const rect = button.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  
+  // Create a more intense particle burst
+  for (let i = 0; i < 30; i++) {
+    const particle = document.createElement("span");
+    particle.classList.add("particle");
+    
+    // Create a circular burst pattern
+    const angle = (Math.PI * 2 * i) / 30;
+    const distance = Math.random() * 80 + 40;
+    const offsetX = Math.cos(angle) * distance;
+    const offsetY = Math.sin(angle) * distance;
+    
+    // Set initial position
+    particle.style.left = `${centerX}px`;
+    particle.style.top = `${centerY}px`;
+    
+    // Set final position using CSS custom properties
+    particle.style.setProperty('--particle-x', `${offsetX}px`);
+    particle.style.setProperty('--particle-y', `${offsetY}px`);
+    
+    particle.style.background = getRandomColor();
+    particle.style.width = `${Math.random() * 8 + 4}px`;
+    particle.style.height = `${Math.random() * 8 + 4}px`;
+    particle.style.borderRadius = '50%';
+    
+    document.body.appendChild(particle);
+    setTimeout(() => particle.remove(), 1500);
+  }
+}
+/* keron end */
 // === Disable Teleport Method ===
 function buttonDisableTeleport() {
   if (!button) return;
@@ -734,9 +825,9 @@ window.addEventListener("click", () => {
 if (button) {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
+    totalClicks++; // Increment total clicks for button
     button.classList.add("button-active");
     setTimeout(() => button.classList.remove("button-active"), 150);
-    // Scale down and back up animation
     button.animate(
       [
         { transform: "scale(1)" },
@@ -761,6 +852,13 @@ if (button) {
 
     clicks++;
 
+    /* keron start */
+    // === PARTICLE BURST EFFECT (Shop Item) ===
+    if (document.body.dataset.particleBurst === 'true') {
+      createParticleBurst();
+    }
+    // === END PARTICLE BURST ===
+    /* keron end */
     // create persistent animals GIF on the very first click
     if (clicks === 1) {
       try {
@@ -775,6 +873,11 @@ if (button) {
       highScore = clicks;
       if (highScoreDisplay) highScoreDisplay.textContent = highScore;
       localStorage.setItem("nothingHighScore", highScore); // Save high score
+      // Submit score to leaderboard
+      console.log("submitted high score");
+      const totalInitial = clicks + failedClicks;
+      const initialAccuracy = totalInitial > 0 ? Math.round((clicks / totalInitial) * 100) : 100;
+      submitScore(highScore, initialAccuracy, seconds);
     }
     // === END MERGE ===
 
@@ -867,21 +970,29 @@ function getNewAction() {
 }
 
 // === Count failed clicks ===
+// === Count failed clicks AND track total clicks ===
+
 document.addEventListener("click", (e) => {
+  totalClicks++; // Count EVERY click on the page
+
   const clickedButton = e.target.closest('button');
   const clickedInput = e.target.closest('input, select, textarea'); // Broaden check
   const clickedLabel = e.target.closest('label');
-  const clickedControl = e.target.closest('.control-buttons button, #theme-selector, #sound-panel'); // Ignore UI controls
+  const clickedControl = e.target.closest('.control-buttons button, #theme-selector, #sound-panel, .time-attack-settings, #time-attack-menu'); // Ignore UI controls
 
   if (!clickedButton && !clickedInput && !clickedLabel && !clickedControl) {
     failedClicks++;
     const messageArray = impossibleMode ? impossibleFailMessages : failedClickMessages;
     const randomFail = messageArray[Math.floor(Math.random() * messageArray.length)];
     updateCounter(`— ${randomFail}`);
+
     if (failedClicks % (impossibleMode ? 5 : 10) === 0 && userInteracted) {
       playSound(failSound); // Use playSound utility
     }
+
     checkMusicUnlock();
+  } else {
+    updateCounter(); // Update counter even for UI clicks
   }
 });
 
@@ -1053,16 +1164,16 @@ function getRandomColor() {
 
 /* ===== START JS UPDATE DEV/Kronpatel ===== */
 // === COIN REWARD SYSTEM FUNCTIONS ===
-function updateCoinDisplay() {
-  if (coinCountDisplay) {
-    coinCountDisplay.textContent = nothingCoins;
-  }
-}
+// Update: function is now exported above
 
 function addCoins(amount) {
   nothingCoins += amount;
   localStorage.setItem('nothingCoins', nothingCoins);
   updateCoinDisplay();
+  // Refresh shop if available
+  if (refreshShop) {
+    refreshShop();
+  }
 }
 
 function checkCoinReward() {
@@ -1476,13 +1587,75 @@ if (musicToggle) musicToggle.addEventListener('change', () => { musicEnabled = m
 if (volumeSlider) volumeSlider.addEventListener('input', () => { masterVolume = volumeSlider.value / 100; updateSoundSettings(); });
 if (trackSelector) trackSelector.addEventListener('change', () => { currentTrack = trackSelector.value; updateSoundSettings(); updateMusicPlayback(); });
 
+function updateTimeAttackMenuSelection() {
+  if (!timeAttackDurationOptions) return;
+  timeAttackDurationOptions.forEach((option) => {
+    const optionDuration = Number(option.dataset.duration);
+    const isSelected = optionDuration === timeAttackDuration;
+    option.classList.toggle('selected', isSelected);
+    option.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+  });
+}
+
+function openTimeAttackMenu() {
+  if (!timeAttackMenu || !timeAttackSettingsButton) return;
+  timeAttackMenu.classList.add('show');
+  timeAttackSettingsButton.setAttribute('aria-expanded', 'true');
+  timeAttackSettingsButton.classList.add('active');
+}
+
+function closeTimeAttackMenu() {
+  if (!timeAttackMenu || !timeAttackSettingsButton) return;
+  timeAttackMenu.classList.remove('show');
+  timeAttackSettingsButton.setAttribute('aria-expanded', 'false');
+  timeAttackSettingsButton.classList.remove('active');
+}
+
+function toggleTimeAttackMenu() {
+  if (!timeAttackMenu || !timeAttackSettingsButton) return;
+  const isOpen = timeAttackMenu.classList.contains('show');
+  if (isOpen) {
+    closeTimeAttackMenu();
+  } else {
+    openTimeAttackMenu();
+  }
+}
+
+function setTimeAttackDuration(duration, { announce = true } = {}) {
+  if (!Number.isFinite(duration)) return;
+  const normalized = Math.max(5, Math.round(duration));
+  let applied = normalized;
+  if (timeAttackDurationOptions && timeAttackDurationOptions.length) {
+    const allowedValues = Array.from(timeAttackDurationOptions).map((option) => Number(option.dataset.duration));
+    if (!allowedValues.includes(applied)) {
+      applied = allowedValues[allowedValues.length - 1];
+    }
+  }
+  const previous = timeAttackDuration;
+  timeAttackDuration = applied;
+  timeAttackCountdown = applied;
+  localStorage.setItem('timeAttackDuration', applied);
+  updateTimeAttackMenuSelection();
+  if (announce && applied !== previous) {
+    updateCounter(`— Time Attack duration set to ${applied}s.`);
+  }
+}
+
 // === TIME ATTACK MODE ===
 function startTimeAttack() {
+  clearInterval(timeAttackInterval);
+  closeTimeAttackMenu();
   isTimeAttackActive = true;
   timeAttackScore = 0;
-  timeAttackCountdown = 60; // 60 second timer
+  const totalDuration = timeAttackDuration;
+  timeAttackCountdown = totalDuration;
+  updateCounter('— Go! Time Attack started.');
+  if (timeAttackButton) {
+    timeAttackButton.classList.add('time-attack-active');
+    timeAttackButton.setAttribute('aria-pressed', 'true');
+  }
   
-  if(timeAttackButton) timeAttackButton.disabled = true;
+  if(timeAttackSettingsButton) timeAttackSettingsButton.disabled = true;
   if(impossibleToggle) impossibleToggle.disabled = true; // Disable impossible mode during
   if(timeAttackTimerDisplay) {
     timeAttackTimerDisplay.textContent = `Time Left: ${timeAttackCountdown}s`;
@@ -1510,62 +1683,78 @@ function startTimeAttack() {
     if(timeAttackTimerDisplay) timeAttackTimerDisplay.textContent = `Time Left: ${timeAttackCountdown}s`;
 
     if (timeAttackProgressInner) {
-      const percentLeft = (timeAttackCountdown / 60) * 100;
+      const percentLeft = Math.max(0, (timeAttackCountdown / totalDuration) * 100);
       timeAttackProgressInner.style.width = `${percentLeft}%`;
     }
 
     if (timeAttackCountdown <= 0) {
       endTimeAttack();
+      return;
     }
   }, 1000);
 }
 
-function endTimeAttack() {
+function endTimeAttack({ cancelled = false } = {}) {
   clearInterval(timeAttackInterval);
+  timeAttackInterval = null;
   isTimeAttackActive = false;
+  timeAttackCountdown = timeAttackDuration;
+  if (timeAttackProgressInner) {
+    timeAttackProgressInner.style.width = '0%';
+  }
 
   if (timeAttackProgressBar) {
     timeAttackProgressBar.style.display = 'none';
   }
 
-  // Show custom themed modal instead of alert
   const resultPopup = document.getElementById('time-attack-result-popup');
   const finalScoreDisplay = document.getElementById('time-attack-final-score');
   const newRecordDisplay = document.getElementById('time-attack-new-record');
-  
-  if (finalScoreDisplay) {
-    finalScoreDisplay.textContent = timeAttackScore;
-  }
 
-  // Check for new high score
-  const isNewRecord = timeAttackScore > timeAttackHighScore;
-  
-  if (isNewRecord) {
-    timeAttackHighScore = timeAttackScore;
-    localStorage.setItem('timeAttackHighScore', timeAttackHighScore);
-    if(timeAttackHighScoreDisplay) timeAttackHighScoreDisplay.textContent = timeAttackHighScore;
-    if(quoteDiv) quoteDiv.textContent = `🏆 New Time Attack High Score: ${timeAttackHighScore}!`;
-    
-    // Show new record message
-    if (newRecordDisplay) {
-      newRecordDisplay.style.display = 'block';
+  if (!cancelled) {
+    clicks += timeAttackScore;
+    if (finalScoreDisplay) {
+      finalScoreDisplay.textContent = timeAttackScore;
     }
+
+    // Check for new high score
+    const isNewRecord = timeAttackScore > timeAttackHighScore;
+
+    if (isNewRecord) {
+      timeAttackHighScore = timeAttackScore;
+      localStorage.setItem('timeAttackHighScore', timeAttackHighScore);
+      if(timeAttackHighScoreDisplay) timeAttackHighScoreDisplay.textContent = timeAttackHighScore;
+      if(quoteDiv) quoteDiv.textContent = `🏆 New Time Attack High Score: ${timeAttackHighScore}!`;
+
+      if (newRecordDisplay) {
+        newRecordDisplay.style.display = 'block';
+      }
+    } else {
+      if (newRecordDisplay) {
+        newRecordDisplay.style.display = 'none';
+      }
+    }
+
+    if (resultPopup) {
+      resultPopup.classList.add('show');
+    }
+    updateCounter(`— Time Attack Complete! Score: ${timeAttackScore}`); // Refresh the main counter
   } else {
-    // Hide new record message
-    if (newRecordDisplay) {
-      newRecordDisplay.style.display = 'none';
+    if (resultPopup) {
+      resultPopup.classList.remove('show');
     }
+    updateCounter('— Time Attack cancelled.');
   }
   
-  // Show the custom modal
-  if (resultPopup) {
-    resultPopup.classList.add('show');
-  }
-  
-  if(timeAttackButton) timeAttackButton.disabled = false;
+  if(timeAttackSettingsButton) timeAttackSettingsButton.disabled = false;
   if(impossibleToggle) impossibleToggle.disabled = false;
   if(timeAttackTimerDisplay) timeAttackTimerDisplay.style.display = 'none';
   if(timerDiv) timerDiv.style.display = 'block';
+  closeTimeAttackMenu();
+  if (timeAttackButton) {
+    timeAttackButton.classList.remove('time-attack-active');
+    timeAttackButton.setAttribute('aria-pressed', 'false');
+  }
 
   // Restore button to its original state
   if (button) {
@@ -1575,16 +1764,44 @@ function endTimeAttack() {
      button.style.transform = '';
      // The next normal click will teleport it anyway
   }
+  updateCounter();
 }
 
 // Add the listener for the button
 if (timeAttackButton) {
   timeAttackButton.addEventListener('click', () => {
-    if (!isTimeAttackActive) {
+    if (isTimeAttackActive) {
+      endTimeAttack({ cancelled: true });
+    } else {
       startTimeAttack();
     }
   });
 }
+
+if (timeAttackSettingsButton) {
+  timeAttackSettingsButton.addEventListener('click', () => {
+    if (timeAttackSettingsButton.disabled) return;
+    toggleTimeAttackMenu();
+  });
+}
+
+if (timeAttackMenu) {
+  timeAttackMenu.addEventListener('click', (event) => {
+    const option = event.target.closest('button[data-duration]');
+    if (!option || timeAttackSettingsButton?.disabled) return;
+    const selectedDuration = Number(option.dataset.duration);
+    setTimeAttackDuration(selectedDuration);
+    closeTimeAttackMenu();
+  });
+}
+
+document.addEventListener('click', (event) => {
+  if (!timeAttackMenu || !timeAttackMenu.classList.contains('show')) return;
+  const isSettingsButton = timeAttackSettingsButton?.contains(event.target);
+  const isMenu = timeAttackMenu.contains(event.target);
+  if (isSettingsButton || isMenu) return;
+  closeTimeAttackMenu();
+});
 
 // Add listener for Time Attack result modal close button
 const timeAttackCloseBtn = document.getElementById('time-attack-close-btn');
@@ -1650,6 +1867,7 @@ document.addEventListener('keydown', (e) => {
     popupContainer?.classList.remove('show');
     const timeAttackResultPopup = document.getElementById('time-attack-result-popup');
     timeAttackResultPopup?.classList.remove('show');
+    closeTimeAttackMenu();
   }
 });
 
@@ -1666,6 +1884,10 @@ window.addEventListener('load', () => {
   // === ADDED FOR TIME ATTACK ===
   if (timeAttackHighScoreDisplay) {
     timeAttackHighScoreDisplay.textContent = timeAttackHighScore;
+  }
+  setTimeAttackDuration(timeAttackDuration, { announce: false });
+  if (timeAttackButton) {
+    timeAttackButton.setAttribute('aria-pressed', 'false');
   }
   // === END MERGE ===
 

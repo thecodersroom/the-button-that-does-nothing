@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="css/epilepsywarning.css" />
   <link rel="icon" type="image/x-icon" href="image/favicon.ico" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/leaderboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 
 <body>
@@ -100,7 +102,17 @@
         <span class="toggle-slider"></span>
         <span class="toggle-text">🔥 IMPOSSIBLE MODE</span>
       </label>
-      <button id="time-attack-button" class="toggle-label" title="Time Attack Mode">⏱️ Time Attack</button>
+      <div class="time-attack-controls">
+        <button id="time-attack-button" class="toggle-label" title="Time Attack Mode" aria-pressed="false">⏱️ Time Attack</button>
+        <div class="time-attack-settings">
+          <button id="time-attack-settings" class="time-attack-settings-btn" title="Time Attack Settings" aria-label="Time Attack Settings" aria-haspopup="true" aria-expanded="false" aria-controls="time-attack-menu">⚙️</button>
+          <div id="time-attack-menu" class="time-attack-menu" role="menu" aria-label="Select Time Attack duration">
+            <button type="button" data-duration="15" role="menuitemradio" aria-checked="false">15s Sprint</button>
+            <button type="button" data-duration="30" role="menuitemradio" aria-checked="false">30s Challenge</button>
+            <button type="button" data-duration="60" role="menuitemradio" aria-checked="false">60s Marathon</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="button-container">
@@ -108,13 +120,39 @@
     </div>
 
     <div class="high-score-display">
-      My High Score: <span id="high-score">0</span>
+      <div style="position: relative; z-index: 1; font-size: var(--text-sm); letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; margin-bottom: var(--space-xs);">My High Score</div>
+      <span id="high-score">0</span>
     </div>
     <div class="high-score-display">
-      Time Attack High Score: <span id="time-attack-high-score">0</span>
+      <div style="position: relative; z-index: 1; font-size: var(--text-sm); letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; margin-bottom: var(--space-xs);">Time Attack High Score</div>
+      <span id="time-attack-high-score">0</span>
     </div>
-    <button id="share-button">Share My Score</button>
-    <button id="reset-score-button">🔄 Reset Score</button>
+
+    <div class="leaderboard-section">
+      <h2>🏆 Global Leaderboard</h2>
+
+      <!-- Inline Username Section -->
+      <div class="username-inline" id="username-inline">
+        <h3>Enter Your Name</h3>
+        <input type="text" id="username-input" placeholder="Enter your display name" maxlength="100">
+        <div class="github-section">
+          <label>
+            <input type="checkbox" id="is-github-username"> This is my GitHub username
+          </label>
+        </div>
+        <button id="save-username">Save</button>
+      </div>
+
+      <div id="leaderboard-container">
+        <div id="leaderboard-list"></div>
+      </div>
+
+      <div class="leaderboard-buttons">
+        <button id="share-button">Share My Score</button>
+        <button id="reset-score-button">🔄 Reset Score</button>
+      </div>
+    </div>
+
 
     <!-- Start Popup Modal -Dev/Jetrock -->
     <div id="share-modal" class="modal">
@@ -268,9 +306,15 @@
     💭 Lack Motivation?
   </a>
 
-  <script src="js/script.js"></script>
+  <!-- Start kronpatel -->
+  <!-- Module scripts -->
+  <script type="module" src="js/script.js"></script>
+  <script type="module" src="js/shop.js"></script>
+  <script type="module" src="js/leaderboard.js"></script>
+
+  <!-- Regular scripts -->
+   <!-- End kronpatel -->
   <script src="js/clock.js"></script>
-  <script src="js/shop.js"></script>
   <script src="js/epilepsywarning.js"></script>
   <script src="js/invisibleButton.js"></script>
   <script>
