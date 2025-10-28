@@ -92,8 +92,6 @@ the-button-that-does-nothing/
 │   ├── script.js
 │   └── shop.js
 ├── FEATURE_SUMMARY.md
-├── FEATURES.md
-├── IMPLEMENTATION_CHECKLIST.md
 ├── index.html
 ├── LICENSE
 ├── motivation.html
