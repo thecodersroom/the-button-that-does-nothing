@@ -268,7 +268,9 @@ function buttonTeleport(posX, posY) {
   button.style.top = `${posY}px`;
   button.style.transition = "all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)";
 }
-document.body.style.height = `${wrapper.scrollWidth}px`;
+if (wrapper) { // <--- Add this check
+  document.body.style.height = `${wrapper.scrollWidth}px`;
+}
 window.addEventListener('scroll', () => {
   const scrollTop = window.scrollY;
   wrapper.style.transform = `translateX(-${scrollTop}px)`;
