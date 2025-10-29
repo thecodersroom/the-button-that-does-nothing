@@ -306,6 +306,13 @@ function getRandomLocation() {
 
   return { left, top };
 }
+document
+  .getElementById("recenter")
+  .addEventListener("click", function recenterButton() {
+    const windowHeight = window.innerHeight;
+    const windowWidth = window.innerWidth;
+    buttonTeleport((windowWidth)/5, (windowHeight)/14);
+  });
 
 function buttonTeleport(posX, posY) {
   if (isTimeAttackActive) return; // --- MODIFIED FOR TIME ATTACK ---
