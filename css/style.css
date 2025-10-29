@@ -295,19 +295,60 @@ body::after {
   }
 }
 
-/* === THEME VARIATIONS === */
+/* 🩷 Light (Pink) Theme — EVERYTHING BLACK */
+/* 🩷 Light Theme — Make only text black, keep card color same */
 [data-theme="light"] {
-  --bg-start: #fdf2ec;
-  --bg-end: #ffd8d8;
-  --card-bg: rgba(255, 255, 255, 0.8);
-  --card-bg-solid: rgba(255, 255, 255, 0.95);
-  --text-color: #1f1f1f;
-  --text-secondary: rgba(31, 31, 31, 0.6);
-  --accent-color: #ff5a5a;
-  --border-color: rgba(0, 0, 0, 0.1);
-  --button-gradient-start: #ff867c;
-  --button-gradient-end: #ff5a5a;
+  --text-color: #000000;
+  --text-secondary: #000000;
 }
+[data-theme="light"] body,
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6,
+[data-theme="light"] p,
+[data-theme="light"] span,
+[data-theme="light"] a,
+[data-theme="light"] li,
+[data-theme="light"] label,
+[data-theme="light"] div,
+[data-theme="light"] small,
+[data-theme="light"] strong,
+[data-theme="light"] em {
+  color: #000000 !important;
+}
+
+
+/* 🎯 Target all text elements inside cards/quotes without changing the background */
+[data-theme="light"] .card,
+[data-theme="light"] .quote-card,
+[data-theme="light"] .entry,
+[data-theme="light"] .quote,
+[data-theme="light"] .content,
+[data-theme="light"] .text,
+[data-theme="light"] .box,
+[data-theme="light"] .container {
+  color: #000000 !important;
+}
+
+/* 💬 Specifically target paragraphs, spans, divs, etc. inside those cards */
+[data-theme="light"] .card *,
+[data-theme="light"] .quote-card *,
+[data-theme="light"] .entry *,
+[data-theme="light"] .quote *,
+[data-theme="light"] .content *,
+[data-theme="light"] .text *,
+[data-theme="light"] .box *,
+[data-theme="light"] .container * {
+  color: #000000 !important;
+  fill: #000000 !important;
+  stroke: #000000 !important;
+}
+
+
+
 
 [data-theme="neon"] {
   --bg-start: #0a0e27;
