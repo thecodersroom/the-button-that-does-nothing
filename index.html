@@ -24,24 +24,23 @@
 
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 <script>
+
 // Mobile-Only Optimizer (FIXED)
+
 (function() {
   const isMobile = window.innerWidth <= 768;
-  
   if (!isMobile) {
     console.log('Desktop - no optimizations');
     return;
   }
-  
   console.log('Mobile detected - applying fixes...');
-  
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', applyMobileFixes);
   } else {
     applyMobileFixes();
   }
-  
   function applyMobileFixes() {
     const style = document.createElement('style');
     style.innerHTML = `
@@ -51,37 +50,31 @@
           animation: none !important;
           transition: transform 0.2s ease, opacity 0.2s ease !important;
         }
-        
         /* Prevent horizontal scroll */
         html, body {
           overflow-x: hidden !important;
           max-width: 100vw !important;
         }
-        
         /* Optimize button */
         #useless-button {
           animation: none !important;
           box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
         }
-        
         #useless-button::before,
         #useless-button::after,
         .button-container::before {
           display: none !important;
         }
-        
         /* Hide particles */
         .floating-particle,
         .confetti {
           display: none !important;
         }
-        
         /* Simplify background */
         body::after {
           animation: none !important;
           opacity: 0.2 !important;
         }
-        
         /* Fix motivation button */
         .motivation-btn {
           bottom: 85px !important;
@@ -91,23 +84,19 @@
           font-size: 0.85rem !important;
           padding: 8px 16px !important;
         }
-        
         /* Top panel shrink animation */
         #top-panel {
           transition: transform 0.3s ease, padding 0.3s ease, top 0.3s ease !important;
         }
-        
         #top-panel.scrolled {
           transform: translateX(-50%) scale(0.85) !important;
           padding: 4px 8px !important;
           top: 5px !important;
         }
-        
         #top-panel.scrolled .panel-buttons button {
           font-size: 1em !important;
           padding: 6px !important;
         }
-        
         #top-panel.scrolled .panel-item {
           font-size: 0.75em !important;
           padding: 3px 6px !important;
@@ -116,7 +105,7 @@
     `;
     document.head.appendChild(style);
     
-    // ✅ FIX: Properly get topPanel element
+    // FIX: Properly get topPanel element
     const topPanel = document.getElementById('top-panel');
     
     if (topPanel) {
@@ -128,10 +117,10 @@
         }
       }, { passive: true });
       
-      console.log('✅ Scroll handler added');
+      console.log(' Scroll handler added');
     }
     
-    console.log('✅ Mobile optimizations complete!');
+    console.log(' Mobile optimizations complete!');
   }
 })();
 </script>
