@@ -1,0 +1,38 @@
+#useless-button {
+  transition: all 0.4s ease;
+}
+
+#useless-button.day-theme {
+  background: linear-gradient(135deg, #ffda6b, #ffb347) !important;
+  color: #222 !important;
+  box-shadow: 0 0 15px rgba(255, 223, 99, 0.9) !important;
+  border: 2px solid #fff5d1 !important;
+}
+
+#useless-button.night-theme {
+  background: linear-gradient(135deg, #141e30, #243b55) !important;
+  color: #f5f5f5 !important;
+  box-shadow: 0 0 20px rgba(36, 59, 85, 0.8) !important;
+  border: 2px solid #3a506b !important;
+}
+
+#useless-button.halloween-theme {
+  background: linear-gradient(135deg, #ff7518, #2c1b10) !important;
+  color: #fdf6e3 !important;
+  text-shadow: 0 0 5px #ffcc00 !important;
+  border: 2px solid #ffb84d !important;
+  box-shadow: 0 0 30px rgba(255, 117, 24, 1) !important;
+  animation: spooky-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes spooky-glow {
+  from { box-shadow: 0 0 15px #ff7518; }
+  to { box-shadow: 0 0 35px #ffcc00; }
+}
+
+#useless-button.winter-theme {
+  background: linear-gradient(135deg, #a1c4fd, #c2e9fb) !important;
+  color: #003366 !important;
+  box-shadow: 0 0 20px rgba(173, 216, 230, 1) !important;
+  border: 2px solid rgba(255, 255, 255, 0.9) !important;
+}
