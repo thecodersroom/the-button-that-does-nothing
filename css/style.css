@@ -2098,6 +2098,13 @@ body.dark-mode #reset-score-button.threatening {
   gap: var(--space-sm);
 }
 
+#custom-font-family{
+  background-color: transparent;
+  border: none;
+  color: var(--text-color);
+  font-size: var(--text-base);
+}
+
 .color-picker-item label {
   color: var(--text-color);
   font-weight: 600;

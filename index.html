@@ -66,12 +66,12 @@
     </div>
 
     <!-- Combined Buttons -->
- <div class="panel-buttons">
-  <button id="dark-mode-toggle" title="Toggle Dark Mode">🌙</button>
-  <button id="theme-toggle" title="Theme">🎨</button>
-  <button id="sound-toggle" title="Sound Settings">🎵</button>
-  <button id="open-shop-btn" title="Open Shop">🛍️</button>
-</div>
+    <div class="panel-buttons">
+      <button id="dark-mode-toggle" title="Toggle Dark Mode">🌙</button>
+      <button id="theme-toggle" title="Theme">🎨</button>
+      <button id="sound-toggle" title="Sound Settings">🎵</button>
+      <button id="open-shop-btn" title="Open Shop">🛍️</button>
+    </div>
 
     <!-- Moved Clock Here -->
     <div class="clock-container">
@@ -92,16 +92,16 @@
   <div class="app-container">
     <h1>The Button That Does Nothing</h1>
 
-  <!-- Hidden Easter Egg Button -->
-<button id="hidden-button">
-  <img src="image/Invisible-Egg.png" class="hidden-image" width="75px" height="100px" alt="Easter Egg">
-</button>
+    <!-- Hidden Easter Egg Button -->
+    <button id="hidden-button">
+      <img src="image/Invisible-Egg.png" class="hidden-image" width="75px" height="100px" alt="Easter Egg">
+    </button>
 
-<!-- Popup Card -->
-<div id="easter-card" class="easter-card">
-  <h1>🥚 You found the Easter Egg!</h1>
-  <h3>Congrats! You discovered a hidden feature 🎉</h3>
-</div>
+    <!-- Popup Card -->
+    <div id="easter-card" class="easter-card">
+      <h1>🥚 You found the Easter Egg!</h1>
+      <h3>Congrats! You discovered a hidden feature 🎉</h3>
+    </div>
 
     <div class="toggle-container">
       <label class="toggle-label">
@@ -110,9 +110,12 @@
         <span class="toggle-text">🔥 IMPOSSIBLE MODE</span>
       </label>
       <div class="time-attack-controls">
-        <button id="time-attack-button" class="toggle-label" title="Time Attack Mode" aria-pressed="false">⏱️ Time Attack</button>
+        <button id="time-attack-button" class="toggle-label" title="Time Attack Mode" aria-pressed="false">⏱️ Time
+          Attack</button>
         <div class="time-attack-settings">
-          <button id="time-attack-settings" class="time-attack-settings-btn" title="Time Attack Settings" aria-label="Time Attack Settings" aria-haspopup="true" aria-expanded="false" aria-controls="time-attack-menu">⚙️</button>
+          <button id="time-attack-settings" class="time-attack-settings-btn" title="Time Attack Settings"
+            aria-label="Time Attack Settings" aria-haspopup="true" aria-expanded="false"
+            aria-controls="time-attack-menu">⚙️</button>
           <div id="time-attack-menu" class="time-attack-menu" role="menu" aria-label="Select Time Attack duration">
             <button type="button" data-duration="15" role="menuitemradio" aria-checked="false">15s Sprint</button>
             <button type="button" data-duration="30" role="menuitemradio" aria-checked="false">30s Challenge</button>
@@ -127,14 +130,18 @@
     </div>
 
     <div class="high-score-display">
-      <div style="position: relative; z-index: 1; font-size: var(--text-sm); letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; margin-bottom: var(--space-xs);">My High Score</div>
+      <div
+        style="position: relative; z-index: 1; font-size: var(--text-sm); letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; margin-bottom: var(--space-xs);">
+        My High Score</div>
       <span id="high-score">0</span>
     </div>
     <div style="margin-top: 20px; text-align: center;">
       <button id="download-report" class="download-btn">📄 Download Wasted Time Report</button>
     </div>
     <div class="high-score-display">
-      <div style="position: relative; z-index: 1; font-size: var(--text-sm); letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; margin-bottom: var(--space-xs);">Time Attack High Score</div>
+      <div
+        style="position: relative; z-index: 1; font-size: var(--text-sm); letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; margin-bottom: var(--space-xs);">
+        Time Attack High Score</div>
       <span id="time-attack-high-score">0</span>
     </div>
 
@@ -264,27 +271,97 @@
         <div class="themes-grid" id="themes-grid"></div>
       </div>
 
-      <div class="theme-tab-content" id="custom-tab">
-        <div class="custom-theme-creator">
-          <h3>✨ Create Your Custom Theme</h3>
+      <div class="custom-theme-creator">
+        <h3>✨ Create Your Custom Theme</h3>
+        <div class="color-picker-group">
+          <div class="color-picker-item">
+            <label>
+              Background Start
+              <div class="color-input-wrapper">
+                <input type="color" id="custom-bg-start">
+                <input type="text" id="custom-bg-start-text">
+              </div>
+            </label>
+          </div>
+          <div class="color-picker-item">
+            <label>
+              Background End
+              <div class="color-input-wrapper">
+                <input type="color" id="custom-bg-end">
+                <input type="text" id="custom-bg-end-text">
+              </div>
+            </label>
+          </div>
+          <div class="color-picker-item">
+            <label>
+              Text Color
+              <div class="color-input-wrapper">
+                <input type="color" id="custom-text-color">
+                <input type="text" id="custom-text-color-text">
+              </div>
+            </label>
+          </div>
+          <div class="color-picker-item">
+            <label>
+              Accent Color
+              <div class="color-input-wrapper">
+                <input type="color" id="custom-accent-color">
+                <input type="text" id="custom-accent-color-text">
+              </div>
+            </label>
+          </div>
+          <div class="color-picker-item">
+            <label>
+              Button Gradient Start
+              <div class="color-input-wrapper">
+                <input type="color" id="custom-button-start">
+                <input type="text" id="custom-button-start-text">
+              </div>
+            </label>
+          </div>
+          <div class="color-picker-item">
+            <label>
+              Button Gradient End
+              <div class="color-input-wrapper">
+                <input type="color" id="custom-button-end">
+                <input type="text" id="custom-button-end-text">
+              </div>
+            </label>
+          </div>
+
+          <div class="color-picker-item">
+            <label>
+              Font Family:
+              <input type="text" id="custom-font-family" value="'Poppins', sans-serif">
+            </label>
+          </div>
+
+
+        </div>
+        <div class="custom-theme-actions">
+          <button id="save-custom-theme" class="save-custom-theme">Apply Custom Theme</button>
+          <button id="reset-custom-theme" class="reset-custom-theme">Reset</button>
+          <button id="random-color-theme" class="random-color-theme">Randomize Colors</button>
         </div>
       </div>
+
+
     </div>
   </div>
 
 
 
-<!-- === NOTHING SHOP (Collapsible) === -->
-<div id="nothing-shop" class="nothing-shop closed">
-  <div class="shop-header">
-    <h2>🛒 Nothing Shop</h2>
-    <button id="close-shop" class="shop-close-btn" title="Close Shop">✖</button>
+  <!-- === NOTHING SHOP (Collapsible) === -->
+  <div id="nothing-shop" class="nothing-shop closed">
+    <div class="shop-header">
+      <h2>🛒 Nothing Shop</h2>
+      <button id="close-shop" class="shop-close-btn" title="Close Shop">✖</button>
+    </div>
+
+
+
+    <div id="shop-items" class="shop-items"></div>
   </div>
-
-  
-
-  <div id="shop-items" class="shop-items"></div>
-</div>
 
 
 
@@ -307,14 +384,18 @@
       <p id="bot-feedback" style="margin-top:10px; color: #eee; min-height: 1.2em;"></p>
     </div>
   </div>
-   <a href="motivation.html" class="motivation-btn">
+  <a href="motivation.html" class="motivation-btn">
     💭 Lack Motivation?
   </a>
-<button class="recenter-btn" id="recenter" title="Recenter View">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M288-16c17.7 0 32 14.3 32 32l0 18.3c98.1 14 175.7 91.6 189.7 189.7l18.3 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-18.3 0c-14 98.1-91.6 175.7-189.7 189.7l0 18.3c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-18.3C157.9 463.7 80.3 386.1 66.3 288L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l18.3 0C80.3 125.9 157.9 48.3 256 34.3L256 16c0-17.7 14.3-32 32-32zM128 256a160 160 0 1 0 320 0 160 160 0 1 0 -320 0zm160-96a96 96 0 1 1 0 192 96 96 0 1 1 0-192z"/></svg>
-</button>
+  <button class="recenter-btn" id="recenter" title="Recenter View">
+    <svg xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 576 512"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+      <path
+        d="M288-16c17.7 0 32 14.3 32 32l0 18.3c98.1 14 175.7 91.6 189.7 189.7l18.3 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-18.3 0c-14 98.1-91.6 175.7-189.7 189.7l0 18.3c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-18.3C157.9 463.7 80.3 386.1 66.3 288L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l18.3 0C80.3 125.9 157.9 48.3 256 34.3L256 16c0-17.7 14.3-32 32-32zM128 256a160 160 0 1 0 320 0 160 160 0 1 0 -320 0zm160-96a96 96 0 1 1 0 192 96 96 0 1 1 0-192z" />
+    </svg>
+  </button>
 
-<div id="tooltip" class="tooltip">I’m here!</div>
+  <div id="tooltip" class="tooltip">I’m here!</div>
 
 
   <!-- Start kronpatel -->
@@ -324,7 +405,7 @@
   <script type="module" src="js/leaderboard.js"></script>
 
   <!-- Regular scripts -->
-   <!-- End kronpatel -->
+  <!-- End kronpatel -->
   <script src="js/clock.js"></script>
   <script src="js/epilepsywarning.js"></script>
   <script src="js/invisibleButton.js"></script>
