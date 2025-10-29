@@ -24,6 +24,217 @@
 
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+// Mobile-Only Optimizer (FIXED)
+(function() {
+  const isMobile = window.innerWidth <= 768;
+  
+  if (!isMobile) {
+    console.log('Desktop - no optimizations');
+    return;
+  }
+  
+  console.log('Mobile detected - applying fixes...');
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyMobileFixes);
+  } else {
+    applyMobileFixes();
+  }
+  
+  function applyMobileFixes() {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @media (max-width: 768px) {
+        /* Kill animations */
+        *, *::before, *::after {
+          animation: none !important;
+          transition: transform 0.2s ease, opacity 0.2s ease !important;
+        }
+        
+        /* Prevent horizontal scroll */
+        html, body {
+          overflow-x: hidden !important;
+          max-width: 100vw !important;
+        }
+        
+        /* Optimize button */
+        #useless-button {
+          animation: none !important;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+        }
+        
+        #useless-button::before,
+        #useless-button::after,
+        .button-container::before {
+          display: none !important;
+        }
+        
+        /* Hide particles */
+        .floating-particle,
+        .confetti {
+          display: none !important;
+        }
+        
+        /* Simplify background */
+        body::after {
+          animation: none !important;
+          opacity: 0.2 !important;
+        }
+        
+        /* Fix motivation button */
+        .motivation-btn {
+          bottom: 85px !important;
+          left: 15px !important;
+          max-width: calc(100vw - 100px) !important;
+          animation: none !important;
+          font-size: 0.85rem !important;
+          padding: 8px 16px !important;
+        }
+        
+        /* Top panel shrink animation */
+        #top-panel {
+          transition: transform 0.3s ease, padding 0.3s ease, top 0.3s ease !important;
+        }
+        
+        #top-panel.scrolled {
+          transform: translateX(-50%) scale(0.85) !important;
+          padding: 4px 8px !important;
+          top: 5px !important;
+        }
+        
+        #top-panel.scrolled .panel-buttons button {
+          font-size: 1em !important;
+          padding: 6px !important;
+        }
+        
+        #top-panel.scrolled .panel-item {
+          font-size: 0.75em !important;
+          padding: 3px 6px !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // ✅ FIX: Properly get topPanel element
+    const topPanel = document.getElementById('top-panel');
+    
+    if (topPanel) {
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 50) {
+          topPanel.classList.add('scrolled');
+        } else {
+          topPanel.classList.remove('scrolled');
+        }
+      }, { passive: true });
+      
+      console.log('✅ Scroll handler added');
+    }
+    
+    console.log('✅ Mobile optimizations complete!');
+  }
+})();
+</script>
+<style>
+@media (max-width: 768px) {
+  /* Compact but visible top bar - MATCH DESKTOP STYLE */
+  #top-panel {
+    position: fixed !important;
+    top: 15px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 10000 !important;
+    padding: 6px 12px !important;
+    gap: 10px !important;
+    background: rgba(255, 255, 255, 0.1) !important; /* Same as desktop */
+    backdrop-filter: blur(12px) !important; /* Same as desktop */
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Push content just below */
+  .app-container {
+    margin-top: 89px !important;
+    padding-top: 65px !important;
+  }
+
+  /* Title visible below bar */
+  .app-container h1 {
+    margin-top: 0 !important;
+    margin-bottom: 20px !important;
+    font-size: 1.9rem !important;
+  }
+
+  #achievement-popup,
+  .notification-popup {
+    top: 105px !important;
+    z-index: 9999 !important;
+  }
+
+  #easter-card {
+    top: 105px !important;
+    z-index: 9999 !important;
+  }
+
+  /* FIX: Hide tooltips on mobile */
+  #top-panel .panel-buttons button::before {
+    display: none !important;
+  }
+  
+  /* FIX: All modals/dropdowns ABOVE panel */
+  #theme-selector,
+  #sound-panel,
+  .popup-container,
+  .modal {
+    z-index: 10005 !important;
+  }
+  
+  .theme-selector-content,
+  .popup-content {
+    z-index: 10006 !important;
+  }
+  
+  /* Time attack menu */
+  #time-attack-menu,
+  .time-attack-menu {
+    z-index: 10005 !important;
+  }
+
+  /* Shrink on scroll */
+  #top-panel.scrolled {
+    transform: translateX(-50%) scale(0.85) !important;
+    padding: 4px 8px !important;
+    top: 8px !important;
+  }
+
+  body.scrolled {
+    padding-top: 85px !important;
+  }
+
+  #top-panel .panel-item {
+    font-size: 0.8em !important;
+    padding: 4px 8px !important;
+  }
+
+  #top-panel .panel-buttons button {
+    font-size: 1.1em !important;
+    padding: 6px !important;
+  }
+}
+
+/* Desktop: unchanged */
+@media (min-width: 769px) {
+  body {
+    padding-top: var(--top-panel-offset) !important;
+  }
+  
+  .app-container {
+    margin-top: 0 !important;
+  }
+}
+</style>
 </head>
 
 <body>
