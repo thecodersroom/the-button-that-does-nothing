@@ -92,7 +92,7 @@ the-button-that-does-nothing/
 │   ├── leaderboard.js
 │   ├── script.js
 │   └── shop.js
-├── FEATURE_SUMMARY.md
+├── FEATURES.md
 ├── index.html
 ├── LICENSE
 ├── motivation.html
