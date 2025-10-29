@@ -53,10 +53,11 @@
 Click the most important button you’ll ever encounter — that still does *absolutely nothing*.
 
 ---
-## File structure
+## File Structure
+```
 the-button-that-does-nothing/
 ├── .vscode/
-│    └── settings.json
+│   └── settings.json
 ├── audio/
 │   ├── 8-bit.mp3
 │   ├── boss.mp3
@@ -92,16 +93,13 @@ the-button-that-does-nothing/
 │   ├── script.js
 │   └── shop.js
 ├── FEATURE_SUMMARY.md
-├── FEATURES.md
-├── IMPLEMENTATION_CHECKLIST.md
 ├── index.html
 ├── LICENSE
 ├── motivation.html
 ├── package-lock.json
 ├── README.md
-└──THEME_SYSTEM.md
-
----
+└── THEME_SYSTEM.md
+```
 
 ## ⚡ About the Project
 
