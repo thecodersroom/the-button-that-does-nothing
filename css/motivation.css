@@ -66,6 +66,7 @@ body {
   padding: 0;
 }
 
+/* === QUOTES SECTION === */
 #quotes {
   list-style: none;
   padding: 0;
@@ -73,20 +74,30 @@ body {
   text-align: center;
   counter-reset: quote;
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
 #quotes li.quote {
   counter-increment: quote;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 12px;
-  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 24px 28px;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 12px;
-  box-shadow: 0 4px 14px rgba(2, 6, 23, 0.35);
+  justify-content: flex-start;
+  gap: 20px;
+  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.45);
   position: relative;
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 80px;
+}
+
+#quotes li.quote:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6);
 }
 
 #quotes li.quote::before {
@@ -94,58 +105,78 @@ body {
   font-weight: 600;
   color: #9be7ff;
   font-size: 1rem;
-  min-width: 28px;
-  text-align: center;
   position: absolute;
-  left: 60px;
   top: 16px;
+  left: 16px;
   opacity: 0.4;
 }
 
-blockquote {
-  margin: 0;
-  font-size: 1rem;
-  display: flex;
-  text-align: center;
-  line-height: 1.4;
-  color: #e8f3ff;
-  quotes: "“" "”" "‘" "’";;
-}
-
-blockquote::before {
-  content: open-quote;
-  color:  #9be7ff;
-  margin-right: 4px;
-}
-blockquote::after {
-  content: close-quote;
-  color: #9be7ff;
-  margin-left: 4px;
-}
-
-cite {
-  display: block;
-  margin-top: 6px;
-  font-size: 0.85rem;
-  color: #9aa6bf;
-}
-
-/* Avatar Styling */
+/* === AVATAR === */
 .quote img.avatar {
-  margin-right: 10px;
-  width: 42px;
-  height: 42px;
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  min-height: 52px;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.1);
   object-fit: cover;
-  flex-shrink: 0;
   transition: transform 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 28px;
 }
 
 .quote img.avatar:hover {
   transform: scale(1.1);
 }
 
+/* === QUOTE CONTENT WRAPPER === */
+.quote-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* === QUOTE TEXT === */
+blockquote {
+  margin: 0;
+  font-size: 1.05rem;
+  font-style: italic;
+  text-align: left;
+  line-height: 1.6;
+  color: #e8f3ff;
+  max-width: 100%;
+  quotes: """ """ "'" "'";
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+blockquote::before {
+  content: open-quote;
+  color: #9be7ff;
+  margin-right: 4px;
+}
+
+blockquote::after {
+  content: close-quote;
+  color: #9be7ff;
+  margin-left: 4px;
+}
+
+/* === AUTHOR NAME === */
+cite {
+  display: block;
+  margin: 0;
+  font-size: 0.9rem;
+  color: #9be7ff;
+  opacity: 0.85;
+  font-style: normal;
+  text-align: left;
+}
+
+/* === FOOTER === */
 .motivation-footer {
   text-align: center;
   margin-top: 28px;
@@ -153,6 +184,7 @@ cite {
   font-size: 0.85rem;
 }
 
+/* === THEME TOGGLE === */
 #theme-toggle {
   top: 20px;
   right: 20px;
@@ -164,7 +196,7 @@ cite {
   transition: transform 0.2s ease;
 }
 
-/* === SMART SCROLL BUTTON  === */
+/* === SMART SCROLL BUTTON === */
 .smart-scroll-btn {
   position: fixed;
   bottom: 20px;
@@ -322,6 +354,7 @@ cite {
   animation: smartScrollBounce 0.6s ease, gradientShiftSmart 2s ease infinite;
 }
 
+/* === RESPONSIVE DESIGN === */
 @media (max-width: 768px) {
   .smart-scroll-btn {
     bottom: 80px;
@@ -336,6 +369,51 @@ cite {
   
   .smart-scroll-btn:hover {
     transform: translateY(-3px) scale(1.03);
+  }
+
+  #quotes li.quote {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+    gap: 12px;
+    min-height: auto;
+  }
+
+  .quote img.avatar {
+    margin-left: 0;
+    margin-top: 8px;
+    order: -1;
+  }
+
+  blockquote,
+  cite {
+    text-align: center;
+  }
+
+  #quotes li.quote::before {
+    top: 12px;
+    left: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  #quotes li.quote {
+    padding: 18px;
+  }
+
+  blockquote {
+    font-size: 0.95rem;
+  }
+
+  cite {
+    font-size: 0.85rem;
+  }
+
+  .quote img.avatar {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
   }
 }
 
