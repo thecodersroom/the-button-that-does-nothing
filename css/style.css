@@ -602,11 +602,13 @@ h1::after {
 }
 
 /* === IMPOSSIBLE MODE TOGGLE & TIME ATTACK BUTTON CONTAINER === */
+/* === IMPOSSIBLE MODE TOGGLE & TIME ATTACK BUTTON CONTAINER === */
 .toggle-container {
   display: flex;
   justify-content: center;
   align-items: stretch;
-  gap: var(--space-lg);
+  /* Adjusted gap to match the spacing between Time Attack and Settings button */
+  gap: var(--space-sm); /* was var(--space-lg) */
   margin-bottom: var(--space-xl);
   flex-wrap: wrap;
 }
