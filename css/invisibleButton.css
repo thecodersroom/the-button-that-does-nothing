@@ -12,12 +12,12 @@
 .hidden-image {
   width: 75px;
   height: 100px;
-  display: none; 
+  display: none;
 }
 
 .easter-card {
-  position: fixed; /* fixed for centering */
-  top: 30%;
+  position: sticky; /* fixed for centering */
+  top: 15%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: black;
@@ -36,4 +36,87 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translate(-50%, -60%); }
   to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+/* Badges Css */
+
+.easter-card {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: black;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  padding: 20px;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  display: none;
+  z-index: 9999;
+  width: 750px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -60%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.easter-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 12px 24px;
+  border-radius: 20px;
+  box-shadow: 0 4px 25px rgba(42, 38, 70, 0.3);
+  cursor: default;
+  min-width: 140px;
+  user-select: none;
+  margin: 20px auto 0 auto;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+}
+.easter-badge .badge-icon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 1px #222);
+}
+.easter-badge .badge-name {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.85rem;
+  color: #e0e0f7;
+}
+.easter-badge.egg-finder {
+  background: linear-gradient(135deg, #25c481, #06b679);
+  border: 2px solid #12a662;
+  color: #d0f3e5;
+}
+.easter-badge.double-discover {
+  background: linear-gradient(135deg, #f9a12f, #de7c0e);
+  border: 2px solid #c56100;
+  color: #fdf1db;
+}
+.easter-badge.nothing-seeker {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border: 2px solid #1e40af;
+  color: #daddff;
+}
+.easter-badge.button-ninja {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  border: 2px solid #5b21b6;
+  color: #e5dbff;
+}
+.easter-badge.ultimate-clicker {
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  border-color: #b45309;
+  color: #4a2c00;
+  font-weight: 800;
+}
+.easter-badge.ultimate-clicker .badge-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 0 3px #b07f00);
 }

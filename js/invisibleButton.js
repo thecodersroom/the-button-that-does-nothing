@@ -1,40 +1,52 @@
-// Invisible Button
+const eggButton = document.getElementById("hidden-button");
+const card = document.getElementById("easter-card");
 
-  const eggButton = document.getElementById("hidden-button");
-  const card = document.getElementById("easter-card");
+function placeEggRandomly() {
+  const eggWidth = 75;
+  const eggHeight = 100;
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+  const randomX = Math.random() * (screenWidth - eggWidth);
+  const randomY = Math.random() * (screenHeight - eggHeight - 50);
+  eggButton.style.left = `${randomX}px`;
+  eggButton.style.top = `${randomY}px`;
+}
 
-  function placeEggRandomly() {
-    const eggWidth = 75;
-    const eggHeight = 100;
+function getBadgeInfo(count) {
+  if (count === 1) return { name: "Egg Finder", icon: "🥚", css: "egg-finder" };
+  if (count === 2) return { name: "Double Discover", icon: "🥯", css: "double-discover" };
+  if (count === 3) return { name: "Nothing Seeker", icon: "🔍", css: "nothing-seeker" };
+  if (count === 4) return { name: "Button Ninja", icon: "🥷", css: "button-ninja" };
+  return { name: "Ultimate Clicker", icon: "🚀", css: "ultimate-clicker" };
+}
 
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
+function showCard() {
+  let eggClickCount = Number(localStorage.getItem('eggClickCount') || 0);
+  eggClickCount++;
+  localStorage.setItem('eggClickCount', eggClickCount);
 
-    // Random X/Y so egg stays within the viewport
-    const randomX = Math.random() * (screenWidth - eggWidth);
-    const randomY = Math.random() * (screenHeight - eggHeight - 50);
-
-    eggButton.style.left = `${randomX}px`;
-    eggButton.style.top = `${randomY}px`;
+  const badgeData = getBadgeInfo(eggClickCount <= 5 ? eggClickCount : 5);
+  const badgeBox = card.querySelector('#badge-box');
+  if (badgeBox) {
+    badgeBox.innerHTML = `
+      <div class="easter-badge ${badgeData.css}">
+        <div class="badge-icon">${badgeData.icon}</div>
+        <div class="badge-name">${badgeData.name}</div>
+        <div class="badge-count">Eggs Found : ${eggClickCount}${eggClickCount > 5 ? '+' : ''}</div>
+      </div>
+    `;
   }
 
-  function showCard() {
-    // Show the centered popup
-    card.style.display = "block";
-    eggButton.style.display = "block";
+  card.style.display = "block";
+  eggButton.style.display = "block";
 
-    // Hide after 2.5 seconds
-    setTimeout(() => {
-      card.style.display = "none";
-      eggButton.style.display = "none";
-      placeEggRandomly();
-    }, 2500);
-    // Move the egg to a new random position
-  }
+  setTimeout(() => {
+    card.style.display = "none";
+    eggButton.style.display = "none";
+    placeEggRandomly();
+  }, 2500);
+}
 
-  // Randomize position on load and on resize
-  window.addEventListener("load", placeEggRandomly);
-  window.addEventListener("resize", placeEggRandomly);
-
-  // Move and show popup on click
-  eggButton.addEventListener("click", showCard);
+window.addEventListener("load", placeEggRandomly);
+window.addEventListener("resize", placeEggRandomly);
+eggButton.addEventListener("click", showCard);
