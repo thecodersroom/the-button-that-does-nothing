@@ -64,14 +64,14 @@ const shopItems = [
   },
   {
     id: 'ambient-nothing',
-    name: '🎵 Ambient Nothing',
+    name: '🎵 Adventure of Nothing',
     cost: 300,
-    description: 'Adds a calming ambient hum of… nothing.',
+    description: 'Adds a adventurous song o nothing.',
     effect: () => playAmbientNothing(),
     persistent: true,
     activate: () => {
       if (!window.ambientSound) {
-        window.ambientSound = new Audio('audio/ambient-nothing.mp3');
+        window.ambientSound = new Audio('audio/adventuremode.mp3');
         window.ambientSound.loop = true;
         window.ambientSound.volume = 0.2;
         window.ambientSound.play().catch(() => {});
@@ -84,16 +84,35 @@ const shopItems = [
       }
     }
   },
-  {
-    id: 'confetti-mode',
-    name: '🎉 Confetti Mode',
-    cost: 500,
-    description: 'Every purchase rains confetti of pure emptiness.',
-    effect: () => createConfetti(),
-    persistent: false, // This is a one-time effect
-    activate: () => createConfetti(),
-    deactivate: () => {} // No need to deactivate one-time effects
+{
+  id: 'confetti-mode',
+  name: '🎉 Flashy Mode',
+  cost: 500,
+  description: 'Every purchase rains confetti of pure emptiness and Make your Target flashy✨.',
+  effect: () => createConfetti(),
+  persistent: true, // now persistent for button styling
+  activate: () => {
+    createConfetti();
+
+    const uselessButton = document.getElementById('useless-button');
+    if (uselessButton) {
+      uselessButton.textContent = "🎊 PARTY MODE ON! 🎊";
+      uselessButton.classList.add('fun-mode');
+    }
+
+    // 🔥 Save this mode as active separately
+    localStorage.setItem('funModeActive', 'true');
   },
+  deactivate: () => {
+    const uselessButton = document.getElementById('useless-button');
+    if (uselessButton) {
+      uselessButton.textContent = "Click Me!";
+      uselessButton.classList.remove('fun-mode');
+    }
+    localStorage.removeItem('funModeActive');
+  }
+},
+
 ];
 
 const ownedItems = JSON.parse(localStorage.getItem('ownedNothingItems')) || [];
@@ -347,3 +366,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 350);
   });
 });
+
+  // Restore Confetti Mode fun button if active
+  const funModeActive = localStorage.getItem('funModeActive') === 'true';
+  if (funModeActive) {
+    const uselessButton = document.getElementById('useless-button');
+    if (uselessButton) {
+      uselessButton.textContent = "🎊 PARTY MODE ON! 🎊";
+      uselessButton.classList.add('fun-mode');
+    }
+  }
