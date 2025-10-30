@@ -1887,11 +1887,6 @@ if (impossibleToggle) { // Reset magnetic on impossible toggle
 // === Keyboard Navigation ===
 document.addEventListener('keydown', (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
-  if (e.key === ' ' || e.key === 'Enter') {
-    if (document.activeElement === button || !document.activeElement || document.activeElement === document.body) {
-      e.preventDefault(); button?.click();
-    }
-  }
   if ((e.key === 't' || e.key === 'T') && !e.metaKey && !e.ctrlKey) { e.preventDefault(); themeToggle?.click(); }
   if ((e.key === 's' || e.key === 'S') && !e.metaKey && !e.ctrlKey) { e.preventDefault(); soundToggle?.click(); }
   if ((e.key === 'i' || e.key === 'I') && !e.metaKey && !e.ctrlKey) { e.preventDefault(); impossibleToggle?.click(); }
