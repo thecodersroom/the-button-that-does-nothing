@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -17,95 +18,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
-
-    <style>
-      /* ---- Back button styles (bottom-left) ---- */
-      .back-btn {
-        position: fixed;
-        bottom: 20px;
-        left: 18px;
-        background: linear-gradient(135deg, #6a5acd 0%, #00adb5 100%);
-        color: #fff;
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        border: none;
-        border-radius: 999px;
-        padding: 10px 18px;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-        cursor: pointer;
-        box-shadow: 0 6px 22px rgba(0, 173, 181, 0.35), inset 0 -4px 12px rgba(255,255,255,0.03);
-        transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
-        z-index: 1000;
-        -webkit-tap-highlight-color: transparent;
-        will-change: transform;
-      }
-
-      .back-btn i {
-        font-size: 14px;
-      }
-
-      .back-btn:hover {
-        transform: translateY(-4px) scale(1.02);
-        box-shadow: 0 10px 34px rgba(0, 173, 181, 0.45), inset 0 -6px 18px rgba(255,255,255,0.04);
-        filter: saturate(1.05);
-      }
-
-      /* small-screen: reduce size */
-      @media (max-width: 520px) {
-        .back-btn {
-          left: 12px;
-          bottom: 14px;
-          padding: 8px 12px;
-          gap: 8px;
-          font-size: 14px;
-        }
-      }
-
-      /* ---- Flip animation (matching scroll button behavior) ---- */
-      .flip-animation {
-        animation: flip-anim 0.6s cubic-bezier(.4,.0,.2,1);
-        transform-origin: center;
-      }
-
-      @keyframes flip-anim {
-        0% {
-          transform: perspective(400px) rotateX(0deg) scale(1);
-        }
-        40% {
-          transform: perspective(400px) rotateX(120deg) scale(0.98);
-        }
-        70% {
-          transform: perspective(400px) rotateX(80deg) scale(1.01);
-        }
-        100% {
-          transform: perspective(400px) rotateX(0deg) scale(1);
-        }
-      }
-
-      /* subtle glow pulse used briefly during hover or active */
-      .glow-pulse {
-        animation: glowPulse 1s ease-in-out infinite alternate;
-      }
-
-      @keyframes glowPulse {
-        0% {
-          box-shadow: 0 6px 22px rgba(0, 173, 181, 0.35), inset 0 -4px 12px rgba(255,255,255,0.03);
-        }
-        100% {
-          box-shadow: 0 14px 40px rgba(0, 173, 181, 0.55), inset 0 -6px 18px rgba(255,255,255,0.05);
-        }
-      }
-
-      /* keep header centered since button is floating */
-      .motivation-header {
-        text-align: center;
-        margin-top: 60px;
-      }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   </head>
 
   <body>
@@ -124,7 +37,7 @@
         <ul>
           <li>
             Only add your new quote entry —
-            <strong>don’t edit or remove existing ones</strong>.
+            <strong>don't edit or remove existing ones</strong>.
           </li>
           <li>Use the format shown below.</li>
           <li>
@@ -136,11 +49,10 @@
 
       <ul id="quotes">
         <li class="quote">
-          <blockquote>Nothing isn’t empty — it’s the canvas of everything.</blockquote>
+          <blockquote>Nothing isn't empty — it's the canvas of everything.</blockquote>
           <cite>@Samriddhi</cite>
         </li>
 
-  
         <li class="quote">
           <blockquote>in the space of nothing, ideas quietly begin</blockquote>
           <cite>@Samriddhi</cite>
@@ -317,24 +229,19 @@
         }
       });
 
-      // ---- Added behavior for Back button: animate before navigating ----
+      // Back button animation
       const backBtn = document.getElementById("backBtn");
       if (backBtn) {
         backBtn.addEventListener("click", function (e) {
-          // prevent immediate navigation so animation can play
           e.preventDefault();
-          // add flip animation and brief glow pulse
           backBtn.classList.add("flip-animation", "glow-pulse");
-          // remove pulse after a bit (keep flip removal consistent with animation length)
           setTimeout(() => backBtn.classList.remove("glow-pulse"), 900);
-          // navigate after animation (350ms chosen to show the flip)
           const href = backBtn.getAttribute("href") || "index.html";
           setTimeout(() => {
             window.location.href = href;
           }, 350);
         });
 
-        // also animate on keyboard activation (enter) for accessibility
         backBtn.addEventListener("keydown", function (e) {
           if (e.key === "Enter" || e.key === " ") {
             backBtn.classList.add("flip-animation", "glow-pulse");
@@ -345,7 +252,7 @@
             }, 350);
           }
         });
-        // clean up flip-animation after it ends (so it can run again)
+        
         backBtn.addEventListener("animationend", function () {
           backBtn.classList.remove("flip-animation");
         });
