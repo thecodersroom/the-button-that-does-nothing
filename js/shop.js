@@ -21,6 +21,7 @@ const shopItems = [
     description: 'Makes your nothing slightly shinier.',
     effect: () => addVisualGlow(),
     persistent: true,
+    category: null, // Stackable effect
     activate: () => {
       document.body.classList.add('shinier-nothing');
       document.documentElement.style.setProperty('--glow-intensity', '1.5');
@@ -37,6 +38,7 @@ const shopItems = [
     description: 'Adds a joyful dancing duck at the center.',
     effect: () => addDancingDuck(),
     persistent: true,
+    category: 'character', // Mutually exclusive category
     activate: () => {
       if (!document.querySelector('.dancing-duck')) {
         addDancingDuck();
@@ -45,6 +47,9 @@ const shopItems = [
     deactivate: () => {
       const duck = document.querySelector('.dancing-duck');
       if (duck) duck.remove();
+      // Also remove any other characters
+      const chars = document.querySelectorAll('.shop-character');
+      chars.forEach(char => char.remove());
     }
   },
   {
@@ -54,6 +59,7 @@ const shopItems = [
     description: 'Triggers a colorful particle explosion every click.',
     effect: () => enableParticleBurst(),
     persistent: true,
+    category: null, // Stackable effect
     activate: () => {
       document.body.dataset.particleBurst = 'true';
       enableParticleBurst();
@@ -69,6 +75,7 @@ const shopItems = [
     description: 'Adds a adventurous song o nothing.',
     effect: () => playAmbientNothing(),
     persistent: true,
+    category: null, // Stackable effect
     activate: () => {
       if (!window.ambientSound) {
         window.ambientSound = new Audio('audio/adventuremode.mp3');
@@ -182,6 +189,29 @@ async function purchaseItem(item) {
   if (nothingCoins < item.cost || ownedItems.includes(item.id)) return;
   
   try {
+    // If this item has a category (mutually exclusive items)
+    if (item.category) {
+      // Find other items in the same category that are currently active
+      const activeItems = JSON.parse(localStorage.getItem('activeShopItems') || '[]');
+      const activeItemsArray = [...activeItems];
+      
+      // Deactivate other items in the same category
+      for (const activeItemId of activeItemsArray) {
+        const activeItem = shopItems.find(i => i.id === activeItemId);
+        if (activeItem && activeItem.category === item.category && activeItem.persistent && activeItem.deactivate) {
+          activeItem.deactivate();
+          // Remove from active items list
+          const index = activeItems.indexOf(activeItemId);
+          if (index > -1) {
+            activeItems.splice(index, 1);
+          }
+        }
+      }
+      
+      // Save updated active items
+      localStorage.setItem('activeShopItems', JSON.stringify(activeItems));
+    }
+    
     // Deduct coins using the exported function
     setCurrentCoins(nothingCoins - item.cost);
     nothingCoins = getCurrentCoins(); // Update local variable
@@ -257,16 +287,20 @@ function addVisualGlow() {
 }
 
 function addDancingDuck() {
-  if (document.querySelector('.dancing-duck')) return;
+  // Remove any existing character items first
+  const existingCharacters = document.querySelectorAll('.shop-character');
+  existingCharacters.forEach(char => char.remove());
+  
   const duck = document.createElement('img');
-  duck.src = 'image/dancing-duck.gif';
-  duck.className = 'dancing-duck';
+  duck.src = 'image/animals.gif';
+  duck.className = 'dancing-duck shop-character';
   duck.style.position = 'absolute';
   duck.style.left = '50%';
   duck.style.top = '50%';
   duck.style.transform = 'translate(-50%, -50%)';
   duck.style.zIndex = 2000;
   duck.style.width = '100px';
+  duck.alt = 'Dancing Duck';
   document.body.appendChild(duck);
 }
 
@@ -292,14 +326,25 @@ function initializeShop() {
     ownedItems.push(...JSON.parse(savedItems));
   }
   
-  // Restore active persistent effects
+  // Restore active persistent effects, but only if they are owned
   const activeItems = JSON.parse(localStorage.getItem('activeShopItems') || '[]');
+  const validActiveItems = [];
+  
   activeItems.forEach(itemId => {
-    const item = shopItems.find(i => i.id === itemId);
-    if (item && item.persistent && item.activate) {
-      item.activate();
+    // Only activate if the item is actually owned
+    if (ownedItems.includes(itemId)) {
+      const item = shopItems.find(i => i.id === itemId);
+      if (item && item.persistent && item.activate) {
+        item.activate();
+        validActiveItems.push(itemId);
+      }
     }
   });
+  
+  // Update activeItems list to only include valid owned items
+  if (validActiveItems.length !== activeItems.length) {
+    localStorage.setItem('activeShopItems', JSON.stringify(validActiveItems));
+  }
   
   // Initialize display
   renderShop();

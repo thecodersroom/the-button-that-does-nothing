@@ -1,0 +1,70 @@
+#useless-button {
+  position: relative;
+  overflow: visible;
+  transition: all 0.4s ease;
+  font-weight: 600;
+}
+
+#useless-button .evo-eyes {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 15px;
+  font-size: 20px;
+  pointer-events: none;
+}
+
+#useless-button .evo-arm-left,
+#useless-button .evo-arm-right {
+  position: absolute;
+  top: 35%;
+  font-size: 22px;
+  pointer-events: none;
+}
+#useless-button .evo-arm-left {
+  left: -25px;
+}
+#useless-button .evo-arm-right {
+  right: -25px;
+}
+
+#useless-button .evo-wing-left,
+#useless-button .evo-wing-right {
+  position: absolute;
+  top: -35px;
+  font-size: 26px;
+  pointer-events: none;
+}
+#useless-button .evo-wing-left {
+  left: -30px;
+  transform: rotate(-10deg);
+}
+#useless-button .evo-wing-right {
+  right: -30px;
+  transform: rotate(10deg);
+}
+
+#useless-button.evo-sparkle {
+  box-shadow: 0 0 20px 5px gold;
+  animation: sparklePulse 1.5s infinite alternate;
+}
+
+@keyframes sparklePulse {
+  from {
+    box-shadow: 0 0 10px 3px gold;
+  }
+  to {
+    box-shadow: 0 0 25px 8px gold;
+  }
+}
+
+#useless-button.evo-final {
+  background: linear-gradient(135deg, #ff00cc, #3333ff);
+  color: white;
+  text-shadow: 0 0 8px white;
+  transform: scale(1.1);
+  border-radius: 20px;
+}
+    

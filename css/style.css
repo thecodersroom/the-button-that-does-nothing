@@ -295,19 +295,60 @@ body::after {
   }
 }
 
-/* === THEME VARIATIONS === */
+
+/*Light Theme — Make only text black, keep card color same */
 [data-theme="light"] {
-  --bg-start: #fdf2ec;
-  --bg-end: #ffd8d8;
-  --card-bg: rgba(255, 255, 255, 0.8);
-  --card-bg-solid: rgba(255, 255, 255, 0.95);
-  --text-color: #1f1f1f;
-  --text-secondary: rgba(31, 31, 31, 0.6);
-  --accent-color: #ff5a5a;
-  --border-color: rgba(0, 0, 0, 0.1);
-  --button-gradient-start: #ff867c;
-  --button-gradient-end: #ff5a5a;
+  --text-color: #000000;
+  --text-secondary: #000000;
 }
+[data-theme="light"] body,
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6,
+[data-theme="light"] p,
+[data-theme="light"] span,
+[data-theme="light"] a,
+[data-theme="light"] li,
+[data-theme="light"] label,
+[data-theme="light"] div,
+[data-theme="light"] small,
+[data-theme="light"] strong,
+[data-theme="light"] em {
+  color: #000000 !important;
+}
+
+
+/* 🎯 Target all text elements inside cards/quotes without changing the background */
+[data-theme="light"] .card,
+[data-theme="light"] .quote-card,
+[data-theme="light"] .entry,
+[data-theme="light"] .quote,
+[data-theme="light"] .content,
+[data-theme="light"] .text,
+[data-theme="light"] .box,
+[data-theme="light"] .container {
+  color: #000000 !important;
+}
+
+/* 💬 Specifically target paragraphs, spans, divs, etc. inside those cards */
+[data-theme="light"] .card *,
+[data-theme="light"] .quote-card *,
+[data-theme="light"] .entry *,
+[data-theme="light"] .quote *,
+[data-theme="light"] .content *,
+[data-theme="light"] .text *,
+[data-theme="light"] .box *,
+[data-theme="light"] .container * {
+  color: #000000 !important;
+  fill: #000000 !important;
+  stroke: #000000 !important;
+}
+
+
+
 
 [data-theme="neon"] {
   --bg-start: #0a0e27;
@@ -338,8 +379,8 @@ body::after {
 [data-theme="pastel"] {
   --bg-start: #ffcce7;
   --bg-end: #d5f5e3;
-  --text-color: #5d5d5d;
-  --text-secondary: rgba(93, 93, 93, 0.6);
+  --text-color: #000000; /* all text black */
+  --text-secondary: #000000; /* secondary text black too */
   --card-bg: rgba(255, 255, 255, 0.6);
   --card-bg-solid: rgba(255, 255, 255, 0.8);
   --accent-color: #ff8fa3;
@@ -347,6 +388,41 @@ body::after {
   --button-gradient-start: #ffb3c6;
   --button-gradient-end: #ff8fa3;
 }
+
+/* 🖋️ Force all text inside pastel theme to black */
+[data-theme="pastel"] body,
+[data-theme="pastel"] h1,
+[data-theme="pastel"] h2,
+[data-theme="pastel"] h3,
+[data-theme="pastel"] h4,
+[data-theme="pastel"] h5,
+[data-theme="pastel"] h6,
+[data-theme="pastel"] p,
+[data-theme="pastel"] span,
+[data-theme="pastel"] a,
+[data-theme="pastel"] li,
+[data-theme="pastel"] label,
+[data-theme="pastel"] div,
+[data-theme="pastel"] small,
+[data-theme="pastel"] strong,
+[data-theme="pastel"] em {
+  color: #000000 !important;
+}
+
+/* 💬 Ensure all text inside cards, quotes, and content blocks is black */
+[data-theme="pastel"] .card *,
+[data-theme="pastel"] .quote-card *,
+[data-theme="pastel"] .entry *,
+[data-theme="pastel"] .quote *,
+[data-theme="pastel"] .content *,
+[data-theme="pastel"] .text *,
+[data-theme="pastel"] .box *,
+[data-theme="pastel"] .container * {
+  color: #000000 !important;
+  fill: #000000 !important;
+  stroke: #000000 !important;
+}
+
 
 [data-theme="solarized"] {
   --bg-start: #002b36;
@@ -526,11 +602,13 @@ h1::after {
 }
 
 /* === IMPOSSIBLE MODE TOGGLE & TIME ATTACK BUTTON CONTAINER === */
+/* === IMPOSSIBLE MODE TOGGLE & TIME ATTACK BUTTON CONTAINER === */
 .toggle-container {
   display: flex;
   justify-content: center;
   align-items: stretch;
-  gap: var(--space-lg);
+  /* Adjusted gap to match the spacing between Time Attack and Settings button */
+  gap: var(--space-sm); /* was var(--space-lg) */
   margin-bottom: var(--space-xl);
   flex-wrap: wrap;
 }
@@ -2020,6 +2098,13 @@ body.dark-mode #reset-score-button.threatening {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
+}
+
+#custom-font-family{
+  background-color: transparent;
+  border: none;
+  color: var(--text-color);
+  font-size: var(--text-base);
 }
 
 .color-picker-item label {

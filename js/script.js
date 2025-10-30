@@ -71,7 +71,9 @@ const coinCountDisplay = document.getElementById('coin-count');
 // --- MERGED: Keep game reset from fix/game-bugs, add high score from main ---
 let clicks = 0;
 let failedClicks = 0;
+let totalClicks = 0; // NEW: Track ALL clicks on the page
 let highScore = Number(localStorage.getItem('nothingHighScore')) || 0; // High score still saved
+
 // --- END MERGE ---
 
 // keron start
@@ -313,32 +315,39 @@ function buttonTeleport(posX, posY) {
   button.style.top = `${posY}px`;
   button.style.transition = "all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)";
 }
-document.body.style.height = `${wrapper.scrollWidth}px`;
+if (wrapper) { // <--- Add this check
+  document.body.style.height = `${wrapper.scrollWidth}px`;
+}
 window.addEventListener('scroll', () => {
   const scrollTop = window.scrollY;
   wrapper.style.transform = `translateX(-${scrollTop}px)`;
 });
 
-// Initialize modern card-based counter
 function initializeCounter() {
   if (!counterDiv) return;
-  const totalInitial = clicks + failedClicks;
+
+  const totalInitial = totalClicks; 
   const initialAccuracy = totalInitial > 0 ? Math.round((clicks / totalInitial) * 100) : 100;
+
   counterDiv.innerHTML = `
     <div class="stat-card">
       <span class="stat-icon">👆</span>
-      <div class="stat-value" id="clicks-value">${clicks}</div> <div class="stat-label">Total Clicks</div>
+      <div class="stat-value" id="clicks-value">${totalClicks}</div> 
+      <div class="stat-label">Total Clicks</div>
     </div>
     <div class="stat-card">
       <span class="stat-icon">❌</span>
-      <div class="stat-value" id="failed-value">${failedClicks}</div> <div class="stat-label">Failed Clicks</div>
+      <div class="stat-value" id="failed-value">${failedClicks}</div> 
+      <div class="stat-label">Failed Clicks</div>
     </div>
     <div class="stat-card">
       <span class="stat-icon">🎯</span>
-      <div class="stat-value" id="accuracy-value">${initialAccuracy}%</div> <div class="stat-label">Accuracy</div>
+      <div class="stat-value" id="accuracy-value">${initialAccuracy}%</div> 
+      <div class="stat-label">Accuracy</div>
     </div>
   `;
 }
+
 
 function animateNumber(element, newValue) {
   if (!element) return;
@@ -364,21 +373,23 @@ function updateCounter(extraText = "") {
   const clicksEl = document.getElementById('clicks-value');
   const failedEl = document.getElementById('failed-value');
   const accuracyEl = document.getElementById('accuracy-value');
-  if (clicksEl) animateNumber(clicksEl, clicks);
+
+  if (clicksEl) animateNumber(clicksEl, totalClicks);
   if (failedEl) animateNumber(failedEl, failedClicks);
+
   if (accuracyEl) {
-    const total = clicks + failedClicks;
-    const accuracy = total > 0 ? Math.round((clicks / total) * 100) : 100;
+    const accuracy = totalClicks > 0 ? Math.round((clicks / totalClicks) * 100) : 100;
     accuracyEl.textContent = `${accuracy}%`;
   }
+
   if (extraText && quoteDiv) {
-  quoteDiv.classList.remove("fade-in");
-  void quoteDiv.offsetWidth; 
-  quoteDiv.textContent = extraText;
-  quoteDiv.classList.add("fade-in");
+    quoteDiv.classList.remove("fade-in");
+    void quoteDiv.offsetWidth;
+    quoteDiv.textContent = extraText;
+    quoteDiv.classList.add("fade-in");
+  }
 }
 
-}
 
 // Add ripple effect to button
 function addRippleEffect(event) {
@@ -848,9 +859,9 @@ window.addEventListener("click", () => {
 if (button) {
   button.addEventListener("click", (e) => {
     e.stopPropagation();
+    totalClicks++; // Increment total clicks for button
     button.classList.add("button-active");
     setTimeout(() => button.classList.remove("button-active"), 150);
-    // Scale down and back up animation
     button.animate(
       [
         { transform: "scale(1)" },
@@ -993,7 +1004,11 @@ function getNewAction() {
 }
 
 // === Count failed clicks ===
+// === Count failed clicks AND track total clicks ===
+
 document.addEventListener("click", (e) => {
+  totalClicks++; // Count EVERY click on the page
+
   const clickedButton = e.target.closest('button');
   const clickedInput = e.target.closest('input, select, textarea'); // Broaden check
   const clickedLabel = e.target.closest('label');
@@ -1004,10 +1019,14 @@ document.addEventListener("click", (e) => {
     const messageArray = impossibleMode ? impossibleFailMessages : failedClickMessages;
     const randomFail = messageArray[Math.floor(Math.random() * messageArray.length)];
     updateCounter(`— ${randomFail}`);
+
     if (failedClicks % (impossibleMode ? 5 : 10) === 0 && userInteracted) {
       playSound(failSound); // Use playSound utility
     }
+
     checkMusicUnlock();
+  } else {
+    updateCounter(); // Update counter even for UI clicks
   }
 });
 
@@ -1727,6 +1746,7 @@ function endTimeAttack({ cancelled = false } = {}) {
   const newRecordDisplay = document.getElementById('time-attack-new-record');
 
   if (!cancelled) {
+    clicks += timeAttackScore;
     if (finalScoreDisplay) {
       finalScoreDisplay.textContent = timeAttackScore;
     }
@@ -1752,6 +1772,7 @@ function endTimeAttack({ cancelled = false } = {}) {
     if (resultPopup) {
       resultPopup.classList.add('show');
     }
+    updateCounter(`— Time Attack Complete! Score: ${timeAttackScore}`); // Refresh the main counter
   } else {
     if (resultPopup) {
       resultPopup.classList.remove('show');
@@ -1777,6 +1798,7 @@ function endTimeAttack({ cancelled = false } = {}) {
      button.style.transform = '';
      // The next normal click will teleport it anyway
   }
+  updateCounter();
 }
 
 // Add the listener for the button
@@ -2161,4 +2183,4 @@ if (resetScoreButton) {
 
 
 // === Initialize Shop if script loaded ===
-// Shop now initializes itself via DOMContentLoaded event in shop.js
+if (typeof renderShop === 'function') renderShop();

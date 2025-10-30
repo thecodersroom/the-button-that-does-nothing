@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Motivation — Quotes About Nothing</title>
 
-    <!-- Same design language as main site -->
+    <!-- Fonts & Icons -->
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
       rel="stylesheet"
@@ -17,57 +18,46 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   </head>
 
   <body>
     <div class="motivation-container">
       <div class="panel-buttons">
-      <button id="theme-toggle" title="Theme">🎨</button>
-    </div>
+        <button id="theme-toggle" title="Theme">🎨</button>
+      </div>
+
       <header class="motivation-header">
         <h1>💭 Motivation — Quotes About Nothing</h1>
         <p>Collect your thoughts about nothing — one quote at a time.</p>
-        <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Nothing</a>
       </header>
 
       <section class="motivation-note">
         <strong>Instructions:</strong>
         <ul>
-          <li>Only add your new quote entry — <strong>don’t edit or remove existing ones</strong>.</li>
+          <li>
+            Only add your new quote entry —
+            <strong>don't edit or remove existing ones</strong>.
+          </li>
           <li>Use the format shown below.</li>
-          <li>Numbering and avatars are automatic — no need to add point numbers or images.</li>
+          <li>
+            Numbering and avatars are automatic — no need to add point numbers
+            or images.
+          </li>
         </ul>
       </section>
 
-      <!-- ✏️ Add new quotes here -->
-      <!--
-        To add your quote:
-        1. Copy one of the <li class="quote">...</li> elements below.
-        2. Paste it as a new entry inside the <ul id="quotes">.
-        3. Replace the quote text and @username.
-        4. Do NOT edit any other HTML or CSS.
-
-        Example:
+      <ul id="quotes">
         <li class="quote">
-          <blockquote>Nothing matters, and that’s beautiful.</blockquote>
-          <cite>@yourGitHubHandle</cite>
-        </li>
-      -->
-
-        <ul id="quotes">
-        <li class="quote">
-          <blockquote>Nothing isn’t empty — it’s the canvas of everything.</blockquote>
+          <blockquote>Nothing isn't empty — it's the canvas of everything.</blockquote>
           <cite>@Samriddhi</cite>
         </li>
 
-          <ul id="quotes">
         <li class="quote">
           <blockquote>in the space of nothing, ideas quietly begin</blockquote>
           <cite>@Samriddhi</cite>
         </li>
-      
 
-      <ul id="quotes">
         <li class="quote">
           <blockquote>Nothing is the beginning of everything.</blockquote>
           <cite>@Abdulkhadhar</cite>
@@ -82,40 +72,52 @@
           <blockquote>Doing nothing is also something.</blockquote>
           <cite>@annuuxoxo</cite>
         </li>
-        
+
         <li class="quote">
           <blockquote>When life throws errors, return nothing but peace.</blockquote>
           <cite>@Moksh-Mutreja</cite>
         </li>
-        
+
         <li class="quote">
           <blockquote>"Nothing is impossible, the word itself says 'I'm possible."</blockquote>
           <cite>@Moksh-Mutreja</cite>
         </li>
+
         <li class="quote">
           <blockquote>"When you have nothing, you actually have everything in terms of possibilities but when you have something you have everything except nothing."</blockquote>
           <cite>@AyushBurde</cite>
         </li>
+
         <li class="quote">
           <blockquote>"Nothing can stop you except yourself"</blockquote>
           <cite>@AyushBurde</cite>
         </li>
+
         <li class="quote">
           <blockquote>"Eat 5-star and do NOTHING"</blockquote>
           <cite>@AyushBurde</cite>
         </li>
-       
-        
+
         <li class="quote">
           <blockquote>Nothing ventured, nothing gained — but sometimes nothing gained is everything you need.</blockquote>
           <cite>@kronpatel</cite>
         </li>
-        
+
+        <li class="quote">
+          <blockquote>Sometimes doing nothing is exactly what you need to find everything that matters.</blockquote>
+          <cite>@shatakshi220805</cite>
+        </li>
+
+        <li class="quote">
+          <blockquote>Nothing is ever wasted when it teaches you who you are.</blockquote>
+          <cite>@shatakshi220805</cite>
+        </li>
+
         <li class="quote">
           <blockquote>In the silence of nothing, we find the loudest truths.</blockquote>
           <cite>@kronpatel</cite>
         </li>
-        
+
         <li class="quote">
           <blockquote>Nothing is permanent, not even nothing itself.</blockquote>
           <cite>@kronpatel</cite>
@@ -125,6 +127,7 @@
           <blockquote>Embrace the void. It's less work.</blockquote>
           <cite>@HossamSaberr</cite>
         </li>
+
         <li class="quote">
           <blockquote>Sometimes, the most productive thing you can do is nothing.</blockquote>
           <cite>@HossamSaberr</cite>
@@ -134,16 +137,54 @@
           <blockquote>Nothing is so underrated — after all, the universe started with absolutely nothing!</blockquote>
           <cite>@Gowtham-arja</cite>
         </li>
+
         <li class="quote">
           <blockquote>Why choose between something or nothing, when you can take a nap instead?</blockquote>
           <cite>@Gowtham-arja</cite>
         </li>
+        <li class="quote">
+          <blockquote>Nothing teaches patience better than waiting for something.</blockquote>
+          <cite>@vanshikap21</cite>
+        </li>
+        <li class="quote">
+          <blockquote>When you own nothing, even a little becomes everything.</blockquote>
+          <cite>@vanshikap21</cite>
+        </li>
+
+        <li class="quote">
+          <blockquote>Nothingness is the soil where abundance takes root</blockquote>
+          <cite>@Kavya-Goyal-kcoder005</cite>
+        </li>
+
+        <li class="quote">
+          <blockquote>Nothing happens in this world, without a reason.</blockquote>
+          <cite>@Kavya-Goyal-kcoder005</cite>
+        </li>
+        <li class="quote">
+  <blockquote>I tried doing nothing — turns out I’m overqualified.</blockquote>
+  <cite>@PrafulCodes</cite>
+        </li>
+<li class="quote">
+  <blockquote>Nothing creates clarity — when noise fades, truth speaks.</blockquote>
+  <cite>@PrafulCodes</cite>
+        </li>
+      <li class="quote">
+  <blockquote>Nothing? Nailed it.</blockquote>
+  <cite>@PrafulCodes</cite>
+      </li>
+
       </ul>
 
-     <button id="smart-scroll-btn" class="smart-scroll-btn" aria-label="Scroll to bottom">
-      <span class="scroll-icon">⬇️</span>
-      <span class="scroll-text">Scroll Down</span>
-     </button>
+      <button id="smart-scroll-btn" class="smart-scroll-btn" aria-label="Scroll to bottom">
+        <span class="scroll-icon">⬇️</span>
+        <span class="scroll-text">Scroll Down</span>
+      </button>
+
+      <!-- Floating Back Button (Bottom-left) -->
+      <a href="index.html" id="backBtn" class="back-btn" aria-label="Back to Nothing">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Back to Nothing</span>
+      </a>
 
       <footer class="motivation-footer">
         <p>✨ Add your voice to the void. Keep it short and thoughtful.</p>
@@ -164,53 +205,82 @@
           parent.insertBefore(img, parent.firstChild);
         }
       });
-      
-const smartScrollBtn = document.getElementById('smart-scroll-btn');
-const scrollIcon = smartScrollBtn.querySelector('.scroll-icon');
-const scrollText = smartScrollBtn.querySelector('.scroll-text');
-    
-let isAtTop = true;
-    
-function updateScrollButton() {
-  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-  const scrollHeight = document.documentElement.scrollHeight;
-  const clientHeight = document.documentElement.clientHeight;
-  const scrollPercentage = (scrollTop / (scrollHeight - clientHeight)) * 100; 
-    if (scrollPercentage < 10) {
-      if (!isAtTop) {
-        scrollIcon.textContent = '⬇️';
-        scrollText.textContent = 'Scroll Down';
-        smartScrollBtn.setAttribute('aria-label', 'Scroll to bottom');
-        smartScrollBtn.classList.add('flip-animation');
-        isAtTop = true;
-        setTimeout(() => smartScrollBtn.classList.remove('flip-animation'), 600);
-        }
-        smartScrollBtn.classList.add('show');
-      } else {
-        if (isAtTop) {
-          scrollIcon.textContent = '⬆️';
-          scrollText.textContent = 'Back to Top';
-          smartScrollBtn.setAttribute('aria-label', 'Scroll to top');
-          smartScrollBtn.classList.add('flip-animation');
-          isAtTop = false;
-          setTimeout(() => smartScrollBtn.classList.remove('flip-animation'), 600);
-        }
-        smartScrollBtn.classList.add('show');
-      }
-    }
-    
-    window.addEventListener('load', updateScrollButton);
-    window.addEventListener('scroll', updateScrollButton);
-    
-    smartScrollBtn.addEventListener('click', () => {
-      if (isAtTop) {
-        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    });
 
+      const smartScrollBtn = document.getElementById("smart-scroll-btn");
+      const scrollIcon = smartScrollBtn.querySelector(".scroll-icon");
+      const scrollText = smartScrollBtn.querySelector(".scroll-text");
+
+      let isAtTop = true;
+
+      function updateScrollButton() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight;
+        const clientHeight = document.documentElement.clientHeight;
+        const scrollPercentage = (scrollTop / (scrollHeight - clientHeight)) * 100;
+
+        if (scrollPercentage < 10) {
+          if (!isAtTop) {
+            scrollIcon.textContent = "⬇️";
+            scrollText.textContent = "Scroll Down";
+            smartScrollBtn.setAttribute("aria-label", "Scroll to bottom");
+            smartScrollBtn.classList.add("flip-animation");
+            isAtTop = true;
+            setTimeout(() => smartScrollBtn.classList.remove("flip-animation"), 600);
+          }
+          smartScrollBtn.classList.add("show");
+        } else {
+          if (isAtTop) {
+            scrollIcon.textContent = "⬆️";
+            scrollText.textContent = "Back to Top";
+            smartScrollBtn.setAttribute("aria-label", "Scroll to top");
+            smartScrollBtn.classList.add("flip-animation");
+            isAtTop = false;
+            setTimeout(() => smartScrollBtn.classList.remove("flip-animation"), 600);
+          }
+          smartScrollBtn.classList.add("show");
+        }
+      }
+
+      window.addEventListener("load", updateScrollButton);
+      window.addEventListener("scroll", updateScrollButton);
+
+      smartScrollBtn.addEventListener("click", () => {
+        if (isAtTop) {
+          window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      });
+
+      // Back button animation
+      const backBtn = document.getElementById("backBtn");
+      if (backBtn) {
+        backBtn.addEventListener("click", function (e) {
+          e.preventDefault();
+          backBtn.classList.add("flip-animation", "glow-pulse");
+          setTimeout(() => backBtn.classList.remove("glow-pulse"), 900);
+          const href = backBtn.getAttribute("href") || "index.html";
+          setTimeout(() => {
+            window.location.href = href;
+          }, 350);
+        });
+
+        backBtn.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            backBtn.classList.add("flip-animation", "glow-pulse");
+            setTimeout(() => backBtn.classList.remove("glow-pulse"), 900);
+            setTimeout(() => {
+              const href = backBtn.getAttribute("href") || "index.html";
+              window.location.href = href;
+            }, 350);
+          }
+        });
+        
+        backBtn.addEventListener("animationend", function () {
+          backBtn.classList.remove("flip-animation");
+        });
+      }
     </script>
-    <script src="js/script.js"></script>
+    <script type="module" src="js/script.js"></script>
   </body>
 </html>

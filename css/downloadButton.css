@@ -1,0 +1,25 @@
+.download-btn {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.download-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 18px rgba(0, 114, 255, 0.7);
+  background: linear-gradient(90deg, #0072ff, #00c6ff);
+}
+
+.download-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 10px rgba(0, 114, 255, 0.4);
+}

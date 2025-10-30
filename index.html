@@ -14,7 +14,216 @@
   <link rel="icon" type="image/x-icon" href="image/favicon.ico" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="css/leaderboard.css" />
+  <link rel="stylesheet" href="css/buttonThemes.css" />
+  <link rel="stylesheet" href="css/buttonRipple.css" />
+  <link rel="stylesheet" href="css/buttonEvolution.css" />
+  <link rel="stylesheet" href="css/recenter.css" />
+  <link rel="stylesheet" href="css/downloadButton.css" />
+  <link rel="stylesheet" href="css/clickEffects.css" />
+  <link rel="stylesheet" href="css/themeUnlock.css" />
+
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+// Mobile-Only Optimizer (FIXED)
+
+(function() {
+  const isMobile = window.innerWidth <= 768;
+  if (!isMobile) {
+    console.log('Desktop - no optimizations');
+    return;
+  }
+  console.log('Mobile detected - applying fixes...');
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyMobileFixes);
+  } else {
+    applyMobileFixes();
+  }
+  function applyMobileFixes() {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @media (max-width: 768px) {
+        /* Kill animations */
+        *, *::before, *::after {
+          animation: none !important;
+          transition: transform 0.2s ease, opacity 0.2s ease !important;
+        }
+        /* Prevent horizontal scroll */
+        html, body {
+          overflow-x: hidden !important;
+          max-width: 100vw !important;
+        }
+        /* Optimize button */
+        #useless-button {
+          animation: none !important;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+        }
+        #useless-button::before,
+        #useless-button::after,
+        .button-container::before {
+          display: none !important;
+        }
+        /* Hide particles */
+        .floating-particle,
+        .confetti {
+          display: none !important;
+        }
+        /* Simplify background */
+        body::after {
+          animation: none !important;
+          opacity: 0.2 !important;
+        }
+        /* Fix motivation button */
+        .motivation-btn {
+          bottom: 85px !important;
+          left: 15px !important;
+          max-width: calc(100vw - 100px) !important;
+          animation: none !important;
+          font-size: 0.85rem !important;
+          padding: 8px 16px !important;
+        }
+        /* Top panel shrink animation */
+        #top-panel {
+          transition: transform 0.3s ease, padding 0.3s ease, top 0.3s ease !important;
+        }
+        #top-panel.scrolled {
+          transform: translateX(-50%) scale(0.85) !important;
+          padding: 4px 8px !important;
+          top: 5px !important;
+        }
+        #top-panel.scrolled .panel-buttons button {
+          font-size: 1em !important;
+          padding: 6px !important;
+        }
+        #top-panel.scrolled .panel-item {
+          font-size: 0.75em !important;
+          padding: 3px 6px !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // FIX: Properly get topPanel element
+    const topPanel = document.getElementById('top-panel');
+    
+    if (topPanel) {
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 50) {
+          topPanel.classList.add('scrolled');
+        } else {
+          topPanel.classList.remove('scrolled');
+        }
+      }, { passive: true });
+      
+      console.log(' Scroll handler added');
+    }
+    
+    console.log(' Mobile optimizations complete!');
+  }
+})();
+</script>
+<style>
+@media (max-width: 768px) {
+  /* Compact but visible top bar - MATCH DESKTOP STYLE */
+  #top-panel {
+    position: fixed !important;
+    top: 15px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 10000 !important;
+    padding: 6px 12px !important;
+    gap: 10px !important;
+    background: rgba(255, 255, 255, 0.1) !important; /* Same as desktop */
+    backdrop-filter: blur(12px) !important; /* Same as desktop */
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Push content just below */
+  .app-container {
+    margin-top: 89px !important;
+    padding-top: 65px !important;
+  }
+
+  /* Title visible below bar */
+  .app-container h1 {
+    margin-top: 0 !important;
+    margin-bottom: 20px !important;
+    font-size: 1.9rem !important;
+  }
+
+  #achievement-popup,
+  .notification-popup {
+    top: 105px !important;
+    z-index: 9999 !important;
+  }
+
+  #easter-card {
+    top: 105px !important;
+    z-index: 9999 !important;
+  }
+
+  /* FIX: Hide tooltips on mobile */
+  #top-panel .panel-buttons button::before {
+    display: none !important;
+  }
+  
+  /* FIX: All modals/dropdowns ABOVE panel */
+  #theme-selector,
+  #sound-panel,
+  .popup-container,
+  .modal {
+    z-index: 10005 !important;
+  }
+  
+  .theme-selector-content,
+  .popup-content {
+    z-index: 10006 !important;
+  }
+  
+  /* Time attack menu */
+  #time-attack-menu,
+  .time-attack-menu {
+    z-index: 10005 !important;
+  }
+
+  /* Shrink on scroll */
+  #top-panel.scrolled {
+    transform: translateX(-50%) scale(0.85) !important;
+    padding: 4px 8px !important;
+    top: 8px !important;
+  }
+
+  body.scrolled {
+    padding-top: 85px !important;
+  }
+
+  #top-panel .panel-item {
+    font-size: 0.8em !important;
+    padding: 4px 8px !important;
+  }
+
+  #top-panel .panel-buttons button {
+    font-size: 1.1em !important;
+    padding: 6px !important;
+  }
+}
+
+/* Desktop: unchanged */
+@media (min-width: 769px) {
+  body {
+    padding-top: var(--top-panel-offset) !important;
+  }
+  
+  .app-container {
+    margin-top: 0 !important;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -59,12 +268,12 @@
     </div>
 
     <!-- Combined Buttons -->
- <div class="panel-buttons">
-  <button id="dark-mode-toggle" title="Toggle Dark Mode">🌙</button>
-  <button id="theme-toggle" title="Theme">🎨</button>
-  <button id="sound-toggle" title="Sound Settings">🎵</button>
-  <button id="open-shop-btn" title="Open Shop">🛍️</button>
-</div>
+    <div class="panel-buttons">
+      <button id="dark-mode-toggle" title="Toggle Dark Mode">🌙</button>
+      <button id="theme-toggle" title="Theme">🎨</button>
+      <button id="sound-toggle" title="Sound Settings">🎵</button>
+      <button id="open-shop-btn" title="Open Shop">🛍️</button>
+    </div>
 
     <!-- Moved Clock Here -->
     <div class="clock-container">
@@ -85,16 +294,16 @@
   <div class="app-container">
     <h1>The Button That Does Nothing</h1>
 
-  <!-- Hidden Easter Egg Button -->
-<button id="hidden-button">
-  <img src="image/Invisible-Egg.png" class="hidden-image" width="75px" height="100px" alt="Easter Egg">
-</button>
+    <!-- Hidden Easter Egg Button -->
+    <button id="hidden-button">
+      <img src="image/Invisible-Egg.png" class="hidden-image" width="75px" height="100px" alt="Easter Egg">
+    </button>
 
-<!-- Popup Card -->
-<div id="easter-card" class="easter-card">
-  <h1>🥚 You found the Easter Egg!</h1>
-  <h3>Congrats! You discovered a hidden feature 🎉</h3>
-</div>
+    <!-- Popup Card -->
+    <div id="easter-card" class="easter-card">
+      <h1>🥚 You found the Easter Egg!</h1>
+      <h3>Congrats! You discovered a hidden feature 🎉</h3>
+    </div>
 
     <div class="toggle-container">
       <label class="toggle-label">
@@ -103,9 +312,12 @@
         <span class="toggle-text">🔥 IMPOSSIBLE MODE</span>
       </label>
       <div class="time-attack-controls">
-        <button id="time-attack-button" class="toggle-label" title="Time Attack Mode" aria-pressed="false">⏱️ Time Attack</button>
+        <button id="time-attack-button" class="toggle-label" title="Time Attack Mode" aria-pressed="false">⏱️ Time
+          Attack</button>
         <div class="time-attack-settings">
-          <button id="time-attack-settings" class="time-attack-settings-btn" title="Time Attack Settings" aria-label="Time Attack Settings" aria-haspopup="true" aria-expanded="false" aria-controls="time-attack-menu">⚙️</button>
+          <button id="time-attack-settings" class="time-attack-settings-btn" title="Time Attack Settings"
+            aria-label="Time Attack Settings" aria-haspopup="true" aria-expanded="false"
+            aria-controls="time-attack-menu">⚙️</button>
           <div id="time-attack-menu" class="time-attack-menu" role="menu" aria-label="Select Time Attack duration">
             <button type="button" data-duration="15" role="menuitemradio" aria-checked="false">15s Sprint</button>
             <button type="button" data-duration="30" role="menuitemradio" aria-checked="false">30s Challenge</button>
@@ -120,11 +332,18 @@
     </div>
 
     <div class="high-score-display">
-      <div style="position: relative; z-index: 1; font-size: var(--text-sm); letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; margin-bottom: var(--space-xs);">My High Score</div>
+      <div
+        style="position: relative; z-index: 1; font-size: var(--text-sm); letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; margin-bottom: var(--space-xs);">
+        My High Score</div>
       <span id="high-score">0</span>
     </div>
+    <div style="margin-top: 20px; text-align: center;">
+      <button id="download-report" class="download-btn">📄 Download Wasted Time Report</button>
+    </div>
     <div class="high-score-display">
-      <div style="position: relative; z-index: 1; font-size: var(--text-sm); letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; margin-bottom: var(--space-xs);">Time Attack High Score</div>
+      <div
+        style="position: relative; z-index: 1; font-size: var(--text-sm); letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; margin-bottom: var(--space-xs);">
+        Time Attack High Score</div>
       <span id="time-attack-high-score">0</span>
     </div>
 
@@ -254,31 +473,97 @@
         <div class="themes-grid" id="themes-grid"></div>
       </div>
 
-      <div class="theme-tab-content" id="custom-tab">
-        <div class="custom-theme-creator">
-          <h3>✨ Create Your Custom Theme</h3>
+      <div class="custom-theme-creator">
+        <h3>✨ Create Your Custom Theme</h3>
+        <div class="color-picker-group">
+          <div class="color-picker-item">
+            <label>
+              Background Start
+              <div class="color-input-wrapper">
+                <input type="color" id="custom-bg-start">
+                <input type="text" id="custom-bg-start-text">
+              </div>
+            </label>
+          </div>
+          <div class="color-picker-item">
+            <label>
+              Background End
+              <div class="color-input-wrapper">
+                <input type="color" id="custom-bg-end">
+                <input type="text" id="custom-bg-end-text">
+              </div>
+            </label>
+          </div>
+          <div class="color-picker-item">
+            <label>
+              Text Color
+              <div class="color-input-wrapper">
+                <input type="color" id="custom-text-color">
+                <input type="text" id="custom-text-color-text">
+              </div>
+            </label>
+          </div>
+          <div class="color-picker-item">
+            <label>
+              Accent Color
+              <div class="color-input-wrapper">
+                <input type="color" id="custom-accent-color">
+                <input type="text" id="custom-accent-color-text">
+              </div>
+            </label>
+          </div>
+          <div class="color-picker-item">
+            <label>
+              Button Gradient Start
+              <div class="color-input-wrapper">
+                <input type="color" id="custom-button-start">
+                <input type="text" id="custom-button-start-text">
+              </div>
+            </label>
+          </div>
+          <div class="color-picker-item">
+            <label>
+              Button Gradient End
+              <div class="color-input-wrapper">
+                <input type="color" id="custom-button-end">
+                <input type="text" id="custom-button-end-text">
+              </div>
+            </label>
+          </div>
+
+          <div class="color-picker-item">
+            <label>
+              Font Family:
+              <input type="text" id="custom-font-family" value="'Poppins', sans-serif">
+            </label>
+          </div>
+
+
+        </div>
+        <div class="custom-theme-actions">
+          <button id="save-custom-theme" class="save-custom-theme">Apply Custom Theme</button>
+          <button id="reset-custom-theme" class="reset-custom-theme">Reset</button>
+          <button id="random-color-theme" class="random-color-theme">Randomize Colors</button>
         </div>
       </div>
+
+
     </div>
   </div>
 
 
 
-<!-- === NOTHING SHOP (Collapsible) === -->
-<div id="nothing-shop" class="nothing-shop closed">
-  <div class="shop-header">
-    <h2>🛒 Nothing Shop</h2>
-    <button id="close-shop" class="shop-close-btn" title="Close Shop">✖</button>
-  </div>
+  <!-- === NOTHING SHOP (Collapsible) === -->
+  <div id="nothing-shop" class="nothing-shop closed">
+    <div class="shop-header">
+      <h2>🛒 Nothing Shop</h2>
+      <button id="close-shop" class="shop-close-btn" title="Close Shop">✖</button>
+    </div>
 
-  <div id="user-section" class="user-section">
-    <input type="text" id="username" placeholder="Enter your name" />
-    <button id="saveName">Save</button>
-    <p id="greeting"></p>
-  </div>
 
-  <div id="shop-items" class="shop-items"></div>
-</div>
+
+    <div id="shop-items" class="shop-items"></div>
+  </div>
 
 
 
@@ -301,10 +586,19 @@
       <p id="bot-feedback" style="margin-top:10px; color: #eee; min-height: 1.2em;"></p>
     </div>
   </div>
-  
-   <a href="motivation.html" class="motivation-btn">
+  <a href="motivation.html" class="motivation-btn">
     💭 Lack Motivation?
   </a>
+  <button class="recenter-btn" id="recenter" title="Recenter View">
+    <svg xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 576 512"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+      <path
+        d="M288-16c17.7 0 32 14.3 32 32l0 18.3c98.1 14 175.7 91.6 189.7 189.7l18.3 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-18.3 0c-14 98.1-91.6 175.7-189.7 189.7l0 18.3c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-18.3C157.9 463.7 80.3 386.1 66.3 288L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l18.3 0C80.3 125.9 157.9 48.3 256 34.3L256 16c0-17.7 14.3-32 32-32zM128 256a160 160 0 1 0 320 0 160 160 0 1 0 -320 0zm160-96a96 96 0 1 1 0 192 96 96 0 1 1 0-192z" />
+    </svg>
+  </button>
+
+  <div id="tooltip" class="tooltip">I’m here!</div>
+
 
   <!-- Start kronpatel -->
   <!-- Module scripts -->
@@ -313,10 +607,20 @@
   <script type="module" src="js/leaderboard.js"></script>
 
   <!-- Regular scripts -->
-   <!-- End kronpatel -->
+  <!-- End kronpatel -->
   <script src="js/clock.js"></script>
   <script src="js/epilepsywarning.js"></script>
   <script src="js/invisibleButton.js"></script>
+  <script src="js/buttonRipple.js"></script>
+  <script src="js/buttonThemes.js"></script>
+  <script src="js/buttonEvolution.js"></script>
+  <script src="js/clickMore.js"></script>
+  <script src="js/recenter.js"></script>
+  <script src="js/downloadReport.js"></script>
+  <script src="js/clickEffects.js"></script>
+  <script src="js/themeUnlock.js"></script>
+
+
   <script>
     window.onload = function () {
       let clickCount = 0;
