@@ -13,7 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (clickCount >= randomTrigger) {
       clickMoreSound.currentTime = 0;
-      clickMoreSound.play();
+
+      // === THIS IS THE FIX ===
+      if (soundsEnabled) {
+        clickMoreSound.play();
+      }
+      // === END OF FIX ===
 
       // Reset for next random trigger
       clickCount = 0;
