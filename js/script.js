@@ -466,16 +466,50 @@ if (ctx) animateParticles();
 
 // === Confetti System ===
 function createConfetti() {
+  const colors = [
+    "#ff0a54",
+    "#ff477e",
+    "#ff7096",
+    "#ff85a1",
+    "#fbb1bd",
+    "#ff61a6",
+    "#ffbe0b",
+    "#fb5607",
+    "#8338ec",
+    "#3a86ff",
+  ];
+
   for (let i = 0; i < 200; i++) {
-    const confetti = document.createElement('div');
-    confetti.className = 'confetti';
-    confetti.style.left = Math.random() * 100 + 'vw';
-    confetti.style.backgroundColor = getRandomColor(); // Re-using getRandomColor util
-    confetti.style.animationDelay = Math.random() * 2 + 's';
+    const confetti = document.createElement("div");
+    confetti.className = "confetti";
+
+    // Random position and color
+    confetti.style.left = Math.random() * 100 + "vw";
+    confetti.style.backgroundColor =
+      colors[Math.floor(Math.random() * colors.length)];
+
+    // Random size and shape
+    const size = Math.random() * 8 + 4;
+    confetti.style.width = size + "px";
+    confetti.style.height = size * (Math.random() > 0.5 ? 1 : 2) + "px";
+    confetti.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+
+    // Random animation and speed
+    const duration = Math.random() * 2 + 3;
+    const delay = Math.random() * 1.5;
+    confetti.style.animation = `fallConfetti ${duration}s linear ${delay}s forwards`;
+    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+
     document.body.appendChild(confetti);
-    setTimeout(() => confetti.remove(), 6000);
+
+    // remove after animation
+    setTimeout(() => confetti.remove(), (duration + delay) * 1000);
   }
+
+  // Optional: Play a short celebration sound
+  // new Audio('https://assets.mixkit.co/sfx/preview/mixkit-winning-notification-2018.wav').play();
 }
+
 
 // === Smoke Trail Effect ===
 function createSmokeTrail() {

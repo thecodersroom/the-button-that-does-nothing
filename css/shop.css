@@ -28,8 +28,10 @@
 }
 
 .shop-items {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
   gap: var(--space-sm, 12px);
   max-height: 60vh;
   overflow-y: auto;
@@ -251,4 +253,77 @@
     80% { transform: translateY(-2%) scale(1.02); opacity: 1; }
     100% { transform: translateY(0) scale(1); }
   }
+}
+
+
+/* Styling for the transformed textButton when the 500 point item purchased */
+#useless-button.fun-mode {
+  background: linear-gradient(270deg, #a06bff, #6ecbff, #6affc5, #ffd76e, #ff8dcf);
+  background-size: 400% 400%;
+  color: #fff;
+  font-weight: 600;
+  font-size: 20px;
+  padding: 14px 28px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 14px;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.15),
+              0 0 25px rgba(255, 204, 255, 0.1);
+  animation: rainbowFlow 12s ease infinite,
+             softPulse 4s ease-in-out infinite;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+#useless-button.fun-mode:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.25),
+              0 0 35px rgba(255, 204, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Smooth gradient flow */
+@keyframes rainbowFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Soft glowing pulse */
+@keyframes softPulse {
+  0%, 100% {
+    text-shadow: 0 0 6px #fff, 0 0 12px #d8baff;
+    box-shadow: 0 0 10px rgba(255,255,255,0.15),
+                0 0 20px rgba(255,204,255,0.1);
+  }
+  50% {
+    text-shadow: 0 0 10px #fff, 0 0 20px #b3e9ff;
+    box-shadow: 0 0 12px rgba(255,255,255,0.25),
+                0 0 25px rgba(255,204,255,0.2);
+  }
+}
+
+/* Gentle shimmer line */
+#useless-button.fun-mode::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.25),
+    transparent
+  );
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
 }

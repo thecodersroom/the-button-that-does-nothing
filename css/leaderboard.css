@@ -124,6 +124,10 @@ body.dark-mode {
   --border-color: rgba(255, 255, 255, 0.1);
 }
 
+body.dark-mode .leaderboard-section {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+}
 .leaderboard-section {
   max-width: 600px;
   margin: 20px auto;
