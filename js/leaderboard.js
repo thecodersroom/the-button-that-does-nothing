@@ -61,22 +61,36 @@ function showUsernameModal() {
         githubCheckbox.checked = false;
 
         saveButton.onclick = async () => {
-            const name = input.value.trim();
-            if (name) {
-                userName = name;
-                isGithubUser = githubCheckbox.checked;
-                localStorage.setItem('userName', userName);
-                localStorage.setItem('isGithubUser', isGithubUser);
+            // --- START: Input Validation (fixes #302) ---
+            const name = input.value.trim();
 
-                if (isGithubUser) {
-                    userAvatar = await fetchGithubAvatar(userName);
-                    localStorage.setItem('userAvatar', userAvatar);
-                }
+            // This RegEx allows letters (a-z, A-Z), numbers (0-9), spaces (\s), and hyphens (-).
+            const validationRegex = /^[a-zA-Z0-9\s-]+$/; 
 
-                modal.style.display = 'none';
-                updateLeaderboard();
-            }
-        };
+            if (name.length === 0 || !validationRegex.test(name)) {
+                // If the name is empty OR contains invalid characters...
+                alert("Invalid name. Please use only letters, numbers, spaces, or hyphens.");
+                
+                // STOP the function. Do not save.
+                return; 
+            }
+            // --- END: Input Validation ---
+
+            if (name) {
+                userName = name;
+                isGithubUser = githubCheckbox.checked;
+                localStorage.setItem('userName', userName);
+                localStorage.setItem('isGithubUser', isGithubUser);
+
+                if (isGithubUser) {
+                    userAvatar = await fetchGithubAvatar(userName);
+                    localStorage.setItem('userAvatar', userAvatar);
+                }
+
+                modal.style.display = 'none';
+                updateLeaderboard();
+            }
+        };
     }
 }
 
