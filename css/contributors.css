@@ -1,0 +1,174 @@
+/* ====================== Contributors Page (full CSS) ====================== */
+:root {
+  --bg: #0b0e13;
+  --card-bg: rgba(20,20,28,.75);
+  --panel: rgba(30,30,40,.6);
+  --border: rgba(255,255,255,.10);
+  --border-weak: rgba(255,255,255,.08);
+  --text: #e5e7eb;
+  --muted: #9aa0a6;
+  --accent: #60a5fa;    /* azul del tema */
+}
+
+/* Fondo + tipografía (si usas otra hoja global, esto no molesta) */
+.bg { background: var(--bg); color: var(--text); }
+
+/* Layout general de la página */
+.container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+.page-header { text-align: center; margin-bottom: 1.25rem; }
+.page-header h1 { font-size: clamp(1.8rem, 3.5vw, 3.2rem); margin: .25rem 0; }
+.subtitle { color: var(--muted); margin: .25rem 0 1rem; }
+
+/* Botón volver */
+.btn, .btn.btn-secondary {
+  display: inline-block; padding: .6rem .9rem; border-radius: 10px;
+  border: 1px solid var(--border-weak); color: var(--text); text-decoration: none;
+  background: transparent; transition: border-color .15s, box-shadow .15s, transform .1s;
+}
+.btn:hover, .btn.btn-secondary:hover {
+  border-color: var(--accent); box-shadow: 0 0 0 3px rgba(96,165,250,.15); transform: translateY(-1px);
+}
+
+/* ===================== GRID + CARDS (con overrides fuertes) ===================== */
+
+/* Grid de contribuidores */
+#contributors.contributors-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+  gap: 14px !important;
+  margin-top: 1rem !important;
+}
+
+/* Card (avatar | texto) */
+.contrib-card {
+  display: grid !important;
+  grid-template-columns: 56px 1fr !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 12px !important;
+  border: 1px solid var(--border-weak) !important;
+  border-radius: 12px !important;
+  background: var(--card-bg) !important;
+  color: var(--text) !important;
+  text-decoration: none !important;
+  min-width: 0 !important; /* permite truncar texto en grid */
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease !important;
+}
+.contrib-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,.35) !important;
+}
+
+/* Avatar SIEMPRE pequeño */
+.contrib-card .contrib-avatar,
+#contributors img.contrib-avatar {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 1px solid var(--border-weak) !important;
+  background: #111 !important;
+  display: block !important;
+}
+
+/* Texto meta */
+.contrib-meta { display: flex !important; flex-direction: column !important; min-width: 0 !important; }
+
+/* Nombre con ellipsis (una línea) */
+.contrib-name {
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  max-width: 100% !important;
+}
+
+/* Commits */
+.contrib-commits { font-size: .9rem !important; color: var(--muted) !important; overflow-wrap: anywhere !important; }
+
+/* Estados (cargando / error) */
+.status { text-align: center !important; padding: 1rem !important; color: var(--muted) !important; }
+.status.error { color: #fca5a5 !important; }
+
+/* Footer */
+.page-footer { margin-top: 1.5rem !important; text-align: center !important; color: var(--muted) !important; }
+
+/* ================================ Responsive ================================ */
+
+@media (max-width: 680px) {
+  #contributors.contributors-grid {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)) !important;
+  }
+  .contrib-card {
+    grid-template-columns: 48px 1fr !important;
+    gap: 10px !important;
+    padding: 10px !important;
+  }
+  .contrib-card .contrib-avatar { width: 48px !important; height: 48px !important; }
+}
+
+@media (max-width: 420px) {
+  #contributors.contributors-grid { grid-template-columns: 1fr !important; }
+}
+
+/* Accesibilidad: menos animaciones si el usuario lo pide */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+.page-header h1 {
+  padding-bottom: 12px;   /* deja espacio para la línea */
+  position: relative;
+}
+
+.page-header .subtitle {
+  margin-top: 15px;       /* baja el subtítulo */
+}
+
+/* Botón estilo tema para "View Contributors" */
+.view-contrib-btn {
+  --btn-grad: linear-gradient(135deg, rgba(96,165,250,.18), rgba(167,139,250,.18));
+  --btn-ring: rgba(96,165,250,.14);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border, rgba(255,255,255,.1));
+  background: var(--btn-grad);
+  color: var(--text, #e5e7eb);
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: .2px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 10px 24px rgba(0,0,0,.25);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, color .18s ease;
+}
+
+.view-contrib-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent, #60a5fa);
+  box-shadow:
+    0 16px 36px rgba(0,0,0,.45),
+    0 0 0 4px var(--btn-ring);
+  color: #ffffff;
+}
+
+.view-contrib-btn:active { transform: translateY(-1px) scale(.99); }
+
+.view-contrib-btn .dot {
+  width: 8px; height: 8px; border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #93c5fd, #7c3aed);
+  box-shadow: 0 0 8px rgba(124,58,237,.6);
+}
+
+/* Accesibilidad */
+.view-contrib-btn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 16px 36px rgba(0,0,0,.45),
+    0 0 0 4px var(--btn-ring),
+    0 0 0 2px var(--accent, #60a5fa) inset;
+}

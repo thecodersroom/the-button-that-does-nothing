@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Contributors of The Button That Does Nothing"/>
+  <link rel="icon" type="image/svg+xml" href="/image/favicon.ico"/>
+  <link rel="stylesheet" href="/css/style.css"/>
+  <link rel="stylesheet" href="/css/contributors.css"/>
+  <title>Contributors — The Button That Does Nothing</title>
+</head>
+<body class="bg">
+  <main class="container">
+    <header class="page-header">
+      <h1>The Legends Behind The Button</h1> 
+      <p class="subtitle">Thanks to everyone who clicked… and actually built things.</p>
+      <a class="btn btn-secondary" href="/index.html">← Back to the Button</a>
+    </header>
+
+    <section id="contributors" class="contributors-grid" aria-live="polite"></section>
+
+    <template id="contributor-card">
+    <a class="contrib-card" target="_blank" rel="noopener">
+        <img class="contrib-avatar" alt="avatar" />
+        <div class="contrib-meta">
+        <span class="contrib-name"></span>
+        <span class="contrib-commits"></span>
+        </div>
+    </a>
+    </template>
+
+
+    <footer class="page-footer">
+      <p class="muted">Data from GitHub API • Updated live</p>
+    </footer>
+  </main>
+  <script>
+    window.__REPO__ = { owner: "thecodersroom", name: "the-button-that-does-nothing" };
+  </script>
+  <script type="module" src="/js/contributors.js"></script>
+</body>
+</html>
